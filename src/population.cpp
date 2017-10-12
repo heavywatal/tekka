@@ -14,10 +14,20 @@
 
 namespace pbt {
 
+Population::Population(const size_t initial_size) {HERE;
+    const size_t half = initial_size / 2UL;
+    males_.resize(half);
+    females_.resize(half);
+}
+
 std::ostream& Population::write(std::ostream& ost) const {HERE;
-    for (const auto& x: individuals_) {
-        ost << x;
-    }
+    auto write_impl = [&ost](const decltype(males_)& v) {
+        for (const auto& x: v) {
+            ost << x;
+        }
+    };
+    write_impl(males_);
+    write_impl(females_);
     return ost;
 }
 
@@ -27,7 +37,7 @@ std::ostream& operator<<(std::ostream& ost, const Population& pop) {
 }
 
 void Population::test() {HERE;
-    Population x;
+    Population x(6);
     std::cout << x << std::endl;
 }
 

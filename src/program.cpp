@@ -109,7 +109,7 @@ void Program::run() {HERE;
 void Program::main() {HERE;
     wtl::ChDir cd_outdir(outdir_, true);
     // wtl::opfstream{"program_options.conf"} << config_string_;
-    Population pop;
+    Population pop(popsize_);
 }
 
 } // namespace pbt

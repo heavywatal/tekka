@@ -14,8 +14,8 @@
 
 namespace pbt {
 
-std::ostream& Individual::write(std::ostream& ost) const {HERE;
-    return ost << id_ << ":" << is_male_;
+std::ostream& Individual::write(std::ostream& ost) const {
+    return ost << id_;
 }
 
 //! shortcut Individual::write(ost)

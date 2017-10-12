@@ -19,8 +19,8 @@ class Individual;
 */
 class Population {
   public:
-    //! default constructor
-    Population() = default;
+    //! constructor
+    Population(const size_t initial_size);
 
     //! write
     std::ostream& write(std::ostream&) const;
@@ -28,8 +28,10 @@ class Population {
     //! unit test
     static void test();
   private:
-    //! Individual array
-    std::vector<Individual> individuals_;
+    //! Individual array males
+    std::vector<Individual> males_;
+    //! Individual array females
+    std::vector<Individual> females_;
 };
 
 } // namespace pbt

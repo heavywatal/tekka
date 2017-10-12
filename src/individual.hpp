@@ -28,7 +28,6 @@ class Individual {
   private:
     //! ID
     const uint_fast64_t id_ = 0UL;
-    const bool is_male_ = false;
 };
 
 } // namespace pbt
