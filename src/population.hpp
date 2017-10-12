@@ -22,6 +22,9 @@ class Population {
     //! constructor
     Population(const size_t initial_size);
 
+    //! give birth to children
+    void reproduce();
+
     //! write
     std::ostream& write(std::ostream&) const;
     friend std::ostream& operator<<(std::ostream&, const Population&);

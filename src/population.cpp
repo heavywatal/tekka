@@ -20,6 +20,26 @@ Population::Population(const size_t initial_size) {HERE;
     females_.resize(half);
 }
 
+void Population::reproduce() {HERE;
+    std::vector<Individual> boys;
+    std::vector<Individual> girls;
+    constexpr size_t clutch_size = 2;
+    std::poisson_distribution<unsigned int> poisson_eggs(clutch_size);
+    for (const auto& mother: females_) {
+        const Individual& father = *wtl::choice(males_.begin(), males_.end(), wtl::sfmt());
+        const unsigned int num_eggs = poisson_eggs(wtl::sfmt());
+        for (unsigned int i=0; i<num_eggs; ++i) {
+            if (wtl::sfmt().canonical() < 0.5) {
+                boys.emplace_back(father, mother);
+            } else {
+                girls.emplace_back(father, mother);
+            }
+        }
+    }
+    std::copy(boys.begin(), boys.end(), std::back_inserter(males_));
+    std::copy(girls.begin(), girls.end(), std::back_inserter(females_));
+}
+
 std::ostream& Population::write(std::ostream& ost) const {HERE;
     auto write_impl = [&ost](const decltype(males_)& v) {
         for (const auto& x: v) {
@@ -38,6 +58,8 @@ std::ostream& operator<<(std::ostream& ost, const Population& pop) {
 
 void Population::test() {HERE;
     Population x(6);
+    std::cout << x << std::endl;
+    x.reproduce();
     std::cout << x << std::endl;
 }
 
