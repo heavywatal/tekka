@@ -14,8 +14,10 @@
 
 namespace pbt {
 
+uint_fast32_t Individual::LAST_ID_ = 0;
+
 std::ostream& Individual::write(std::ostream& ost) const {
-    return ost << id_;
+    return ost << id_ << ":" << father_id_ << ":" << mother_id_;
 }
 
 //! shortcut Individual::write(ost)

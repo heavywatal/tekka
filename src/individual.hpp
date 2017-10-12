@@ -18,16 +18,29 @@ namespace pbt {
 class Individual {
   public:
     //! default constructor
-    Individual() = default;
+    Individual()
+    : id_(++LAST_ID_) {}
+    //! sexual reproduction
+    Individual(const Individual& father, const Individual& mother)
+    : id_(++LAST_ID_), father_id_(father.id()), mother_id_(mother.id()) {}
 
     //! write
     std::ostream& write(std::ostream&) const;
     friend std::ostream& operator<<(std::ostream&, const Individual&);
     //! unit test
     static void test();
+
+    //! getter of #id_
+    uint_fast32_t id() const {return id_;}
   private:
+    //! ID for a new instance
+    static uint_fast32_t LAST_ID_;
     //! ID
-    const uint_fast64_t id_ = 0UL;
+    const uint_fast32_t id_ = 0;
+    //! father's ID
+    const uint_fast32_t father_id_ = 0;
+    //! mother's ID
+    const uint_fast32_t mother_id_ = 0;
 };
 
 } // namespace pbt

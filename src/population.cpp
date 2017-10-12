@@ -23,7 +23,7 @@ Population::Population(const size_t initial_size) {HERE;
 std::ostream& Population::write(std::ostream& ost) const {HERE;
     auto write_impl = [&ost](const decltype(males_)& v) {
         for (const auto& x: v) {
-            ost << x;
+            ost << x << "\n";
         }
     };
     write_impl(males_);
