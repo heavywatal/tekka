@@ -35,6 +35,8 @@ class Population {
     std::vector<Individual> males_;
     //! Individual array females
     std::vector<Individual> females_;
+    //! by the quater-year
+    uint_fast32_t time_ = 0;
 };
 
 } // namespace pbt

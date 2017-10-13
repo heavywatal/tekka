@@ -21,8 +21,8 @@ class Individual {
     Individual()
     : id_(++LAST_ID_) {}
     //! sexual reproduction
-    Individual(const Individual& father, const Individual& mother)
-    : id_(++LAST_ID_), father_id_(father.id()), mother_id_(mother.id()) {}
+    Individual(const Individual& father, const Individual& mother, const uint_fast32_t time)
+    : id_(++LAST_ID_), father_id_(father.id()), mother_id_(mother.id()), birth_date_(time) {}
 
     //! write
     std::ostream& write(std::ostream&) const;
@@ -41,6 +41,8 @@ class Individual {
     const uint_fast32_t father_id_ = 0;
     //! mother's ID
     const uint_fast32_t mother_id_ = 0;
+    //! by the quater-year
+    uint_fast32_t birth_date_ = 0;
 };
 
 } // namespace pbt

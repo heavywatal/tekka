@@ -21,6 +21,7 @@ Population::Population(const size_t initial_size) {HERE;
 }
 
 void Population::reproduce() {HERE;
+    ++time_;
     std::vector<Individual> boys;
     std::vector<Individual> girls;
     constexpr size_t clutch_size = 2;
@@ -30,9 +31,9 @@ void Population::reproduce() {HERE;
         const unsigned int num_eggs = poisson_eggs(wtl::sfmt());
         for (unsigned int i=0; i<num_eggs; ++i) {
             if (wtl::sfmt().canonical() < 0.5) {
-                boys.emplace_back(father, mother);
+                boys.emplace_back(father, mother, time_);
             } else {
-                girls.emplace_back(father, mother);
+                girls.emplace_back(father, mother, time_);
             }
         }
     }
