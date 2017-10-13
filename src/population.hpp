@@ -25,6 +25,9 @@ class Population {
     //! give birth to children
     void reproduce();
 
+    //! evaluate survival
+    void survive();
+
     //! write
     std::ostream& write(std::ostream&) const;
     friend std::ostream& operator<<(std::ostream&, const Population&);

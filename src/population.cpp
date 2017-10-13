@@ -41,6 +41,22 @@ void Population::reproduce() {HERE;
     std::copy(girls.begin(), girls.end(), std::back_inserter(females_));
 }
 
+void Population::survive() {HERE;
+   std::vector<Individual> survivors;
+   survivors.reserve(males_.size());
+   std::copy_if(males_.begin(), males_.end(),
+                std::back_inserter(survivors), [this](const Individual& x) {
+                    return x.survive(time_);
+                });
+   males_.swap(survivors);
+   survivors.clear();
+   std::copy_if(females_.begin(), females_.end(),
+                std::back_inserter(survivors), [this](const Individual& x) {
+                    return x.survive(time_);
+                });
+   females_.swap(survivors);
+}
+
 std::ostream& Population::write(std::ostream& ost) const {HERE;
     auto write_impl = [&ost](const decltype(males_)& v) {
         for (const auto& x: v) {
@@ -61,6 +77,8 @@ void Population::test() {HERE;
     Population x(6);
     std::cout << x << std::endl;
     x.reproduce();
+    std::cout << x << std::endl;
+    x.survive();
     std::cout << x << std::endl;
 }
 

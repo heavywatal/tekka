@@ -24,6 +24,9 @@ class Individual {
     Individual(const Individual& father, const Individual& mother, const uint_fast32_t time)
     : id_(++LAST_ID_), father_id_(father.id()), mother_id_(mother.id()), birth_date_(time) {}
 
+    //! evaluate survival
+    bool survive(const uint_fast32_t time) const;
+
     //! write
     std::ostream& write(std::ostream&) const;
     friend std::ostream& operator<<(std::ostream&, const Individual&);
