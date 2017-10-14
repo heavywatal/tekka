@@ -16,7 +16,7 @@ namespace pbt {
 
 uint_fast32_t Individual::LAST_ID_ = 0;
 
-bool Individual::survive(const uint_fast32_t time) const {
+bool Individual::has_survived(const uint_fast32_t time) const {
     const uint_fast32_t age = (time - birth_date_) / 4U;
     return (wtl::sfmt()() > age);
 }

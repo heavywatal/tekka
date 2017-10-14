@@ -25,7 +25,7 @@ class Individual {
     : id_(++LAST_ID_), father_id_(father.id()), mother_id_(mother.id()), birth_date_(time) {}
 
     //! evaluate survival
-    bool survive(const uint_fast32_t time) const;
+    bool has_survived(const uint_fast32_t time) const;
 
     //! evaluate maturity
     bool is_matured(const uint_fast32_t time) const {

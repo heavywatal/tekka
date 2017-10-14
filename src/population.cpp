@@ -49,13 +49,13 @@ void Population::survive() {HERE;
    survivors.reserve(males_.size());
    std::copy_if(males_.begin(), males_.end(),
                 std::back_inserter(survivors), [this](const Individual& x) {
-                    return x.survive(time_);
+                    return x.has_survived(time_);
                 });
    males_.swap(survivors);
    survivors.clear();
    std::copy_if(females_.begin(), females_.end(),
                 std::back_inserter(survivors), [this](const Individual& x) {
-                    return x.survive(time_);
+                    return x.has_survived(time_);
                 });
    females_.swap(survivors);
 }
