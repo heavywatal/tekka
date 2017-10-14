@@ -27,7 +27,10 @@ void Population::reproduce() {HERE;
     constexpr size_t clutch_size = 2;
     std::poisson_distribution<unsigned int> poisson_eggs(clutch_size);
     for (const auto& mother: females_) {
+        if (!mother.is_matured(time_)) continue;
         const Individual& father = *wtl::choice(males_.begin(), males_.end(), wtl::sfmt());
+        // TODO: weighted sampling
+        if (!father.is_matured(time_)) continue;
         const unsigned int num_eggs = poisson_eggs(wtl::sfmt());
         for (unsigned int i=0; i<num_eggs; ++i) {
             if (wtl::sfmt().canonical() < 0.5) {

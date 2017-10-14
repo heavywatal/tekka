@@ -27,6 +27,11 @@ class Individual {
     //! evaluate survival
     bool survive(const uint_fast32_t time) const;
 
+    //! evaluate maturity
+    bool is_matured(const uint_fast32_t time) const {
+        return time > birth_date_ + AGE_OF_MATURATION_;
+    }
+
     //! write
     std::ostream& write(std::ostream&) const;
     friend std::ostream& operator<<(std::ostream&, const Individual&);
@@ -36,6 +41,7 @@ class Individual {
     //! getter of #id_
     uint_fast32_t id() const {return id_;}
   private:
+    constexpr static uint_fast32_t AGE_OF_MATURATION_ = 3 * 4;
     //! ID for a new instance
     static uint_fast32_t LAST_ID_;
     //! ID
