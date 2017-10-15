@@ -45,29 +45,25 @@ void Population::reproduce() {HERE;
 }
 
 void Population::survive() {HERE;
-   std::vector<Individual> survivors;
-   survivors.reserve(males_.size());
-   std::copy_if(males_.begin(), males_.end(),
-                std::back_inserter(survivors), [this](const Individual& x) {
-                    return x.has_survived(time_);
-                });
-   males_.swap(survivors);
-   survivors.clear();
-   std::copy_if(females_.begin(), females_.end(),
-                std::back_inserter(survivors), [this](const Individual& x) {
-                    return x.has_survived(time_);
-                });
-   females_.swap(survivors);
+   auto impl = [t=time_](const decltype(males_)& v) {
+       decltype(males_) survivors;
+       survivors.reserve(v.size());
+       std::copy_if(v.begin(), v.end(), std::back_inserter(survivors),
+                    [&t](const Individual& x) {return x.has_survived(t);});
+       return survivors;
+   };
+   males_ = impl(males_);
+   females_ = impl(females_);
 }
 
 std::ostream& Population::write(std::ostream& ost) const {HERE;
-    auto write_impl = [&ost](const decltype(males_)& v) {
+    auto impl = [&ost](const decltype(males_)& v) {
         for (const auto& x: v) {
             ost << x << "\n";
         }
     };
-    write_impl(males_);
-    write_impl(females_);
+    impl(males_);
+    impl(females_);
     return ost;
 }
 
