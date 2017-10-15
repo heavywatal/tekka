@@ -35,13 +35,13 @@ class Program {
     void help_and_exit();
 
     //! population size
-    size_t popsize_ = 100;
-    //! maximum number of generations to simulate
-    size_t num_generations_ = 100;
+    size_t pop_size_ = 100;
+    //! maximum time to simulate by quaters
+    size_t max_time_ = 100;
     //! number of threads
     unsigned int concurrency_ = 1;
     //! name of output directory
-    std::string outdir_ = "";
+    std::string out_dir_ = "";
     //! writen to "program_options.conf"
     std::string config_string_;
 };

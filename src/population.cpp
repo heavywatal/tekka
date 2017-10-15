@@ -20,6 +20,13 @@ Population::Population(const size_t initial_size) {HERE;
     females_.resize(half);
 }
 
+void Population::run(const uint_fast32_t max_time) {HERE;
+    for (uint_fast32_t i=0; i<max_time; ++i) {
+        reproduce();
+        survive();
+    }
+}
+
 void Population::reproduce() {HERE;
     ++time_;
     std::vector<Individual> boys;

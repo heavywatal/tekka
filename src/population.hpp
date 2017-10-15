@@ -22,11 +22,8 @@ class Population {
     //! constructor
     Population(const size_t initial_size);
 
-    //! give birth to children
-    void reproduce();
-
-    //! evaluate survival
-    void survive();
+    //! main iteration
+    void run(const uint_fast32_t max_time);
 
     //! write
     std::ostream& write(std::ostream&) const;
@@ -34,6 +31,12 @@ class Population {
     //! unit test
     static void test();
   private:
+    //! give birth to children
+    void reproduce();
+
+    //! evaluate survival
+    void survive();
+
     //! Individual array males
     std::vector<Individual> males_;
     //! Individual array females

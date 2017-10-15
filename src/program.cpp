@@ -35,18 +35,18 @@ inline po::options_description general_desc() {HERE;
 
     Command line option | Symbol  | Variable
     ------------------- | ------- | -------------------------
-    `-n,--popsize`      | \f$N\f$ | Program::popsize_
-    `-g,--generations`  |         | Program::num_generations_
+    `-n,--popsize`      | \f$N\f$ | Program::pop_size_
+    `-g,--maxtime`      |         | Program::max_time_
     `-j,--parallel`     |         | Program::concurrency_
-    `-o,--outdir`       |         | Program::outdir_
+    `-o,--outdir`       |         | Program::out_dir_
 */
 po::options_description Program::options_desc() {HERE;
     po::options_description description("Program");
     description.add_options()
-      ("popsize,n", po::value(&popsize_)->default_value(popsize_))
-      ("generations,g", po::value(&num_generations_)->default_value(num_generations_))
+      ("popsize,n", po::value(&pop_size_)->default_value(pop_size_))
+      ("maxtime,t", po::value(&max_time_)->default_value(max_time_))
       ("parallel,j", po::value(&concurrency_)->default_value(concurrency_))
-      ("outdir,o", po::value(&outdir_)->default_value(outdir_));
+      ("outdir,o", po::value(&out_dir_)->default_value(out_dir_));
     // description.add(Population::options_desc());
     // description.add(Individual::options_desc());
     return description;
@@ -107,9 +107,10 @@ void Program::run() {HERE;
 }
 
 void Program::main() {HERE;
-    wtl::ChDir cd_outdir(outdir_, true);
+    wtl::ChDir cd_outdir(out_dir_, true);
     // wtl::opfstream{"program_options.conf"} << config_string_;
-    Population pop(popsize_);
+    Population pop(pop_size_);
+    pop.run(max_time_);
 }
 
 } // namespace pbt
