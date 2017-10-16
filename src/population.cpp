@@ -50,11 +50,11 @@ void Population::reproduce() {HERE;
 }
 
 void Population::survive() {HERE;
-   auto impl = [t=time_](const decltype(males_)& v) {
+   auto impl = [](const decltype(males_)& v) {
        decltype(males_) survivors;
        survivors.reserve(v.size());
        std::copy_if(v.begin(), v.end(), std::back_inserter(survivors),
-                    [&t](const Individual& x) {return x.has_survived(t);});
+                    [](const Individual& x) {return x.has_survived();});
        return survivors;
    };
    males_ = impl(males_);
@@ -78,7 +78,7 @@ std::ostream& operator<<(std::ostream& ost, const Population& pop) {
 }
 
 void Population::test() {HERE;
-    Population x(6);
+    Population x(8);
     std::cout << x << std::endl;
     x.run(15);
     std::cout << x << std::endl;

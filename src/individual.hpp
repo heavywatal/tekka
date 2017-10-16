@@ -28,7 +28,7 @@ class Individual {
     : id_(++LAST_ID_), father_id_(father.id()), mother_id_(mother.id()), birth_date_(time) {}
 
     //! evaluate survival
-    bool has_survived(const uint_fast32_t time) const;
+    bool has_survived() const;
 
     //! evaluate maturity
     bool is_matured(const uint_fast32_t time) const {
@@ -58,6 +58,10 @@ class Individual {
     static uint_fast32_t MEAN_CLUTCH_SIZE_;
     //! distribution for clutch_size()
     static std::poisson_distribution<uint_fast32_t> POISSON_CLUTCH_SIZE_;
+    //! mortality due to natural causes
+    static double NATURAL_MORTALITY_;
+    //! mortality due to fishing activities
+    static double FISHING_MORTALITY_;
     //! ID for a new instance
     static uint_fast32_t LAST_ID_;
 

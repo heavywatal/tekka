@@ -15,6 +15,8 @@
 namespace pbt {
 
 uint_fast32_t Individual::MEAN_CLUTCH_SIZE_ = 4;
+double Individual::NATURAL_MORTALITY_ = 0.1;
+double Individual::FISHING_MORTALITY_ = 0.1;
 uint_fast32_t Individual::LAST_ID_ = 0;
 std::poisson_distribution<uint_fast32_t> Individual::POISSON_CLUTCH_SIZE_;
 
@@ -25,12 +27,16 @@ std::poisson_distribution<uint_fast32_t> Individual::POISSON_CLUTCH_SIZE_;
     Command line option | Symbol         | Variable
     ------------------- | -------------- | -------------------------------
     `-c,--clutch`       | -              | Individual::MEAN_CLUTCH_SIZE_
+    `--dnatural`        | -              | Individual::NATURAL_MORTALITY_
+    `--dfishing`        | -              | Individual::FISHING_MORTALITY_
 */
 boost::program_options::options_description Individual::options_desc() {
     namespace po = boost::program_options;
     po::options_description desc{"Tissue"};
     desc.add_options()
         ("clutch,c", po::value(&MEAN_CLUTCH_SIZE_)->default_value(MEAN_CLUTCH_SIZE_))
+        ("dnatural", po::value(&NATURAL_MORTALITY_)->default_value(NATURAL_MORTALITY_))
+        ("dfishing", po::value(&FISHING_MORTALITY_)->default_value(FISHING_MORTALITY_))
     ;
     return desc;
 }
@@ -39,9 +45,8 @@ void Individual::init_static_members() {HERE;
     POISSON_CLUTCH_SIZE_.param(decltype(POISSON_CLUTCH_SIZE_)::param_type(MEAN_CLUTCH_SIZE_));
 }
 
-bool Individual::has_survived(const uint_fast32_t time) const {
-    const uint_fast32_t age = (time - birth_date_) / 4U;
-    return (wtl::sfmt()() > age);
+bool Individual::has_survived() const {
+    return wtl::sfmt().canonical() > NATURAL_MORTALITY_;
 }
 
 std::ostream& Individual::write(std::ostream& ost) const {
