@@ -48,7 +48,7 @@ po::options_description Program::options_desc() {HERE;
       ("parallel,j", po::value(&concurrency_)->default_value(concurrency_))
       ("outdir,o", po::value(&out_dir_)->default_value(out_dir_));
     // description.add(Population::options_desc());
-    // description.add(Individual::options_desc());
+    description.add(Individual::options_desc());
     return description;
 }
 
@@ -89,6 +89,7 @@ Program::Program(const std::vector<std::string>& arguments) {HERE;
               options(description).run(), vm);
     if (vm["help"].as<bool>()) {help_and_exit();}
     po::notify(vm);
+    Individual::init_static_members();
 
     config_string_ = wtl::flags_into_string(vm);
     if (vm["verbose"].as<bool>()) {
