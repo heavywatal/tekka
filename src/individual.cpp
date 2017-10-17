@@ -13,10 +13,12 @@
 
 namespace pbt {
 
+uint_fast32_t Individual::MEAN_MATING_NUMBER_ = 2;
 uint_fast32_t Individual::MEAN_CLUTCH_SIZE_ = 4;
 double Individual::NATURAL_MORTALITY_ = 0.1;
 double Individual::FISHING_MORTALITY_ = 0.1;
 uint_fast32_t Individual::LAST_ID_ = 0;
+std::poisson_distribution<uint_fast32_t> Individual::POISSON_MATING_NUMBER_;
 std::poisson_distribution<uint_fast32_t> Individual::POISSON_CLUTCH_SIZE_;
 
 //! Program options
@@ -25,6 +27,7 @@ std::poisson_distribution<uint_fast32_t> Individual::POISSON_CLUTCH_SIZE_;
 
     Command line option | Symbol         | Variable
     ------------------- | -------------- | -------------------------------
+    `-m,--mating`       | -              | Individual::MEAN_MATING_NUMBER_
     `-c,--clutch`       | -              | Individual::MEAN_CLUTCH_SIZE_
     `--dnatural`        | -              | Individual::NATURAL_MORTALITY_
     `--dfishing`        | -              | Individual::FISHING_MORTALITY_
@@ -33,6 +36,7 @@ boost::program_options::options_description Individual::options_desc() {
     namespace po = boost::program_options;
     po::options_description desc{"Tissue"};
     desc.add_options()
+        ("mating,m", po::value(&MEAN_MATING_NUMBER_)->default_value(MEAN_MATING_NUMBER_))
         ("clutch,c", po::value(&MEAN_CLUTCH_SIZE_)->default_value(MEAN_CLUTCH_SIZE_))
         ("dnatural", po::value(&NATURAL_MORTALITY_)->default_value(NATURAL_MORTALITY_))
         ("dfishing", po::value(&FISHING_MORTALITY_)->default_value(FISHING_MORTALITY_))

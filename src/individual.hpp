@@ -34,7 +34,11 @@ class Individual {
         return time > birth_date_ + AGE_OF_MATURATION_;
     }
 
-    //! random number of eggs
+    //! number of matings per quarter year
+    template <class URBG>
+    uint_fast32_t mating_number(URBG& g) const {return POISSON_MATING_NUMBER_(g);}
+
+    //! number of eggs per mating
     template <class URBG>
     uint_fast32_t clutch_size(URBG& g) const {return POISSON_CLUTCH_SIZE_(g);}
 
@@ -53,8 +57,12 @@ class Individual {
   private:
     //! by the quater-year
     constexpr static uint_fast32_t AGE_OF_MATURATION_ = 3 * 4;
+    //! parameter for #POISSON_MATING_NUMBER_
+    static uint_fast32_t MEAN_MATING_NUMBER_;
     //! parameter for #POISSON_CLUTCH_SIZE_
     static uint_fast32_t MEAN_CLUTCH_SIZE_;
+    //! distribution for mating_number()
+    static std::poisson_distribution<uint_fast32_t> POISSON_MATING_NUMBER_;
     //! distribution for clutch_size()
     static std::poisson_distribution<uint_fast32_t> POISSON_CLUTCH_SIZE_;
     //! mortality due to natural causes
