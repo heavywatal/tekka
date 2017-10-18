@@ -18,6 +18,7 @@
 
 namespace pbt {
 
+namespace fs = boost::filesystem;
 namespace po = boost::program_options;
 
 //! options description for general arguments
@@ -45,6 +46,7 @@ po::options_description Program::options_desc() {HERE;
       ("popsize,n", po::value(&pop_size_)->default_value(pop_size_))
       ("maxtime,t", po::value(&max_time_)->default_value(max_time_))
       ("parallel,j", po::value(&concurrency_)->default_value(concurrency_))
+      ("write,w", po::bool_switch(&is_writing_))
       ("outdir,o", po::value(&out_dir_)->default_value(out_dir_));
     // description.add(Population::options_desc());
     description.add(Individual::options_desc());
@@ -80,6 +82,7 @@ Program::Program(const std::vector<std::string>& arguments) {HERE;
     std::cin.tie(0);
     std::cout.precision(15);
     std::cerr.precision(6);
+    out_dir_ = wtl::strftime("thunnus_%Y%m%d_%H%M_") + std::to_string(::getpid());
 
     auto description = general_desc();
     description.add(options_desc());
@@ -107,10 +110,15 @@ void Program::run() {HERE;
 }
 
 void Program::main() {HERE;
-    wtl::ChDir cd_outdir(out_dir_, true);
-    // wtl::opfstream{"program_options.conf"} << config_string_;
     Population pop(pop_size_);
     pop.run(max_time_);
+    if (is_writing_) {
+        DCERR("mkdir && cd to " << out_dir_ << std::endl);
+        wtl::ChDir cd_outdir(out_dir_, true);
+        wtl::opfstream{"program_options.conf"} << config_string_;
+        wtl::ozfstream{"population.tsv.gz"} << pop;
+        std::cerr << wtl::iso8601datetime() << std::endl;
+    }
 }
 
 } // namespace pbt

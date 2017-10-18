@@ -39,6 +39,8 @@ class Program {
     size_t max_time_ = 100;
     //! number of threads
     unsigned int concurrency_ = 1;
+    //! `-w`
+    bool is_writing_ = false;
     //! name of output directory
     std::string out_dir_ = "";
     //! writen to "program_options.conf"
