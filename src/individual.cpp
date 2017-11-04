@@ -34,7 +34,7 @@ std::poisson_distribution<uint_fast32_t> Individual::POISSON_CLUTCH_SIZE_;
 */
 boost::program_options::options_description Individual::options_desc() {
     namespace po = boost::program_options;
-    po::options_description desc{"Tissue"};
+    po::options_description desc{"Individual"};
     desc.add_options()
         ("mating,m", po::value(&MEAN_MATING_NUMBER_)->default_value(MEAN_MATING_NUMBER_))
         ("clutch,c", po::value(&MEAN_CLUTCH_SIZE_)->default_value(MEAN_CLUTCH_SIZE_))
