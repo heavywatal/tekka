@@ -115,7 +115,7 @@ void Program::main() {HERE;
     if (is_writing_) {
         DCERR("mkdir && cd to " << out_dir_ << std::endl);
         wtl::ChDir cd_outdir(out_dir_, true);
-        wtl::opfstream{"program_options.conf"} << config_string_;
+        wtl::make_ofs("program_options.conf") << config_string_;
         wtl::ozfstream{"population.tsv.gz"} << pop;
         std::cerr << wtl::iso8601datetime() << std::endl;
     }
