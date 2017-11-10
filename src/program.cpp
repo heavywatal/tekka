@@ -53,7 +53,7 @@ po::options_description Program::options_desc() {HERE;
     return description;
 }
 
-void Program::help_and_exit() {HERE;
+[[noreturn]] void Program::help_and_exit() {HERE;
     auto description = general_desc();
     description.add(options_desc());
     // do not print positional arguments as options
