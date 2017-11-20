@@ -7,6 +7,7 @@
 
 #include <iosfwd>
 #include <cstdint>
+#include <cmath>
 #include <random>
 
 #include <boost/program_options.hpp>
@@ -34,6 +35,15 @@ class Individual {
         return time > birth_date_ + AGE_OF_MATURATION_;
     }
 
+    //! von Bertalanffy growth equation
+    /*! \f[
+            L = L_\infty(1 - e^{-K(t - t_0)})
+        \f]
+    */
+    double weight(const uint_fast32_t time) const {
+        return -MAX_WEIGHT_ * std::expm1(-GROWTH_RATE_ * (time - birth_date_));
+    }
+
     //! number of matings per quarter year
     template <class URBG>
     uint_fast32_t mating_number(URBG& g) const {return POISSON_MATING_NUMBER_(g);}
@@ -57,6 +67,10 @@ class Individual {
   private:
     //! by the quater-year
     constexpr static uint_fast32_t AGE_OF_MATURATION_ = 3 * 4;
+    //! \f$K\f$ in weight()
+    constexpr static double GROWTH_RATE_ = 0.02;
+    //! \f$L\f$ in weight()
+    constexpr static double MAX_WEIGHT_ = 500.0;
     //! parameter for #POISSON_MATING_NUMBER_
     static uint_fast32_t MEAN_MATING_NUMBER_;
     //! parameter for #POISSON_CLUTCH_SIZE_
