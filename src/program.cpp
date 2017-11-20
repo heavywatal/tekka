@@ -12,6 +12,7 @@
 #include <wtl/zfstream.hpp>
 #include <wtl/filesystem.hpp>
 #include <wtl/getopt.hpp>
+#include <wtl/chrono.hpp>
 #include <sfmt.hpp>
 
 #include <iostream>
@@ -77,7 +78,7 @@ inline void test(const int flg) {HERE;
 }
 
 Program::Program(const std::vector<std::string>& arguments) {HERE;
-    std::cout << wtl::join(arguments, " ") << std::endl;
+    wtl::join(arguments, std::cout, " ") << std::endl;
     std::ios::sync_with_stdio(false);
     std::cin.tie(0);
     std::cout.precision(15);
