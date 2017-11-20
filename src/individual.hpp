@@ -46,19 +46,23 @@ class Individual {
 
     //! number of matings per quarter year
     template <class URBG>
-    uint_fast32_t mating_number(URBG& g) const {return POISSON_MATING_NUMBER_(g);}
+    uint_fast32_t mating_number(URBG& g) const {
+        thread_local std::poisson_distribution<uint_fast32_t> poisson(MEAN_MATING_NUMBER_);
+        return poisson(g);
+    }
 
     //! number of eggs per mating
     template <class URBG>
-    uint_fast32_t clutch_size(URBG& g) const {return POISSON_CLUTCH_SIZE_(g);}
+    uint_fast32_t clutch_size(URBG& g) const {
+        thread_local std::poisson_distribution<uint_fast32_t> poisson(MEAN_CLUTCH_SIZE_);
+        return poisson(g);
+    }
 
     //! write
     std::ostream& write(std::ostream&) const;
     friend std::ostream& operator<<(std::ostream&, const Individual&);
     //! options description for Individual class
     static boost::program_options::options_description options_desc();
-    //! initialize static members after po::notify(vm);
-    static void init_static_members();
     //! unit test
     static void test();
 
@@ -71,14 +75,10 @@ class Individual {
     constexpr static double GROWTH_RATE_ = 0.02;
     //! \f$L\f$ in weight()
     constexpr static double MAX_WEIGHT_ = 500.0;
-    //! parameter for #POISSON_MATING_NUMBER_
+    //! parameter for mating_number()
     static uint_fast32_t MEAN_MATING_NUMBER_;
-    //! parameter for #POISSON_CLUTCH_SIZE_
+    //! parameter for clutch_size()
     static uint_fast32_t MEAN_CLUTCH_SIZE_;
-    //! distribution for mating_number()
-    static std::poisson_distribution<uint_fast32_t> POISSON_MATING_NUMBER_;
-    //! distribution for clutch_size()
-    static std::poisson_distribution<uint_fast32_t> POISSON_CLUTCH_SIZE_;
     //! mortality due to natural causes
     static double NATURAL_MORTALITY_;
     //! mortality due to fishing activities
