@@ -24,15 +24,15 @@ class Individual {
     Individual()
     : id_(++LAST_ID_) {}
     //! sexual reproduction
-    Individual(const Individual& father, const Individual& mother, const uint_fast32_t time)
-    : id_(++LAST_ID_), father_id_(father.id()), mother_id_(mother.id()), birth_date_(time) {}
+    Individual(const Individual& father, const Individual& mother, const uint_fast32_t year)
+    : id_(++LAST_ID_), father_id_(father.id()), mother_id_(mother.id()), birth_year_(year) {}
 
     //! evaluate survival
     bool has_survived() const;
 
     //! evaluate maturity
-    bool is_matured(const uint_fast32_t time) const {
-        return time > birth_date_ + AGE_OF_MATURATION_;
+    bool is_matured(const uint_fast32_t year) const {
+        return year > birth_year_ + AGE_OF_MATURATION_;
     }
 
     //! von Bertalanffy growth equation
@@ -40,11 +40,11 @@ class Individual {
             L = L_\infty(1 - e^{-K(t - t_0)})
         \f]
     */
-    double weight(const uint_fast32_t time) const {
-        return -MAX_WEIGHT_ * std::expm1(-GROWTH_RATE_ * (time - birth_date_));
+    double weight(const uint_fast32_t year) const {
+        return -MAX_WEIGHT_ * std::expm1(-GROWTH_RATE_ * (year - birth_year_));
     }
 
-    //! number of matings per quarter year
+    //! number of matings per season
     template <class URBG>
     uint_fast32_t mating_number(URBG& g) const {
         thread_local std::poisson_distribution<uint_fast32_t> poisson(MEAN_MATING_NUMBER_);
@@ -69,8 +69,8 @@ class Individual {
     //! getter of #id_
     uint_fast32_t id() const {return id_;}
   private:
-    //! by the quater-year
-    constexpr static uint_fast32_t AGE_OF_MATURATION_ = 3 * 4;
+    //! by the year
+    constexpr static uint_fast32_t AGE_OF_MATURATION_ = 3;
     //! \f$K\f$ in weight()
     constexpr static double GROWTH_RATE_ = 0.02;
     //! \f$L\f$ in weight()
@@ -92,8 +92,8 @@ class Individual {
     const uint_fast32_t father_id_ = 0;
     //! mother's ID
     const uint_fast32_t mother_id_ = 0;
-    //! by the quater-year
-    uint_fast32_t birth_date_ = 0;
+    //! year of birth
+    uint_fast32_t birth_year_ = 0;
 };
 
 } // namespace pbt

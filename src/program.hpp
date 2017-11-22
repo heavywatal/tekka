@@ -35,8 +35,8 @@ class Program {
 
     //! population size
     size_t pop_size_ = 100;
-    //! maximum time to simulate by quaters
-    uint_fast32_t max_time_ = 100;
+    //! maximum years to simulate
+    uint_fast32_t years_ = 40;
     //! number of threads
     unsigned int concurrency_ = 1;
     //! `-w`

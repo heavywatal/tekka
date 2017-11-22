@@ -22,7 +22,7 @@ class Population {
     Population(const size_t initial_size);
 
     //! main iteration
-    void run(const uint_fast32_t max_time);
+    void run(const uint_fast32_t years);
 
     //! write
     std::ostream& write(std::ostream&) const;
@@ -40,8 +40,8 @@ class Population {
     std::vector<Individual> males_;
     //! Individual array females
     std::vector<Individual> females_;
-    //! by the quater-year
-    uint_fast32_t time_ = 0;
+    //! year
+    uint_fast32_t year_ = 0;
 };
 
 } // namespace pbt

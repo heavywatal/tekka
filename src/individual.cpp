@@ -49,7 +49,7 @@ bool Individual::has_survived() const {
 std::ostream& Individual::write(std::ostream& ost) const {
     return ost << id_ << ":"
                << father_id_ << ":" << mother_id_ << ":"
-               << birth_date_;
+               << birth_year_;
 }
 
 //! shortcut Individual::write(ost)

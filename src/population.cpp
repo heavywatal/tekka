@@ -19,31 +19,35 @@ Population::Population(const size_t initial_size) {HERE;
     females_.resize(half);
 }
 
-void Population::run(const uint_fast32_t max_time) {HERE;
-    for (uint_fast32_t i=0; i<max_time; ++i) {
-        reproduce();
+void Population::run(const uint_fast32_t years) {HERE;
+    for (uint_fast32_t i=0; i<years; ++i) {
+        ++year_;
         survive();
+        survive();
+        survive();
+        survive();
+        reproduce();
+        std::cerr << year_ << ": " << males_.size() + females_.size() << std::endl;
     }
 }
 
-void Population::reproduce() {HERE;
-    ++time_;
+void Population::reproduce() {
     std::vector<Individual> boys;
     std::vector<Individual> girls;
     for (const auto& mother: females_) {
-        if (!mother.is_matured(time_)) continue;
+        if (!mother.is_matured(year_)) continue;
         auto mating_number = mother.mating_number(wtl::sfmt());
         while (mating_number > 0U) {
             const Individual& father = *wtl::choice(males_.begin(), males_.end(), wtl::sfmt());
             // TODO: weighted sampling
-            if (!father.is_matured(time_)) continue;
+            if (!father.is_matured(year_)) continue;
             --mating_number;
             const unsigned int num_eggs = mother.clutch_size(wtl::sfmt());
             for (unsigned int i=0; i<num_eggs; ++i) {
                 if (wtl::sfmt().canonical() < 0.5) {
-                    boys.emplace_back(father, mother, time_);
+                    boys.emplace_back(father, mother, year_);
                 } else {
-                    girls.emplace_back(father, mother, time_);
+                    girls.emplace_back(father, mother, year_);
                 }
             }
         }
@@ -52,7 +56,7 @@ void Population::reproduce() {HERE;
     std::copy(girls.begin(), girls.end(), std::back_inserter(females_));
 }
 
-void Population::survive() {HERE;
+void Population::survive() {
    auto impl = [](const decltype(males_)& v) {
        decltype(males_) survivors;
        survivors.reserve(v.size());

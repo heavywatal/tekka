@@ -37,7 +37,7 @@ inline po::options_description general_desc() {HERE;
     Command line option | Symbol  | Variable
     ------------------- | ------- | -------------------------
     `-n,--popsize`      | \f$N\f$ | Program::pop_size_
-    `-g,--maxtime`      |         | Program::max_time_
+    `-y,--years`        |         | Program::years_
     `-j,--parallel`     |         | Program::concurrency_
     `-o,--outdir`       |         | Program::out_dir_
 */
@@ -45,7 +45,7 @@ po::options_description Program::options_desc() {HERE;
     po::options_description description("Program");
     description.add_options()
       ("popsize,n", po::value(&pop_size_)->default_value(pop_size_))
-      ("maxtime,t", po::value(&max_time_)->default_value(max_time_))
+      ("years,y", po::value(&years_)->default_value(years_))
       ("parallel,j", po::value(&concurrency_)->default_value(concurrency_))
       ("write,w", po::bool_switch(&is_writing_))
       ("outdir,o", po::value(&out_dir_)->default_value(out_dir_));
@@ -111,7 +111,7 @@ void Program::run() {HERE;
 
 void Program::main() {HERE;
     Population pop(pop_size_);
-    pop.run(max_time_);
+    pop.run(years_);
     if (is_writing_) {
         DCERR("mkdir && cd to " << out_dir_ << std::endl);
         wtl::ChDir cd_outdir(out_dir_, true);
