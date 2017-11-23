@@ -25,7 +25,8 @@ class Individual {
     : id_(++LAST_ID_) {}
     //! sexual reproduction
     Individual(const Individual& father, const Individual& mother, const uint_fast32_t year)
-    : id_(++LAST_ID_), father_id_(father.id()), mother_id_(mother.id()), birth_year_(year) {}
+    : id_(++LAST_ID_), father_id_(father.id()), mother_id_(mother.id()),
+      birth_year_(year), location_(mother.location()) {}
 
     //! evaluate survival
     bool has_survived() const;
@@ -58,6 +59,14 @@ class Individual {
         return poisson(g);
     }
 
+    //! change #location_
+    template <class URBG>
+    void migrate(URBG& g) {
+        const std::vector<double> p = {0.1, 0.2, 0.3, 0.4};
+        std::discrete_distribution<uint_fast32_t> dist(p.begin(), p.end());
+        location_ = dist(g);
+    }
+
     //! write
     std::ostream& write(std::ostream&) const;
     friend std::ostream& operator<<(std::ostream&, const Individual&);
@@ -68,6 +77,9 @@ class Individual {
 
     //! getter of #id_
     uint_fast32_t id() const {return id_;}
+    //! getter of #location_
+    uint_fast32_t location() const {return location_;}
+
   private:
     //! by the year
     constexpr static uint_fast32_t AGE_OF_MATURATION_ = 3;
@@ -94,6 +106,8 @@ class Individual {
     const uint_fast32_t mother_id_ = 0;
     //! year of birth
     uint_fast32_t birth_year_ = 0;
+    //! current location
+    uint_fast32_t location_ = 0;
 };
 
 } // namespace pbt
