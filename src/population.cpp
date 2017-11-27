@@ -26,6 +26,7 @@ void Population::run(const uint_fast32_t years) {HERE;
         survive(urbg);
         survive(urbg);
         survive(urbg);
+        migrate(urbg);
         reproduce(urbg);
         std::cerr << year_ << ": " << males_.size() + females_.size() << std::endl;
     }
@@ -60,15 +61,20 @@ void Population::reproduce(URBG& urbg) {
 }
 
 void Population::survive(URBG& urbg) {
-   auto impl = [&urbg, year = year_](const decltype(males_)& v) {
-       decltype(males_) survivors;
-       survivors.reserve(v.size());
-       std::copy_if(v.begin(), v.end(), std::back_inserter(survivors),
-                    [&urbg, &year](const Individual& x) {return x.has_survived(year, urbg);});
-       return survivors;
-   };
-   males_ = impl(males_);
-   females_ = impl(females_);
+    auto impl = [&urbg, year = year_](const decltype(males_)& v) {
+        decltype(males_) survivors;
+        survivors.reserve(v.size());
+        std::copy_if(v.begin(), v.end(), std::back_inserter(survivors),
+                     [&urbg, &year](const Individual& x) {return x.has_survived(year, urbg);});
+        return survivors;
+    };
+    males_ = impl(males_);
+    females_ = impl(females_);
+}
+
+void Population::migrate(URBG& urbg) {
+    for (auto& x: males_) {x.migrate(urbg);}
+    for (auto& x: females_) {x.migrate(urbg);}
 }
 
 std::ostream& Population::write(std::ostream& ost) const {HERE;

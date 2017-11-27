@@ -39,6 +39,9 @@ class Population {
     //! evaluate survival
     void survive(URBG&);
 
+    //! evaluate migration
+    void migrate(URBG&);
+
     //! Individual array males
     std::vector<Individual> males_;
     //! Individual array females
