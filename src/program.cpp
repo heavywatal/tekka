@@ -15,8 +15,6 @@
 #include <wtl/chrono.hpp>
 #include <sfmt.hpp>
 
-#include <iostream>
-
 namespace pbt {
 
 namespace fs = boost::filesystem;
@@ -48,6 +46,7 @@ po::options_description Program::options_desc() {HERE;
       ("years,y", po::value(&years_)->default_value(years_))
       ("parallel,j", po::value(&concurrency_)->default_value(concurrency_))
       ("write,w", po::bool_switch(&is_writing_))
+      ("default,d", po::bool_switch(), "write default parameters to json")
       ("infile,i", po::value<std::string>(), "config file in json format")
       ("outdir,o", po::value(&out_dir_)->default_value(out_dir_));
     // description.add(Population::options_desc());
@@ -93,6 +92,13 @@ Program::Program(const std::vector<std::string>& arguments) {HERE;
               options(description).run(), vm);
     if (vm["help"].as<bool>()) {help_and_exit();}
     po::notify(vm);
+    Individual::set_static();
+    if (vm["default"].as<bool>()) {
+        json::json obj;
+        Individual::to_json(obj);
+        wtl::make_ofs("config.json") << obj;
+        throw wtl::ExitSuccess();
+    }
     if (vm.count("infile")) {
         auto ifs = wtl::make_ifs(vm["infile"].as<std::string>());
         json::json obj;

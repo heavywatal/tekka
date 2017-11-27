@@ -42,15 +42,6 @@ class Individual {
         return location_ < 2u;
     }
 
-    //! von Bertalanffy growth equation
-    /*! \f[
-            L = L_\infty(1 - e^{-K(t - t_0)})
-        \f]
-    */
-    double weight(const uint_fast32_t year) const {
-        return -MAX_WEIGHT_ * std::expm1(-GROWTH_RATE_ * (year - birth_year_));
-    }
-
     //! number of eggs per mating
     uint_fast32_t clutch_size(urbg_t& g) const {
         thread_local std::poisson_distribution<uint_fast32_t> poisson(MEAN_CLUTCH_SIZE_);
@@ -69,11 +60,19 @@ class Individual {
     friend std::ostream& operator<<(std::ostream&, const Individual&);
     //! options description for Individual class
     static boost::program_options::options_description options_desc();
+    //! set static variables to default values
+    static void set_static();
     //! set class variables from json
     static void from_json(const json::json&);
+    //! encode class variables to json
+    static void to_json(json::json&);
     //! unit test
     static void test();
 
+    //! getter of #WEIGHT_FOR_AGE_
+    double weight(const uint_fast32_t year) const {
+        return WEIGHT_FOR_AGE_[year - birth_year_];
+    }
     //! getter of #id_
     uint_fast32_t id() const {return id_;}
     //! getter of #location_
@@ -83,9 +82,9 @@ class Individual {
     //! by the year
     constexpr static uint_fast32_t AGE_OF_MATURATION_ = 3u;
     //! maximum age to consider
-    constexpr static uint_fast32_t MAX_AGE_ = 100u;
+    constexpr static uint_fast32_t MAX_AGE_ = 80u;
     //! \f$K\f$ in weight()
-    constexpr static double GROWTH_RATE_ = 0.02;
+    constexpr static double GROWTH_RATE_ = 0.08;
     //! \f$L\f$ in weight()
     constexpr static double MAX_WEIGHT_ = 500.0;
     //! parameter for clutch_size()
@@ -94,6 +93,8 @@ class Individual {
     static std::vector<double> NATURAL_MORTALITY_;
     //! mortality due to fishing activities
     static std::vector<double> FISHING_MORTALITY_;
+    //! precalculated values
+    static std::vector<double> WEIGHT_FOR_AGE_;
     //! ID for a new instance
     static uint_fast32_t LAST_ID_;
 
