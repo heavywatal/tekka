@@ -7,7 +7,6 @@
 #include <wtl/debug.hpp>
 #include <wtl/iostr.hpp>
 #include <wtl/prandom.hpp>
-#include <sfmt.hpp>
 
 #include <iostream>
 
@@ -20,18 +19,19 @@ Population::Population(const size_t initial_size) {HERE;
 }
 
 void Population::run(const uint_fast32_t years) {HERE;
+    URBG urbg(std::random_device{}());
     for (uint_fast32_t i=0; i<years; ++i) {
         ++year_;
-        survive();
-        survive();
-        survive();
-        survive();
-        reproduce();
+        survive(urbg);
+        survive(urbg);
+        survive(urbg);
+        survive(urbg);
+        reproduce(urbg);
         std::cerr << year_ << ": " << males_.size() + females_.size() << std::endl;
     }
 }
 
-void Population::reproduce() {
+void Population::reproduce(URBG& urbg) {
     std::vector<Individual> boys;
     std::vector<Individual> girls;
     std::vector<std::vector<const Individual*>> adult_males(2u); // TODO: hardcoded
@@ -44,11 +44,11 @@ void Population::reproduce() {
         if (!mother.is_in_breeding_place()) continue;
         const auto& potential_fathers = adult_males[mother.location()];
         if (potential_fathers.empty()) continue;
-        const unsigned int num_eggs = mother.clutch_size(wtl::sfmt());
-        const Individual* father = *wtl::choice(potential_fathers.begin(), potential_fathers.end(), wtl::sfmt());
+        const unsigned int num_eggs = mother.clutch_size(urbg);
+        const Individual* father = *wtl::choice(potential_fathers.begin(), potential_fathers.end(), urbg);
         // TODO: multiple fathers
         for (unsigned int i=0; i<num_eggs; ++i) {
-            if (wtl::sfmt().canonical() < 0.5) {
+            if (urbg.canonical() < 0.5) {
                 boys.emplace_back(*father, mother, year_);
             } else {
                 girls.emplace_back(*father, mother, year_);
@@ -59,12 +59,12 @@ void Population::reproduce() {
     std::copy(girls.begin(), girls.end(), std::back_inserter(females_));
 }
 
-void Population::survive() {
-   auto impl = [year = year_](const decltype(males_)& v) {
+void Population::survive(URBG& urbg) {
+   auto impl = [&urbg, year = year_](const decltype(males_)& v) {
        decltype(males_) survivors;
        survivors.reserve(v.size());
        std::copy_if(v.begin(), v.end(), std::back_inserter(survivors),
-                    [&year](const Individual& x) {return x.has_survived(year);});
+                    [&urbg, &year](const Individual& x) {return x.has_survived(year, urbg);});
        return survivors;
    };
    males_ = impl(males_);

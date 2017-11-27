@@ -12,6 +12,8 @@
 
 #include <boost/program_options.hpp>
 
+#include <sfmt.hpp>
+
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////
 
 namespace pbt {
@@ -19,6 +21,7 @@ namespace pbt {
 /*! @brief Individual class
 */
 class Individual {
+    using URBG = wtl::sfmt19937_64;
   public:
     //! default constructor
     Individual()
@@ -29,7 +32,11 @@ class Individual {
       birth_year_(year), location_(mother.location()) {}
 
     //! evaluate survival
-    bool has_survived(const uint_fast32_t year) const;
+    bool has_survived(const uint_fast32_t year, URBG& g) const {
+        const auto age = year - birth_year_;
+        return (g.canonical() > NATURAL_MORTALITY_[age])
+            && (g.canonical() > FISHING_MORTALITY_[age]);
+    }
 
     //! evaluate maturity
     bool is_in_breeding_place() const {
@@ -46,14 +53,12 @@ class Individual {
     }
 
     //! number of eggs per mating
-    template <class URBG>
     uint_fast32_t clutch_size(URBG& g) const {
         thread_local std::poisson_distribution<uint_fast32_t> poisson(MEAN_CLUTCH_SIZE_);
         return poisson(g);
     }
 
     //! change #location_
-    template <class URBG>
     void migrate(URBG& g) {
         const std::vector<double> p = {0.4, 0.3, 0.2, 0.1};
         std::discrete_distribution<uint_fast32_t> dist(p.begin(), p.end());

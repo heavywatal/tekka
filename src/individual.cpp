@@ -7,7 +7,6 @@
 #include <wtl/debug.hpp>
 #include <wtl/iostr.hpp>
 #include <wtl/prandom.hpp>
-#include <sfmt.hpp>
 
 #include <iostream>
 
@@ -33,12 +32,6 @@ boost::program_options::options_description Individual::options_desc() {
         ("clutch,c", po::value(&MEAN_CLUTCH_SIZE_)->default_value(MEAN_CLUTCH_SIZE_))
     ;
     return desc;
-}
-
-bool Individual::has_survived(const uint_fast32_t year) const {
-    const auto age = year - birth_year_;
-    return (wtl::sfmt().canonical() > NATURAL_MORTALITY_[age])
-        && (wtl::sfmt().canonical() > FISHING_MORTALITY_[age]);
 }
 
 std::ostream& Individual::write(std::ostream& ost) const {

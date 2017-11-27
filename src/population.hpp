@@ -8,6 +8,8 @@
 #include <iosfwd>
 #include <vector>
 
+#include <sfmt.hpp>
+
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////
 
 namespace pbt {
@@ -17,6 +19,7 @@ class Individual;
 /*! @brief Population class
 */
 class Population {
+    using URBG = wtl::sfmt19937_64;
   public:
     //! constructor
     Population(const size_t initial_size);
@@ -31,10 +34,10 @@ class Population {
     static void test();
   private:
     //! give birth to children
-    void reproduce();
+    void reproduce(URBG&);
 
     //! evaluate survival
-    void survive();
+    void survive(URBG&);
 
     //! Individual array males
     std::vector<Individual> males_;
