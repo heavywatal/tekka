@@ -15,8 +15,8 @@ namespace pbt {
 
 uint_fast32_t Individual::MEAN_MATING_NUMBER_ = 2;
 uint_fast32_t Individual::MEAN_CLUTCH_SIZE_ = 4;
-double Individual::NATURAL_MORTALITY_ = 0.1;
-double Individual::FISHING_MORTALITY_ = 0.1;
+std::vector<double> Individual::NATURAL_MORTALITY_(MAX_AGE_, 0.1);
+std::vector<double> Individual::FISHING_MORTALITY_(MAX_AGE_, 0.1);
 uint_fast32_t Individual::LAST_ID_ = 0;
 
 //! Program options
@@ -27,8 +27,6 @@ uint_fast32_t Individual::LAST_ID_ = 0;
     ------------------- | -------------- | -------------------------------
     `-m,--mating`       | -              | Individual::MEAN_MATING_NUMBER_
     `-c,--clutch`       | -              | Individual::MEAN_CLUTCH_SIZE_
-    `--dnatural`        | -              | Individual::NATURAL_MORTALITY_
-    `--dfishing`        | -              | Individual::FISHING_MORTALITY_
 */
 boost::program_options::options_description Individual::options_desc() {
     namespace po = boost::program_options;
@@ -36,14 +34,14 @@ boost::program_options::options_description Individual::options_desc() {
     desc.add_options()
         ("mating,m", po::value(&MEAN_MATING_NUMBER_)->default_value(MEAN_MATING_NUMBER_))
         ("clutch,c", po::value(&MEAN_CLUTCH_SIZE_)->default_value(MEAN_CLUTCH_SIZE_))
-        ("dnatural", po::value(&NATURAL_MORTALITY_)->default_value(NATURAL_MORTALITY_))
-        ("dfishing", po::value(&FISHING_MORTALITY_)->default_value(FISHING_MORTALITY_))
     ;
     return desc;
 }
 
-bool Individual::has_survived() const {
-    return wtl::sfmt().canonical() > NATURAL_MORTALITY_;
+bool Individual::has_survived(const uint_fast32_t year) const {
+    const auto age = year - birth_year_;
+    return (wtl::sfmt().canonical() > NATURAL_MORTALITY_[age])
+        && (wtl::sfmt().canonical() > FISHING_MORTALITY_[age]);
 }
 
 std::ostream& Individual::write(std::ostream& ost) const {

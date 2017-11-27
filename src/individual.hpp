@@ -29,7 +29,7 @@ class Individual {
       birth_year_(year), location_(mother.location()) {}
 
     //! evaluate survival
-    bool has_survived() const;
+    bool has_survived(const uint_fast32_t year) const;
 
     //! evaluate maturity
     bool is_matured(const uint_fast32_t year) const {
@@ -82,7 +82,9 @@ class Individual {
 
   private:
     //! by the year
-    constexpr static uint_fast32_t AGE_OF_MATURATION_ = 3;
+    constexpr static uint_fast32_t AGE_OF_MATURATION_ = 3u;
+    //! maximum age to consider
+    constexpr static uint_fast32_t MAX_AGE_ = 100u;
     //! \f$K\f$ in weight()
     constexpr static double GROWTH_RATE_ = 0.02;
     //! \f$L\f$ in weight()
@@ -92,9 +94,9 @@ class Individual {
     //! parameter for clutch_size()
     static uint_fast32_t MEAN_CLUTCH_SIZE_;
     //! mortality due to natural causes
-    static double NATURAL_MORTALITY_;
+    static std::vector<double> NATURAL_MORTALITY_;
     //! mortality due to fishing activities
-    static double FISHING_MORTALITY_;
+    static std::vector<double> FISHING_MORTALITY_;
     //! ID for a new instance
     static uint_fast32_t LAST_ID_;
 

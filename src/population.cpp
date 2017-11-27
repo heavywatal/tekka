@@ -57,11 +57,11 @@ void Population::reproduce() {
 }
 
 void Population::survive() {
-   auto impl = [](const decltype(males_)& v) {
+   auto impl = [year = year_](const decltype(males_)& v) {
        decltype(males_) survivors;
        survivors.reserve(v.size());
        std::copy_if(v.begin(), v.end(), std::back_inserter(survivors),
-                    [](const Individual& x) {return x.has_survived();});
+                    [&year](const Individual& x) {return x.has_survived(year);});
        return survivors;
    };
    males_ = impl(males_);
