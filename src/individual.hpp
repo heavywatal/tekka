@@ -32,8 +32,8 @@ class Individual {
     bool has_survived(const uint_fast32_t year) const;
 
     //! evaluate maturity
-    bool is_matured(const uint_fast32_t year) const {
-        return year > birth_year_ + AGE_OF_MATURATION_;
+    bool is_in_breeding_place() const {
+        return location_ < 2u;
     }
 
     //! von Bertalanffy growth equation
@@ -43,13 +43,6 @@ class Individual {
     */
     double weight(const uint_fast32_t year) const {
         return -MAX_WEIGHT_ * std::expm1(-GROWTH_RATE_ * (year - birth_year_));
-    }
-
-    //! number of matings per season
-    template <class URBG>
-    uint_fast32_t mating_number(URBG& g) const {
-        thread_local std::poisson_distribution<uint_fast32_t> poisson(MEAN_MATING_NUMBER_);
-        return poisson(g);
     }
 
     //! number of eggs per mating
@@ -62,7 +55,7 @@ class Individual {
     //! change #location_
     template <class URBG>
     void migrate(URBG& g) {
-        const std::vector<double> p = {0.1, 0.2, 0.3, 0.4};
+        const std::vector<double> p = {0.4, 0.3, 0.2, 0.1};
         std::discrete_distribution<uint_fast32_t> dist(p.begin(), p.end());
         location_ = dist(g);
     }
@@ -89,8 +82,6 @@ class Individual {
     constexpr static double GROWTH_RATE_ = 0.02;
     //! \f$L\f$ in weight()
     constexpr static double MAX_WEIGHT_ = 500.0;
-    //! parameter for mating_number()
-    static uint_fast32_t MEAN_MATING_NUMBER_;
     //! parameter for clutch_size()
     static uint_fast32_t MEAN_CLUTCH_SIZE_;
     //! mortality due to natural causes

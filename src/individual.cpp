@@ -13,7 +13,6 @@
 
 namespace pbt {
 
-uint_fast32_t Individual::MEAN_MATING_NUMBER_ = 2;
 uint_fast32_t Individual::MEAN_CLUTCH_SIZE_ = 4;
 std::vector<double> Individual::NATURAL_MORTALITY_(MAX_AGE_, 0.1);
 std::vector<double> Individual::FISHING_MORTALITY_(MAX_AGE_, 0.1);
@@ -25,14 +24,12 @@ uint_fast32_t Individual::LAST_ID_ = 0;
 
     Command line option | Symbol         | Variable
     ------------------- | -------------- | -------------------------------
-    `-m,--mating`       | -              | Individual::MEAN_MATING_NUMBER_
     `-c,--clutch`       | -              | Individual::MEAN_CLUTCH_SIZE_
 */
 boost::program_options::options_description Individual::options_desc() {
     namespace po = boost::program_options;
     po::options_description desc{"Individual"};
     desc.add_options()
-        ("mating,m", po::value(&MEAN_MATING_NUMBER_)->default_value(MEAN_MATING_NUMBER_))
         ("clutch,c", po::value(&MEAN_CLUTCH_SIZE_)->default_value(MEAN_CLUTCH_SIZE_))
     ;
     return desc;

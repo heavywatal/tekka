@@ -34,21 +34,24 @@ void Population::run(const uint_fast32_t years) {HERE;
 void Population::reproduce() {
     std::vector<Individual> boys;
     std::vector<Individual> girls;
+    std::vector<std::vector<const Individual*>> adult_males(2u); // TODO: hardcoded
+    for (const auto& x: males_) {
+        if (x.is_in_breeding_place()) {
+            adult_males[x.location()].push_back(&x);
+        }
+    }
     for (const auto& mother: females_) {
-        if (!mother.is_matured(year_)) continue;
-        auto mating_number = mother.mating_number(wtl::sfmt());
-        while (mating_number > 0U) {
-            const Individual& father = *wtl::choice(males_.begin(), males_.end(), wtl::sfmt());
-            // TODO: weighted sampling
-            if (!father.is_matured(year_)) continue;
-            --mating_number;
-            const unsigned int num_eggs = mother.clutch_size(wtl::sfmt());
-            for (unsigned int i=0; i<num_eggs; ++i) {
-                if (wtl::sfmt().canonical() < 0.5) {
-                    boys.emplace_back(father, mother, year_);
-                } else {
-                    girls.emplace_back(father, mother, year_);
-                }
+        if (!mother.is_in_breeding_place()) continue;
+        const auto& potential_fathers = adult_males[mother.location()];
+        if (potential_fathers.empty()) continue;
+        const unsigned int num_eggs = mother.clutch_size(wtl::sfmt());
+        const Individual* father = *wtl::choice(potential_fathers.begin(), potential_fathers.end(), wtl::sfmt());
+        // TODO: multiple fathers
+        for (unsigned int i=0; i<num_eggs; ++i) {
+            if (wtl::sfmt().canonical() < 0.5) {
+                boys.emplace_back(*father, mother, year_);
+            } else {
+                girls.emplace_back(*father, mother, year_);
             }
         }
     }
