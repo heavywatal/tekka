@@ -19,7 +19,7 @@ Population::Population(const size_t initial_size) {HERE;
 }
 
 void Population::run(const uint_fast32_t years) {HERE;
-    URBG urbg(std::random_device{}());
+    urbg_t urbg(std::random_device{}());
     for (uint_fast32_t i=0; i<years; ++i) {
         ++year_;
         survive(urbg);
@@ -32,7 +32,7 @@ void Population::run(const uint_fast32_t years) {HERE;
     }
 }
 
-void Population::reproduce(URBG& urbg) {
+void Population::reproduce(urbg_t& urbg) {
     std::vector<Individual> boys;
     std::vector<Individual> girls;
     std::vector<std::vector<const Individual*>> adult_males(2u); // TODO: hardcoded
@@ -60,7 +60,7 @@ void Population::reproduce(URBG& urbg) {
     std::copy(girls.begin(), girls.end(), std::back_inserter(females_));
 }
 
-void Population::survive(URBG& urbg) {
+void Population::survive(urbg_t& urbg) {
     auto impl = [&urbg, year = year_](const decltype(males_)& v) {
         decltype(males_) survivors;
         survivors.reserve(v.size());
@@ -72,7 +72,7 @@ void Population::survive(URBG& urbg) {
     females_ = impl(females_);
 }
 
-void Population::migrate(URBG& urbg) {
+void Population::migrate(urbg_t& urbg) {
     for (auto& x: males_) {x.migrate(urbg);}
     for (auto& x: females_) {x.migrate(urbg);}
 }

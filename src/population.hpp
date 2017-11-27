@@ -5,10 +5,10 @@
 #ifndef PBT_POPULATION_HPP_
 #define PBT_POPULATION_HPP_
 
+#include "common.hpp"
+
 #include <iosfwd>
 #include <vector>
-
-#include <sfmt.hpp>
 
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////
 
@@ -19,7 +19,6 @@ class Individual;
 /*! @brief Population class
 */
 class Population {
-    using URBG = wtl::sfmt19937_64;
   public:
     //! constructor
     Population(const size_t initial_size);
@@ -34,13 +33,13 @@ class Population {
     static void test();
   private:
     //! give birth to children
-    void reproduce(URBG&);
+    void reproduce(urbg_t&);
 
     //! evaluate survival
-    void survive(URBG&);
+    void survive(urbg_t&);
 
     //! evaluate migration
-    void migrate(URBG&);
+    void migrate(urbg_t&);
 
     //! Individual array males
     std::vector<Individual> males_;
