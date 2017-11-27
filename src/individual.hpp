@@ -5,6 +5,8 @@
 #ifndef PBT_INDIVIDUAL_HPP_
 #define PBT_INDIVIDUAL_HPP_
 
+#include "common.hpp"
+
 #include <iosfwd>
 #include <cstdint>
 #include <cmath>
@@ -70,6 +72,8 @@ class Individual {
     friend std::ostream& operator<<(std::ostream&, const Individual&);
     //! options description for Individual class
     static boost::program_options::options_description options_desc();
+    //! set class variables from json
+    static void from_json(const json::json&);
     //! unit test
     static void test();
 

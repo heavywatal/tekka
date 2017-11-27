@@ -34,6 +34,11 @@ boost::program_options::options_description Individual::options_desc() {
     return desc;
 }
 
+void Individual::from_json(const json::json& obj) {HERE;
+    NATURAL_MORTALITY_ = obj.at("natural_mortality").get<decltype(NATURAL_MORTALITY_)>();
+    FISHING_MORTALITY_ = obj.at("fishing_mortality").get<decltype(FISHING_MORTALITY_)>();
+}
+
 std::ostream& Individual::write(std::ostream& ost) const {
     return ost << id_ << ":"
                << father_id_ << ":" << mother_id_ << ":"

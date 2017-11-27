@@ -48,6 +48,7 @@ po::options_description Program::options_desc() {HERE;
       ("years,y", po::value(&years_)->default_value(years_))
       ("parallel,j", po::value(&concurrency_)->default_value(concurrency_))
       ("write,w", po::bool_switch(&is_writing_))
+      ("infile,i", po::value<std::string>(), "config file in json format")
       ("outdir,o", po::value(&out_dir_)->default_value(out_dir_));
     // description.add(Population::options_desc());
     description.add(Individual::options_desc());
@@ -92,6 +93,12 @@ Program::Program(const std::vector<std::string>& arguments) {HERE;
               options(description).run(), vm);
     if (vm["help"].as<bool>()) {help_and_exit();}
     po::notify(vm);
+    if (vm.count("infile")) {
+        auto ifs = wtl::make_ifs(vm["infile"].as<std::string>());
+        json::json obj;
+        ifs >> obj;
+        Individual::from_json(obj);
+    }
 
     config_string_ = wtl::flags_into_string(vm);
     if (vm["verbose"].as<bool>()) {
