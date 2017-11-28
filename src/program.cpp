@@ -92,7 +92,7 @@ Program::Program(const std::vector<std::string>& arguments) {HERE;
               options(description).run(), vm);
     if (vm["help"].as<bool>()) {help_and_exit();}
     po::notify(vm);
-    Individual::set_static();
+    Individual::set_static_default();
     if (vm["default"].as<bool>()) {
         json::json obj;
         Individual::to_json(obj);
@@ -105,6 +105,7 @@ Program::Program(const std::vector<std::string>& arguments) {HERE;
         ifs >> obj;
         Individual::from_json(obj);
     }
+    Individual::set_dependent_static();
 
     config_string_ = wtl::flags_into_string(vm);
     if (vm["verbose"].as<bool>()) {

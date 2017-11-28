@@ -20,14 +20,13 @@ Population::Population(const size_t initial_size) {HERE;
 
 void Population::run(const uint_fast32_t years) {HERE;
     urbg_t urbg(std::random_device{}());
-    for (uint_fast32_t i=0; i<years; ++i) {
-        ++year_;
+    for (year_ = 3u; year_ < years; ++year_) {
+        reproduce(urbg);
         survive(urbg);
         survive(urbg);
         survive(urbg);
         survive(urbg);
         migrate(urbg);
-        reproduce(urbg);
         std::cerr << year_ << ": " << males_.size() + females_.size() << std::endl;
     }
 }
@@ -35,11 +34,9 @@ void Population::run(const uint_fast32_t years) {HERE;
 void Population::reproduce(urbg_t& urbg) {
     std::vector<Individual> boys;
     std::vector<Individual> girls;
-    std::vector<std::vector<const Individual*>> adult_males(2u); // TODO: hardcoded
+    std::vector<std::vector<const Individual*>> adult_males(Individual::num_locations());
     for (const auto& x: males_) {
-        if (x.is_in_breeding_place()) {
-            adult_males[x.location()].push_back(&x);
-        }
+        adult_males[x.location()].push_back(&x);
     }
     for (const auto& mother: females_) {
         if (!mother.is_in_breeding_place()) continue;
@@ -73,8 +70,8 @@ void Population::survive(urbg_t& urbg) {
 }
 
 void Population::migrate(urbg_t& urbg) {
-    for (auto& x: males_) {x.migrate(urbg);}
-    for (auto& x: females_) {x.migrate(urbg);}
+    for (auto& x: males_) {x.migrate(year_, urbg);}
+    for (auto& x: females_) {x.migrate(year_, urbg);}
 }
 
 std::ostream& Population::write(std::ostream& ost) const {HERE;

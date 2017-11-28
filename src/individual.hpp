@@ -49,10 +49,8 @@ class Individual {
     }
 
     //! change #location_
-    void migrate(urbg_t& g) {
-        const std::vector<double> p = {0.4, 0.3, 0.2, 0.1};
-        std::discrete_distribution<uint_fast32_t> dist(p.begin(), p.end());
-        location_ = dist(g);
+    void migrate(const uint_fast32_t year, urbg_t& g) {
+        location_ = MIGRATION_DISTRIBUTIONS_[year - birth_year_][location_](g);
     }
 
     //! write
@@ -61,7 +59,9 @@ class Individual {
     //! options description for Individual class
     static boost::program_options::options_description options_desc();
     //! set static variables to default values
-    static void set_static();
+    static void set_static_default();
+    //! set static variables that depend on other variables
+    static void set_dependent_static();
     //! set class variables from json
     static void from_json(const json::json&);
     //! encode class variables to json
@@ -69,6 +69,10 @@ class Individual {
     //! unit test
     static void test();
 
+    //! number of locations
+    static size_t num_locations() {
+        return MIGRATION_MATRICES_[0].size();
+    }
     //! getter of #WEIGHT_FOR_AGE_
     double weight(const uint_fast32_t year) const {
         return WEIGHT_FOR_AGE_[year - birth_year_];
@@ -79,8 +83,6 @@ class Individual {
     uint_fast32_t location() const {return location_;}
 
   private:
-    //! by the year
-    constexpr static uint_fast32_t AGE_OF_MATURATION_ = 3u;
     //! maximum age to consider
     constexpr static uint_fast32_t MAX_AGE_ = 80u;
     //! \f$K\f$ in weight()
@@ -95,6 +97,10 @@ class Individual {
     static std::vector<double> FISHING_MORTALITY_;
     //! precalculated values
     static std::vector<double> WEIGHT_FOR_AGE_;
+    //! transition matrix for migration
+    static std::vector<std::vector<std::vector<double>>> MIGRATION_MATRICES_;
+    //! discrete distributions for migration
+    static std::vector<std::vector<std::discrete_distribution<uint_fast32_t>>> MIGRATION_DISTRIBUTIONS_;
     //! ID for a new instance
     static uint_fast32_t LAST_ID_;
 

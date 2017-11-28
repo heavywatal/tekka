@@ -34,7 +34,7 @@ class Program {
     [[noreturn]] void help_and_exit();
 
     //! population size
-    size_t pop_size_ = 100;
+    size_t pop_size_ = 1000;
     //! maximum years to simulate
     uint_fast32_t years_ = 40;
     //! number of threads
