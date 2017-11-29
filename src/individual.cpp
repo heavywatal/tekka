@@ -6,7 +6,7 @@
 
 #include <wtl/debug.hpp>
 #include <wtl/iostr.hpp>
-#include <wtl/prandom.hpp>
+#include <wtl/random.hpp>
 
 namespace pbt {
 
@@ -100,6 +100,12 @@ void Individual::to_json(json::json& obj) {HERE;
     obj["fishing_mortality"] = FISHING_MORTALITY_;
     obj["weight_for_age"] = WEIGHT_FOR_AGE_;
     obj["migration_matrices"] = MIGRATION_MATRICES_;
+}
+
+bool Individual::has_survived(const uint_fast32_t year, urbg_t& g) const {
+    const auto age = year - birth_year_;
+    return (wtl::generate_canonical(g) > NATURAL_MORTALITY_[age])
+        && (wtl::generate_canonical(g) > FISHING_MORTALITY_[age]);
 }
 
 std::ostream& Individual::write(std::ostream& ost) const {

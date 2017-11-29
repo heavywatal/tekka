@@ -31,11 +31,7 @@ class Individual {
       birth_year_(year), location_(mother.location()) {}
 
     //! evaluate survival
-    bool has_survived(const uint_fast32_t year, urbg_t& g) const {
-        const auto age = year - birth_year_;
-        return (g.canonical() > NATURAL_MORTALITY_[age])
-            && (g.canonical() > FISHING_MORTALITY_[age]);
-    }
+    bool has_survived(const uint_fast32_t year, urbg_t&) const;
 
     //! evaluate maturity
     bool is_in_breeding_place() const {

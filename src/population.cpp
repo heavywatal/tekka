@@ -6,7 +6,7 @@
 
 #include <wtl/debug.hpp>
 #include <wtl/iostr.hpp>
-#include <wtl/prandom.hpp>
+#include <wtl/random.hpp>
 
 #include <iostream>
 
@@ -46,7 +46,7 @@ void Population::reproduce(urbg_t& urbg) {
         const Individual* father = *wtl::choice(potential_fathers.begin(), potential_fathers.end(), urbg);
         // TODO: multiple fathers
         for (unsigned int i=0; i<num_eggs; ++i) {
-            if (urbg.canonical() < 0.5) {
+            if (wtl::generate_canonical(urbg) < 0.5) {
                 boys.emplace_back(*father, mother, year_);
             } else {
                 girls.emplace_back(*father, mother, year_);
