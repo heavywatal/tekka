@@ -38,9 +38,10 @@ class Individual {
         return location_ < 2u;
     }
 
-    //! number of eggs per mating
-    uint_fast32_t clutch_size(urbg_t& g) const {
-        thread_local std::poisson_distribution<uint_fast32_t> poisson(MEAN_CLUTCH_SIZE_);
+    //! number of juveniles
+    uint_fast32_t recruitment(const uint_fast32_t year, urbg_t& g) const {
+        const double mean = RECRUITMENT_COEF_ * weight(year);
+        std::poisson_distribution<uint_fast32_t> poisson(mean);
         return poisson(g);
     }
 
@@ -85,8 +86,8 @@ class Individual {
     constexpr static double GROWTH_RATE_ = 0.08;
     //! \f$L\f$ in weight()
     constexpr static double MAX_WEIGHT_ = 500.0;
-    //! parameter for clutch_size()
-    static uint_fast32_t MEAN_CLUTCH_SIZE_;
+    //! parameter for recruitment()
+    static double RECRUITMENT_COEF_;
     //! mortality due to natural causes
     static std::vector<double> NATURAL_MORTALITY_;
     //! mortality due to fishing activities

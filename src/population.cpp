@@ -42,10 +42,10 @@ void Population::reproduce(urbg_t& urbg) {
         if (!mother.is_in_breeding_place()) continue;
         const auto& potential_fathers = adult_males[mother.location()];
         if (potential_fathers.empty()) continue;
-        const unsigned int num_eggs = mother.clutch_size(urbg);
+        const uint_fast32_t num_juveniles = mother.recruitment(year_, urbg);
         const Individual* father = *wtl::choice(potential_fathers.begin(), potential_fathers.end(), urbg);
         // TODO: multiple fathers
-        for (unsigned int i=0; i<num_eggs; ++i) {
+        for (uint_fast32_t i=0; i<num_juveniles; ++i) {
             if (wtl::generate_canonical(urbg) < 0.5) {
                 boys.emplace_back(*father, mother, year_);
             } else {
