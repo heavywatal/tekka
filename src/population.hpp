@@ -24,7 +24,9 @@ class Population {
     Population(const size_t initial_size);
 
     //! main iteration
-    void run(const uint_fast32_t years);
+    void run(const uint_fast32_t simulating_duration,
+             const size_t sample_size,
+             const uint_fast32_t recording_duration=1u);
 
     //! write
     std::ostream& write(std::ostream&) const;

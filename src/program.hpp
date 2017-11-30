@@ -33,12 +33,16 @@ class Program {
     //! print help message and exit
     [[noreturn]] void help_and_exit();
 
-    //! population size
-    size_t pop_size_ = 1000;
+    //! initial population size
+    size_t pop_size_ = 1000u;
+    //! number of samples per year
+    size_t sample_size_ = 10u;
     //! maximum years to simulate
-    uint_fast32_t years_ = 40;
+    uint_fast32_t simulating_duration_ = 40u;
+    //! last years to record samples
+    uint_fast32_t recording_duration_ = 1u;
     //! number of threads
-    unsigned int concurrency_ = 1;
+    unsigned int concurrency_ = 1u;
     //! `-w`
     bool is_writing_ = false;
     //! name of output directory

@@ -35,7 +35,9 @@ inline po::options_description general_desc() {HERE;
     Command line option | Symbol  | Variable
     ------------------- | ------- | -------------------------
     `-n,--popsize`      | \f$N\f$ | Program::pop_size_
-    `-y,--years`        |         | Program::years_
+    `-y,--years`        |         | Program::simulating_duration_
+    `-l,--last`         |         | Program::recording_duration_
+    `-s,--sample`       |         | Program::sample_size_
     `-j,--parallel`     |         | Program::concurrency_
     `-o,--outdir`       |         | Program::out_dir_
 */
@@ -43,7 +45,9 @@ po::options_description Program::options_desc() {HERE;
     po::options_description description("Program");
     description.add_options()
       ("popsize,n", po::value(&pop_size_)->default_value(pop_size_))
-      ("years,y", po::value(&years_)->default_value(years_))
+      ("years,y", po::value(&simulating_duration_)->default_value(simulating_duration_))
+      ("last,l", po::value(&recording_duration_)->default_value(recording_duration_))
+      ("sample,s", po::value(&sample_size_)->default_value(sample_size_))
       ("parallel,j", po::value(&concurrency_)->default_value(concurrency_))
       ("write,w", po::bool_switch(&is_writing_))
       ("default,d", po::bool_switch(), "write default parameters to json")
@@ -125,7 +129,7 @@ void Program::run() {HERE;
 
 void Program::main() {HERE;
     Population pop(pop_size_);
-    pop.run(years_);
+    pop.run(simulating_duration_, sample_size_, recording_duration_);
     if (is_writing_) {
         DCERR("mkdir && cd to " << out_dir_ << std::endl);
         wtl::ChDir cd_outdir(out_dir_, true);

@@ -19,19 +19,24 @@ Population::Population(const size_t initial_size) {HERE;
     females_.resize(initial_size - half);
 }
 
-void Population::run(const uint_fast32_t years) {HERE;
+void Population::run(const uint_fast32_t simulating_duration,
+                     const size_t sample_size_,
+                     const uint_fast32_t recording_duration) {HERE;
     urbg_t urbg(std::random_device{}());
-    for (year_ = 3u; year_ < years; ++year_) {
+    auto recording_start = simulating_duration - recording_duration;
+    write_sample_header(std::cout);
+    for (year_ = 3u; year_ < simulating_duration; ++year_) {
         reproduce();
         survive();
         survive();
         survive();
         survive();
         migrate();
-        std::cerr << *this << std::endl;
+        DCERR(year_ << ": " << *this << std::endl);
+        if (year_ >= recording_start) {
+            sample(sample_size_, std::cout);
+        }
     }
-    write_sample_header(std::cout);
-    sample(20u, std::cout);
 }
 
 void Population::reproduce() {
@@ -110,10 +115,8 @@ std::ostream& operator<<(std::ostream& ost, const Population& pop) {
 }
 
 void Population::test() {HERE;
-    Population x(12);
-    std::cout << x << std::endl;
-    x.run(15);
-    std::cout << x << std::endl;
+    Population x(40);
+    x.run(10, 8u);
 }
 
 } // namespace pbt
