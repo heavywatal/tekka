@@ -50,9 +50,11 @@ class Individual {
         location_ = MIGRATION_DISTRIBUTIONS_[year - birth_year_][location_](g);
     }
 
-    //! write
+    //! write members in TSV
     std::ostream& write(std::ostream&) const;
     friend std::ostream& operator<<(std::ostream&, const Individual&);
+    //! column names for write()
+    static std::vector<std::string> names();
     //! options description for Individual class
     static boost::program_options::options_description options_desc();
     //! set static variables to default values

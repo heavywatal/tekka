@@ -28,8 +28,9 @@ void Population::run(const uint_fast32_t years) {HERE;
         survive();
         survive();
         migrate();
-        std::cerr << year_ << ": " << males_.size() + females_.size() << std::endl;
+        std::cerr << *this << std::endl;
     }
+    write_sample_header(std::cout);
     sample(20u, std::cout);
 }
 
@@ -80,23 +81,27 @@ void Population::sample(const size_t n, std::ostream& ost) {
     const auto half_n = n / 2ul;
     auto indices_m = wtl::sample(males_.size(), half_n, engine_);
     for (const auto i: indices_m) {
-        ost << males_[i] << "\n";
+        write_sample(males_[i], ost);
     }
     auto indices_f = wtl::sample(females_.size(), n - half_n, engine_);
     for (const auto i: indices_f) {
-        ost << females_[i] << "\n";
+        write_sample(females_[i], ost);
     }
 }
 
-std::ostream& Population::write(std::ostream& ost) const {HERE;
-    auto impl = [&ost](const decltype(males_)& v) {
-        for (const auto& x: v) {
-            ost << x << "\n";
-        }
-    };
-    impl(males_);
-    impl(females_);
-    return ost;
+std::ostream& Population::write_sample_header(std::ostream& ost) {
+    return wtl::join(Individual::names(), ost, "\t") << "\tcapture_year\n";
+}
+
+std::ostream& Population::write_sample(const Individual& x, std::ostream& ost) const {
+    return ost << x << "\t" << year_ << "\n";
+}
+
+std::ostream& Population::write(std::ostream& ost) const {
+    std::map<uint_fast32_t, size_t> counter;
+    for (const auto& x: males_) {++counter[x.location()];}
+    for (const auto& x: females_) {++counter[x.location()];}
+    return ost << counter;
 }
 
 //! shortcut Population::write(ost)

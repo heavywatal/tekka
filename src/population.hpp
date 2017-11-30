@@ -41,8 +41,12 @@ class Population {
     //! evaluate migration
     void migrate();
 
-    //! sample
+    //! sample n individuals and write
     void sample(const size_t n, std::ostream&);
+    //! write column names for write_sample()
+    static std::ostream& write_sample_header(std::ostream&);
+    //! write a sampled individual
+    std::ostream& write_sample(const Individual&, std::ostream&) const;
 
     //! Individual array males
     std::vector<Individual> males_;

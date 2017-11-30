@@ -108,10 +108,14 @@ bool Individual::has_survived(const uint_fast32_t year, urbg_t& g) const {
         && (wtl::generate_canonical(g) > FISHING_MORTALITY_[age]);
 }
 
+std::vector<std::string> Individual::names() {
+    return {"id", "father_id", "mother_id", "birth_year", "location"};
+}
+
 std::ostream& Individual::write(std::ostream& ost) const {
-    return ost << id_ << ":"
-               << father_id_ << ":" << mother_id_ << ":"
-               << birth_year_;
+    return ost << id_ << "\t"
+               << father_id_ << "\t" << mother_id_ << "\t"
+               << birth_year_ << "\t" << location_;
 }
 
 //! shortcut Individual::write(ost)

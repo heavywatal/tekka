@@ -58,7 +58,7 @@ po::options_description Program::options_desc() {HERE;
     auto description = general_desc();
     description.add(options_desc());
     // do not print positional arguments as options
-    std::cout << "Usage: pbt [options]\n" << std::endl;
+    std::cout << "Usage: blackthunnus [options]\n" << std::endl;
     description.print(std::cout);
     throw wtl::ExitSuccess();
 }
@@ -78,7 +78,7 @@ inline void test(const int flg) {HERE;
 }
 
 Program::Program(const std::vector<std::string>& arguments) {HERE;
-    wtl::join(arguments, std::cout, " ") << std::endl;
+    wtl::join(arguments, std::cerr, " ") << std::endl;
     std::ios::sync_with_stdio(false);
     std::cin.tie(0);
     std::cout.precision(15);
