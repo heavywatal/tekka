@@ -33,13 +33,13 @@ class Population {
     static void test();
   private:
     //! give birth to children
-    void reproduce(urbg_t&);
+    void reproduce();
 
     //! evaluate survival
-    void survive(urbg_t&);
+    void survive();
 
     //! evaluate migration
-    void migrate(urbg_t&);
+    void migrate();
 
     //! Individual array males
     std::vector<Individual> males_;
@@ -47,6 +47,8 @@ class Population {
     std::vector<Individual> females_;
     //! year
     uint_fast32_t year_ = 0;
+    //! random bit generator
+    urbg_t engine_;
 };
 
 } // namespace pbt
