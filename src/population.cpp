@@ -30,6 +30,7 @@ void Population::run(const uint_fast32_t years) {HERE;
         migrate();
         std::cerr << year_ << ": " << males_.size() + females_.size() << std::endl;
     }
+    sample(20u, std::cout);
 }
 
 void Population::reproduce() {
@@ -73,6 +74,18 @@ void Population::survive() {
 void Population::migrate() {
     for (auto& x: males_) {x.migrate(year_, engine_);}
     for (auto& x: females_) {x.migrate(year_, engine_);}
+}
+
+void Population::sample(const size_t n, std::ostream& ost) {
+    const auto half_n = n / 2ul;
+    auto indices_m = wtl::sample(males_.size(), half_n, engine_);
+    for (const auto i: indices_m) {
+        ost << males_[i] << "\n";
+    }
+    auto indices_f = wtl::sample(females_.size(), n - half_n, engine_);
+    for (const auto i: indices_f) {
+        ost << females_[i] << "\n";
+    }
 }
 
 std::ostream& Population::write(std::ostream& ost) const {HERE;

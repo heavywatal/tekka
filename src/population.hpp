@@ -41,6 +41,9 @@ class Population {
     //! evaluate migration
     void migrate();
 
+    //! sample
+    void sample(const size_t n, std::ostream&);
+
     //! Individual array males
     std::vector<Individual> males_;
     //! Individual array females
