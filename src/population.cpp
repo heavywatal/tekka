@@ -83,15 +83,21 @@ void Population::migrate() {
 }
 
 void Population::sample(const size_t n, std::ostream& ost) {
-    const auto half_n = n / 2ul;
-    auto indices_m = wtl::sample(males_.size(), half_n, engine_);
-    for (const auto i: indices_m) {
-        write_sample(males_[i], ost);
-    }
-    auto indices_f = wtl::sample(females_.size(), n - half_n, engine_);
-    for (const auto i: indices_f) {
-        write_sample(females_[i], ost);
-    }
+    auto impl = [this,&ost](const decltype(males_)& v, const size_t sample_size) {
+        decltype(males_) survivors;
+        survivors.reserve(v.size() - sample_size);
+        auto indices = wtl::sample(v.size(), sample_size, engine_);
+        for (size_t i=0; i<v.size(); ++i) {
+            if (indices.find(i) == indices.end()) {
+                survivors.emplace_back(std::move(v[i]));
+            } else {
+                write_sample(v[i], ost);
+            }
+        }
+        return survivors;
+    };
+    males_ = impl(males_, n / 2ul);
+    females_ = impl(females_, n - n / 2ul);
 }
 
 std::ostream& Population::write_sample_header(std::ostream& ost) {
