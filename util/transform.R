@@ -63,7 +63,7 @@ summarize_hsp = function(.tbl) {
 
 write_hsp = function(.tbl, path='hsp.txt') {
     lines = c('# HSP 1-false-negative ratio',
-      0.894,  # TODO: what is this?
+      '1.0',
       '# number of HSP data points',
       nrow(.tbl),
       '# HSP data')
