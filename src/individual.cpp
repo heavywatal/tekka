@@ -2,7 +2,6 @@
     @brief Implementation of Individual class
 */
 #include "individual.hpp"
-#include "individual.hpp"
 
 #include <wtl/debug.hpp>
 #include <wtl/iostr.hpp>
@@ -11,43 +10,10 @@
 namespace pbt {
 
 double Individual::RECRUITMENT_COEF_ = 0.2;
-std::vector<double> Individual::NATURAL_MORTALITY_(MAX_AGE_, 0.1);
-std::vector<double> Individual::FISHING_MORTALITY_(MAX_AGE_, 0.1);
-std::vector<double> Individual::WEIGHT_FOR_AGE_(MAX_AGE_, 0.0);
-std::vector<std::vector<std::vector<double>>> Individual::MIGRATION_MATRICES_ = {
-    {{0.0, 0.0, 1.0, 0.0},
-     {0.0, 0.0, 1.0, 0.0},
-     {0.0, 0.0, 1.0, 0.0},
-     {0.0, 0.0, 1.0, 0.0}},
-    {{1.0, 0.0, 0.0, 0.0},
-     {0.0, 1.0, 0.0, 0.0},
-     {0.0, 0.0, 0.5, 0.5},
-     {0.0, 0.0, 1.0, 0.0}},
-    {{1.0, 0.0, 0.0, 0.0},
-     {0.0, 1.0, 0.0, 0.0},
-     {0.0, 0.0, 1.0, 0.0},
-     {0.0, 0.0, 1.0, 0.0}},
-    {{1.0, 0.0, 0.0, 0.0},
-     {0.0, 1.0, 0.0, 0.0},
-     {1.0, 0.0, 0.0, 0.0},
-     {0.0, 0.0, 0.0, 1.0}},
-    {{1.0, 0.0, 0.0, 0.0},
-     {0.0, 1.0, 0.0, 0.0},
-     {0.0, 0.0, 1.0, 0.0},
-     {0.0, 0.0, 0.0, 1.0}},
-    {{1.0, 0.0, 0.0, 0.0},
-     {0.0, 1.0, 0.0, 0.0},
-     {0.0, 0.0, 1.0, 0.0},
-     {0.0, 0.0, 0.0, 1.0}},
-    {{0.0, 1.0, 0.0, 0.0},
-     {0.0, 1.0, 0.0, 0.0},
-     {0.0, 0.0, 1.0, 0.0},
-     {0.0, 0.0, 0.0, 1.0}},
-    {{1.0, 0.0, 0.0, 0.0},
-     {0.0, 1.0, 0.0, 0.0},
-     {0.0, 0.0, 1.0, 0.0},
-     {0.0, 0.0, 0.0, 1.0}}
-};
+std::vector<double> Individual::NATURAL_MORTALITY_;
+std::vector<double> Individual::FISHING_MORTALITY_;
+std::vector<double> Individual::WEIGHT_FOR_AGE_;
+std::vector<std::vector<std::vector<double>>> Individual::MIGRATION_MATRICES_;
 std::vector<std::vector<std::discrete_distribution<uint_fast32_t>>> Individual::MIGRATION_DISTRIBUTIONS_;
 uint_fast32_t Individual::LAST_ID_ = 0;
 
@@ -66,12 +32,6 @@ boost::program_options::options_description Individual::options_desc() {
         ("recruitment,r", po::value(&RECRUITMENT_COEF_)->default_value(RECRUITMENT_COEF_))
     ;
     return desc;
-}
-
-void Individual::set_static_default() {HERE;
-    for (uint_fast32_t i=0; i<MAX_AGE_; ++i) {
-        WEIGHT_FOR_AGE_[i] = -MAX_WEIGHT_ * std::expm1(-GROWTH_RATE_ * i);
-    }
 }
 
 void Individual::set_dependent_static() {HERE;

@@ -57,8 +57,6 @@ class Individual {
     static std::vector<std::string> names();
     //! options description for Individual class
     static boost::program_options::options_description options_desc();
-    //! set static variables to default values
-    static void set_static_default();
     //! set static variables that depend on other variables
     static void set_dependent_static();
     //! set class variables from json

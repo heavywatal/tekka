@@ -4,7 +4,7 @@
 
 namespace pbt {
 
-auto parameters = R"(
+auto default_values = R"(
 @PARAMETERS_JSON@
 )";
 
