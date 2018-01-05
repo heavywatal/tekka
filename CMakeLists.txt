@@ -18,6 +18,12 @@ if (NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
 endif()
 
+file(READ "${CMAKE_SOURCE_DIR}/util/parameters.json" PARAMETERS_JSON)
+configure_file(
+  ${CMAKE_SOURCE_DIR}/src/config.hpp.in
+  ${CMAKE_SOURCE_DIR}/src/config.hpp @ONLY
+)
+
 set(Boost_NO_BOOST_CMAKE TRUE)
 find_package(Boost REQUIRED COMPONENTS program_options iostreams filesystem system)
 message("Boost_INCLUDE_DIRS: ${Boost_INCLUDE_DIRS}")

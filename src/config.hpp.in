@@ -1,0 +1,13 @@
+#pragma once
+#ifndef PBT_CONFIG_HPP_
+#define PBT_CONFIG_HPP_
+
+namespace pbt {
+
+auto parameters = R"(
+@PARAMETERS_JSON@
+)";
+
+}
+
+#endif // PBT_CONFIG_HPP_
