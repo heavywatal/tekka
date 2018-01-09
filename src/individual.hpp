@@ -31,7 +31,7 @@ class Individual {
       birth_year_(year), location_(mother.location()) {}
 
     //! evaluate survival
-    bool has_survived(const uint_fast32_t year, urbg_t&) const;
+    bool has_survived(const uint_fast32_t year, const uint_fast32_t quarter, urbg_t&) const;
 
     //! evaluate maturity
     bool is_in_breeding_place() const {
@@ -72,7 +72,7 @@ class Individual {
     }
     //! getter of #WEIGHT_FOR_AGE_
     double weight(const uint_fast32_t year) const {
-        return WEIGHT_FOR_AGE_[year - birth_year_];
+        return WEIGHT_FOR_AGE_[4u * (year - birth_year_)];
     }
     //! getter of #id_
     uint_fast32_t id() const {return id_;}
@@ -92,6 +92,8 @@ class Individual {
     static std::vector<double> NATURAL_MORTALITY_;
     //! mortality due to fishing activities
     static std::vector<double> FISHING_MORTALITY_;
+    //! survival rate per quater year
+    static std::vector<double> SURVIVAL_RATE_;
     //! precalculated values
     static std::vector<double> WEIGHT_FOR_AGE_;
     //! transition matrix for migration

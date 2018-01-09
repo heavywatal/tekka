@@ -38,7 +38,7 @@ class Population {
     void reproduce();
 
     //! evaluate survival
-    void survive();
+    void survive(const uint_fast32_t quarter);
 
     //! evaluate migration
     void migrate();

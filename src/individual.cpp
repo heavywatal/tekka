@@ -9,9 +9,10 @@
 
 namespace pbt {
 
-double Individual::RECRUITMENT_COEF_ = 0.2;
+double Individual::RECRUITMENT_COEF_ = 1.0;
 std::vector<double> Individual::NATURAL_MORTALITY_;
 std::vector<double> Individual::FISHING_MORTALITY_;
+std::vector<double> Individual::SURVIVAL_RATE_;
 std::vector<double> Individual::WEIGHT_FOR_AGE_;
 std::vector<std::vector<std::vector<double>>> Individual::MIGRATION_MATRICES_;
 std::vector<std::vector<std::discrete_distribution<uint_fast32_t>>> Individual::MIGRATION_DISTRIBUTIONS_;
@@ -53,6 +54,12 @@ void Individual::from_json(const json::json& obj) {HERE;
     FISHING_MORTALITY_ = obj.at("fishing_mortality").get<decltype(FISHING_MORTALITY_)>();
     WEIGHT_FOR_AGE_ = obj.at("weight_for_age").get<decltype(WEIGHT_FOR_AGE_)>();
     MIGRATION_MATRICES_ = obj.at("migration_matrices").get<decltype(MIGRATION_MATRICES_)>();
+    SURVIVAL_RATE_.resize(NATURAL_MORTALITY_.size());
+    std::transform(NATURAL_MORTALITY_.begin(), NATURAL_MORTALITY_.end(),
+                   FISHING_MORTALITY_.begin(), SURVIVAL_RATE_.begin(),
+                   [](double n, double f) {
+                       return std::exp(-n - f);
+                   });
 }
 
 void Individual::to_json(json::json& obj) {HERE;
@@ -62,10 +69,9 @@ void Individual::to_json(json::json& obj) {HERE;
     obj["migration_matrices"] = MIGRATION_MATRICES_;
 }
 
-bool Individual::has_survived(const uint_fast32_t year, urbg_t& g) const {
+bool Individual::has_survived(const uint_fast32_t year, const uint_fast32_t quarter, urbg_t& g) const {
     const auto age = year - birth_year_;
-    return (wtl::generate_canonical(g) > NATURAL_MORTALITY_[age])
-        && (wtl::generate_canonical(g) > FISHING_MORTALITY_[age]);
+    return (wtl::generate_canonical(g) < SURVIVAL_RATE_[4U * age + quarter]);
 }
 
 std::vector<std::string> Individual::names() {
