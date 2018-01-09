@@ -34,6 +34,9 @@ if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 endif()
 message("CMAKE_INSTALL_PREFIX: ${CMAKE_INSTALL_PREFIX}")
 
+set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
 aux_source_directory(src srcfiles)
 message("Source files: ${srcfiles}")
 
