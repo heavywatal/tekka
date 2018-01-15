@@ -57,8 +57,8 @@ class Individual {
     static std::vector<std::string> names();
     //! options description for Individual class
     static boost::program_options::options_description options_desc();
-    //! set static variables that depend on other variables
-    static void set_dependent_static();
+    //! set static variables from config.hpp
+    static void set_default_values();
     //! set class variables from json
     static void from_json(const json::json&);
     //! encode class variables to json
@@ -80,6 +80,8 @@ class Individual {
     uint_fast32_t location() const {return location_;}
 
   private:
+    //! set static variables that depend on other variables
+    static void set_dependent_static();
     //! maximum age to consider
     constexpr static uint_fast32_t MAX_AGE_ = 80u;
     //! \f$K\f$ in weight()

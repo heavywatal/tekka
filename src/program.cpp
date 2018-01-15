@@ -5,7 +5,6 @@
 #include "program.hpp"
 #include "population.hpp"
 #include "individual.hpp"
-#include "config.hpp"
 
 #include <wtl/exception.hpp>
 #include <wtl/debug.hpp>
@@ -97,7 +96,7 @@ Program::Program(const std::vector<std::string>& arguments) {HERE;
               options(description).run(), vm);
     if (vm["help"].as<bool>()) {help_and_exit();}
     po::notify(vm);
-    Individual::from_json(json::json::parse(default_values));
+    Individual::set_default_values();
     if (vm["default"].as<bool>()) {
         json::json obj;
         Individual::to_json(obj);
@@ -110,7 +109,6 @@ Program::Program(const std::vector<std::string>& arguments) {HERE;
         ifs >> obj;
         Individual::from_json(obj);
     }
-    Individual::set_dependent_static();
 
     config_string_ = wtl::flags_into_string(vm);
     if (vm["verbose"].as<bool>()) {

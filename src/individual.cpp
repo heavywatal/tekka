@@ -2,6 +2,7 @@
     @brief Implementation of Individual class
 */
 #include "individual.hpp"
+#include "config.hpp"
 
 #include <wtl/debug.hpp>
 #include <wtl/iostr.hpp>
@@ -35,7 +36,13 @@ boost::program_options::options_description Individual::options_desc() {
     return desc;
 }
 
+void Individual::set_default_values() {HERE;
+    from_json(json::json::parse(default_values));
+}
+
 void Individual::set_dependent_static() {HERE;
+    MIGRATION_DISTRIBUTIONS_.clear();
+    MIGRATION_DISTRIBUTIONS_.reserve(MAX_AGE_);
     for (const auto& matrix: MIGRATION_MATRICES_) {
         decltype(MIGRATION_DISTRIBUTIONS_)::value_type dists;
         dists.reserve(matrix.size());
@@ -60,6 +67,7 @@ void Individual::from_json(const json::json& obj) {HERE;
                    [](double n, double f) {
                        return std::exp(-n - f);
                    });
+    set_dependent_static();
 }
 
 void Individual::to_json(json::json& obj) {HERE;
