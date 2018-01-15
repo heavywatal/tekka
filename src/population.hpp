@@ -22,6 +22,8 @@ class Population {
   public:
     //! constructor
     Population(const size_t initial_size);
+    //! destructor
+    ~Population();
 
     //! main iteration
     void run(const uint_fast32_t simulating_duration,

@@ -19,6 +19,8 @@ Population::Population(const size_t initial_size) {HERE;
     females_.resize(initial_size - half);
 }
 
+Population::~Population() {} // to allow forward declaration of Individual
+
 void Population::run(const uint_fast32_t simulating_duration,
                      const size_t sample_size_,
                      const uint_fast32_t recording_duration) {HERE;
