@@ -26,7 +26,7 @@ inline po::options_description general_desc() {HERE;
     description.add_options()
         ("help,h", po::bool_switch(), "print this help")
         ("verbose,v", po::bool_switch(), "verbose output")
-        ("test", po::value<int>()->default_value(0)->implicit_value(1));
+    ;
     return description;
 }
 
@@ -67,20 +67,6 @@ po::options_description Program::options_desc() {HERE;
     throw wtl::ExitSuccess();
 }
 
-//! Unit test for each class
-inline void test(const int flg) {HERE;
-    switch (flg) {
-      case 0:
-        break;
-      case 1:
-        Individual::test();
-        Population::test();
-        throw wtl::ExitSuccess();
-      default:
-        throw std::runtime_error("Unknown argument for --test");
-    }
-}
-
 Program::Program(const std::vector<std::string>& arguments) {HERE;
     wtl::join(arguments, std::cerr, " ") << std::endl;
     std::ios::sync_with_stdio(false);
@@ -109,13 +95,11 @@ Program::Program(const std::vector<std::string>& arguments) {HERE;
         ifs >> obj;
         Individual::from_json(obj);
     }
-
     config_string_ = wtl::flags_into_string(vm);
     if (vm["verbose"].as<bool>()) {
         std::cerr << wtl::iso8601datetime() << std::endl;
         std::cerr << config_string_ << std::endl;
     }
-    test(vm["test"].as<int>());
 }
 
 void Program::run() {HERE;

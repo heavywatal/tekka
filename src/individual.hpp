@@ -63,8 +63,6 @@ class Individual {
     static void from_json(const json::json&);
     //! encode class variables to json
     static void to_json(json::json&);
-    //! unit test
-    static void test();
 
     //! number of locations
     static size_t num_locations() {

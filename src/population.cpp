@@ -122,9 +122,4 @@ std::ostream& operator<<(std::ostream& ost, const Population& pop) {
     return pop.write(ost);
 }
 
-void Population::test() {HERE;
-    Population x(40);
-    x.run(10, 8u);
-}
-
 } // namespace pbt

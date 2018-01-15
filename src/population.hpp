@@ -33,8 +33,7 @@ class Population {
     //! write
     std::ostream& write(std::ostream&) const;
     friend std::ostream& operator<<(std::ostream&, const Population&);
-    //! unit test
-    static void test();
+
   private:
     //! give birth to children
     void reproduce();
