@@ -54,6 +54,12 @@ void Individual::set_dependent_static() {HERE;
     for (size_t i=MIGRATION_DISTRIBUTIONS_.size(); i<MAX_AGE_; ++i) {
         MIGRATION_DISTRIBUTIONS_.push_back(MIGRATION_DISTRIBUTIONS_.back());
     }
+    SURVIVAL_RATE_.resize(NATURAL_MORTALITY_.size());
+    std::transform(NATURAL_MORTALITY_.begin(), NATURAL_MORTALITY_.end(),
+                   FISHING_MORTALITY_.begin(), SURVIVAL_RATE_.begin(),
+                   [](double n, double f) {
+                       return std::exp(-n - f);
+                   });
 }
 
 void Individual::from_json(const json::json& obj) {HERE;
@@ -61,12 +67,6 @@ void Individual::from_json(const json::json& obj) {HERE;
     FISHING_MORTALITY_ = obj.at("fishing_mortality").get<decltype(FISHING_MORTALITY_)>();
     WEIGHT_FOR_AGE_ = obj.at("weight_for_age").get<decltype(WEIGHT_FOR_AGE_)>();
     MIGRATION_MATRICES_ = obj.at("migration_matrices").get<decltype(MIGRATION_MATRICES_)>();
-    SURVIVAL_RATE_.resize(NATURAL_MORTALITY_.size());
-    std::transform(NATURAL_MORTALITY_.begin(), NATURAL_MORTALITY_.end(),
-                   FISHING_MORTALITY_.begin(), SURVIVAL_RATE_.begin(),
-                   [](double n, double f) {
-                       return std::exp(-n - f);
-                   });
     set_dependent_static();
 }
 
