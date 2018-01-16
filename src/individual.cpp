@@ -49,10 +49,10 @@ void Individual::set_dependent_static() {HERE;
         for (const auto& row: matrix) {
             dists.emplace_back(row.begin(), row.end());
         }
-        MIGRATION_DISTRIBUTIONS_.push_back(std::move(dists));
+        MIGRATION_DISTRIBUTIONS_.emplace_back(std::move(dists));
     }
     for (size_t i=MIGRATION_DISTRIBUTIONS_.size(); i<MAX_AGE_; ++i) {
-        MIGRATION_DISTRIBUTIONS_.push_back(MIGRATION_DISTRIBUTIONS_.back());
+        MIGRATION_DISTRIBUTIONS_.emplace_back(MIGRATION_DISTRIBUTIONS_.back());
     }
     SURVIVAL_RATE_.resize(NATURAL_MORTALITY_.size());
     std::transform(NATURAL_MORTALITY_.begin(), NATURAL_MORTALITY_.end(),
@@ -88,8 +88,10 @@ std::vector<std::string> Individual::names() {
 
 std::ostream& Individual::write(std::ostream& ost) const {
     return ost << id_ << "\t"
-               << father_id_ << "\t" << mother_id_ << "\t"
-               << birth_year_ << "\t" << location_;
+               << (father_ ? father_->id() : 0u) << "\t"
+               << (mother_ ? mother_->id() : 0u) << "\t"
+               << birth_year_ << "\t"
+               << location_;
 }
 
 //! shortcut Individual::write(ost)

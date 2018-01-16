@@ -9,6 +9,7 @@
 
 #include <iosfwd>
 #include <vector>
+#include <memory>
 
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////
 
@@ -55,9 +56,9 @@ class Population {
     std::ostream& write_sample(const Individual&, std::ostream&) const;
 
     //! Individual array males
-    std::vector<Individual> males_;
+    std::vector<std::shared_ptr<Individual>> males_;
     //! Individual array females
-    std::vector<Individual> females_;
+    std::vector<std::shared_ptr<Individual>> females_;
     //! year
     uint_fast32_t year_ = 0;
     //! random bit generator

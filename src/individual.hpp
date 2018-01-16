@@ -11,6 +11,7 @@
 #include <cstdint>
 #include <cmath>
 #include <random>
+#include <memory>
 
 #include <boost/program_options.hpp>
 
@@ -23,12 +24,11 @@ namespace pbt {
 class Individual {
   public:
     //! default constructor
-    Individual()
-    : id_(++LAST_ID_) {}
+    Individual() = default;
     //! sexual reproduction
-    Individual(const Individual& father, const Individual& mother, const uint_fast32_t year)
-    : id_(++LAST_ID_), father_id_(father.id()), mother_id_(mother.id()),
-      birth_year_(year), location_(mother.location()) {}
+    Individual(const std::shared_ptr<Individual>& father, const std::shared_ptr<Individual>& mother, const uint_fast32_t year)
+    : father_(father), mother_(mother), id_(++LAST_ID_),
+      birth_year_(year), location_(mother->location()) {}
 
     //! evaluate survival
     bool has_survived(const uint_fast32_t year, const uint_fast32_t quarter, urbg_t&) const;
@@ -103,12 +103,12 @@ class Individual {
     //! ID for a new instance
     static uint_fast32_t LAST_ID_;
 
+    //! father
+    const std::shared_ptr<Individual> father_ = nullptr;
+    //! mother
+    const std::shared_ptr<Individual> mother_ = nullptr;
     //! ID
     const uint_fast32_t id_ = 0;
-    //! father's ID
-    const uint_fast32_t father_id_ = 0;
-    //! mother's ID
-    const uint_fast32_t mother_id_ = 0;
     //! year of birth
     uint_fast32_t birth_year_ = 0;
     //! current location
