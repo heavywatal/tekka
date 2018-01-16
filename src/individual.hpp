@@ -50,8 +50,17 @@ class Individual {
         location_ = MIGRATION_DISTRIBUTIONS_[year - birth_year_][location_](g);
     }
 
-    //! write members in TSV
+    void trace_back(std::map<uint_fast32_t, Individual*>* nodes) {
+        if (nodes->emplace(id_, this).second && father_) {
+            father_->trace_back(nodes);
+            mother_->trace_back(nodes);
+        }
+    }
+
+    //! write all the data members in TSV
     std::ostream& write(std::ostream&) const;
+    //! write ids in TSV
+    std::ostream& write_ids(std::ostream&) const;
     friend std::ostream& operator<<(std::ostream&, const Individual&);
     //! column names for write()
     static std::vector<std::string> names();

@@ -87,11 +87,15 @@ std::vector<std::string> Individual::names() {
 }
 
 std::ostream& Individual::write(std::ostream& ost) const {
-    return ost << id_ << "\t"
-               << (father_ ? father_->id() : 0u) << "\t"
-               << (mother_ ? mother_->id() : 0u) << "\t"
+    return write_ids(ost) << "\t"
                << birth_year_ << "\t"
                << location_;
+}
+
+std::ostream& Individual::write_ids(std::ostream& ost) const {
+    return ost << id_ << "\t"
+               << (father_ ? father_->id() : 0u) << "\t"
+               << (mother_ ? mother_->id() : 0u);
 }
 
 //! shortcut Individual::write(ost)

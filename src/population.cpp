@@ -43,6 +43,7 @@ void Population::run(const uint_fast32_t simulating_duration,
         }
     }
     DCERR(year_ << ": " << sizes() << std::endl);
+    sample_tree(2u, std::cerr);
 }
 
 void Population::reproduce() {
@@ -104,6 +105,18 @@ void Population::sample(const size_t n, std::ostream& ost) {
     };
     males_ = impl(males_, n / 2ul);
     females_ = impl(females_, n - n / 2ul);
+}
+
+void Population::sample_tree(const size_t n, std::ostream& ost) {
+    auto samples = wtl::sample(males_, n, engine_);
+    std::map<uint_fast32_t, Individual*> nodes;
+    for (const auto& p: samples) {
+        p->trace_back(&nodes);
+    }
+    ost << "id\tfather_id\tmother_id\n";
+    for (const auto& p: nodes) {
+        p.second->write_ids(ost) << "\n";
+    }
 }
 
 std::ostream& Population::write_sample_header(std::ostream& ost) {

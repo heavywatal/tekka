@@ -31,6 +31,9 @@ class Population {
              const size_t sample_size,
              const uint_fast32_t recording_duration=1u);
 
+    //! Construct tree from samples
+    void sample_tree(const size_t n, std::ostream& ost);
+
     //! count individuals for each location
     std::vector<size_t> sizes() const;
 
