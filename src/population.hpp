@@ -30,6 +30,9 @@ class Population {
              const size_t sample_size,
              const uint_fast32_t recording_duration=1u);
 
+    //! count individuals for each location
+    std::vector<size_t> sizes() const;
+
     //! write
     std::ostream& write(std::ostream&) const;
     friend std::ostream& operator<<(std::ostream&, const Population&);

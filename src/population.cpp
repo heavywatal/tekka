@@ -24,33 +24,33 @@ Population::~Population() {} // to allow forward declaration of Individual
 void Population::run(const uint_fast32_t simulating_duration,
                      const size_t sample_size_,
                      const uint_fast32_t recording_duration) {HERE;
-    urbg_t urbg(std::random_device{}());
     auto recording_start = simulating_duration - recording_duration;
     write_sample_header(std::cout);
-    for (year_ = 3u; year_ < simulating_duration; ++year_) {
+    for (year_ = 4u; year_ < simulating_duration; ++year_) {
+        DCERR(year_ << ": " << sizes() << std::endl);
         reproduce();
         survive(0u);
         survive(1u);
         survive(2u);
         survive(3u);
         migrate();
-        DCERR(year_ << ": " << *this << std::endl);
         if (year_ >= recording_start) {
             sample(sample_size_, std::cout);
         }
     }
+    DCERR(year_ << ": " << sizes() << std::endl);
 }
 
 void Population::reproduce() {
     std::vector<Individual> boys;
     std::vector<Individual> girls;
-    std::vector<std::vector<const Individual*>> adult_males(Individual::num_locations());
+    std::vector<std::vector<const Individual*>> males_located(Individual::num_locations());
     for (const auto& x: males_) {
-        adult_males[x.location()].push_back(&x);
+        males_located[x.location()].push_back(&x);
     }
     for (const auto& mother: females_) {
         if (!mother.is_in_breeding_place()) continue;
-        const auto& potential_fathers = adult_males[mother.location()];
+        const auto& potential_fathers = males_located[mother.location()];
         if (potential_fathers.empty()) continue;
         const uint_fast32_t num_juveniles = mother.recruitment(year_, engine_);
         const Individual* father = *wtl::choice(potential_fathers.begin(), potential_fathers.end(), engine_);
@@ -110,11 +110,17 @@ std::ostream& Population::write_sample(const Individual& x, std::ostream& ost) c
     return ost << x << "\t" << year_ << "\n";
 }
 
-std::ostream& Population::write(std::ostream& ost) const {
-    std::map<uint_fast32_t, size_t> counter;
+std::vector<size_t> Population::sizes() const {
+    std::vector<size_t> counter(Individual::num_locations(), 0u);
     for (const auto& x: males_) {++counter[x.location()];}
     for (const auto& x: females_) {++counter[x.location()];}
-    return ost << counter;
+    return counter;
+}
+
+std::ostream& Population::write(std::ostream& ost) const {
+    for (const auto& x: males_) {write_sample(x, ost);}
+    for (const auto& x: females_) {write_sample(x, ost);}
+    return ost;
 }
 
 //! shortcut Population::write(ost)
