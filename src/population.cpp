@@ -29,7 +29,7 @@ void Population::run(const uint_fast32_t simulating_duration,
                      const size_t sample_size_,
                      const uint_fast32_t recording_duration) {HERE;
     auto recording_start = simulating_duration - recording_duration;
-    write_sample_header(std::cout);
+    write_samples_header(std::cout);
     for (year_ = 4u; year_ < simulating_duration; ++year_) {
         DCERR(year_ << ": " << sizes() << std::endl);
         reproduce();
@@ -39,11 +39,11 @@ void Population::run(const uint_fast32_t simulating_duration,
         survive(3u);
         migrate();
         if (year_ >= recording_start) {
-            sample(sample_size_, std::cout);
+            sample(sample_size_);
         }
     }
+    write_samples(std::cout);
     DCERR(year_ << ": " << sizes() << std::endl);
-    sample_tree(2u, std::cerr);
 }
 
 void Population::reproduce() {
@@ -89,8 +89,10 @@ void Population::migrate() {
     for (auto& p: females_) {p->migrate(year_, engine_);}
 }
 
-void Population::sample(const size_t n, std::ostream& ost) {
-    auto impl = [this,&ost](const decltype(males_)& v, const size_t sample_size) {
+void Population::sample(const size_t n) {
+    auto& bag = samples_[year_];
+    bag.reserve(n);
+    auto impl = [&bag,this](const decltype(males_)& v, const size_t sample_size) {
         decltype(males_) survivors;
         survivors.reserve(v.size() - sample_size);
         auto indices = wtl::sample(v.size(), sample_size, engine_);
@@ -98,7 +100,7 @@ void Population::sample(const size_t n, std::ostream& ost) {
             if (indices.find(i) == indices.end()) {
                 survivors.emplace_back(std::move(v[i]));
             } else {
-                write_sample(*v[i], ost);
+                bag.emplace_back(v[i]);
             }
         }
         return survivors;
@@ -119,12 +121,17 @@ void Population::sample_tree(const size_t n, std::ostream& ost) {
     }
 }
 
-std::ostream& Population::write_sample_header(std::ostream& ost) {
+std::ostream& Population::write_samples_header(std::ostream& ost) {
     return wtl::join(Individual::names(), ost, "\t") << "\tcapture_year\n";
 }
 
-std::ostream& Population::write_sample(const Individual& x, std::ostream& ost) const {
-    return ost << x << "\t" << year_ << "\n";
+std::ostream& Population::write_samples(std::ostream& ost) const {
+    for (const auto& item: samples_) {
+        for (const auto& p: item.second) {
+            ost << *p << "\t" << item.first << "\n";
+        }
+    }
+    return ost;
 }
 
 std::vector<size_t> Population::sizes() const {
@@ -135,8 +142,8 @@ std::vector<size_t> Population::sizes() const {
 }
 
 std::ostream& Population::write(std::ostream& ost) const {
-    for (const auto& p: males_) {write_sample(*p, ost);}
-    for (const auto& p: females_) {write_sample(*p, ost);}
+    for (const auto& p: males_) {ost << *p << "\n";}
+    for (const auto& p: females_) {ost << *p << "\n";}
     return ost;
 }
 
