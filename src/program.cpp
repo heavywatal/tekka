@@ -20,6 +20,8 @@ namespace pbt {
 namespace fs = boost::filesystem;
 namespace po = boost::program_options;
 
+const std::string OUT_DIR = wtl::strftime("thunnus_%Y%m%d_%H%M_") + std::to_string(::getpid());
+
 //! options description for general arguments
 inline po::options_description general_desc() {HERE;
     po::options_description description("General");
@@ -44,15 +46,15 @@ inline po::options_description general_desc() {HERE;
 po::options_description Program::options_desc() {HERE;
     po::options_description description("Program");
     description.add_options()
-      ("popsize,n", po::value(&pop_size_)->default_value(pop_size_))
+      ("popsize,n", po::value(&pop_size_)->default_value(pop_size_), "Initial population size")
       ("years,y", po::value(&simulating_duration_)->default_value(simulating_duration_))
-      ("last,l", po::value(&recording_duration_)->default_value(recording_duration_))
+      ("last,l", po::value(&recording_duration_)->default_value(recording_duration_), "Sample last _ years")
       ("sample,s", po::value(&sample_rate_)->default_value(sample_rate_))
       ("parallel,j", po::value(&concurrency_)->default_value(concurrency_))
-      ("write,w", po::bool_switch(&is_writing_))
-      ("default,d", po::bool_switch(), "write default parameters to json")
+      ("outdir-predefined,O", po::bool_switch(), OUT_DIR.c_str())
+      ("default,d", po::bool_switch(), "Print default parameters in json")
       ("infile,i", po::value<std::string>(), "config file in json format")
-      ("outdir,o", po::value(&out_dir_)->default_value(out_dir_));
+      ("outdir,o", po::value(&out_dir_));
     // description.add(Population::options_desc());
     description.add(Individual::options_desc());
     return description;
@@ -73,7 +75,6 @@ Program::Program(const std::vector<std::string>& arguments) {HERE;
     std::cin.tie(0);
     std::cout.precision(15);
     std::cerr.precision(6);
-    out_dir_ = wtl::strftime("thunnus_%Y%m%d_%H%M_") + std::to_string(::getpid());
 
     auto description = general_desc();
     description.add(options_desc());
@@ -84,21 +85,24 @@ Program::Program(const std::vector<std::string>& arguments) {HERE;
     po::notify(vm);
     Individual::set_default_values();
     if (vm["default"].as<bool>()) {
-        json::json obj;
-        Individual::to_json(obj);
-        wtl::make_ofs("config.json") << obj;
+        Individual::write_json(std::cout);
         throw wtl::ExitSuccess();
     }
     if (vm.count("infile")) {
         auto ifs = wtl::make_ifs(vm["infile"].as<std::string>());
-        json::json obj;
-        ifs >> obj;
-        Individual::from_json(obj);
+        Individual::read_json(ifs);
     }
     config_string_ = wtl::flags_into_string(vm);
     if (vm["verbose"].as<bool>()) {
         std::cerr << wtl::iso8601datetime() << std::endl;
         std::cerr << config_string_ << std::endl;
+        Individual::write_json(std::cerr);
+    }
+    if (vm["outdir-predefined"].as<bool>()) {
+        if (vm.count("outdir")) {
+            throw std::runtime_error("cannot use -o and -O at the same time");
+        }
+        out_dir_ = OUT_DIR;
     }
 }
 
@@ -113,8 +117,7 @@ void Program::run() {HERE;
 void Program::main() {HERE;
     Population pop(pop_size_);
     pop.run(simulating_duration_, sample_rate_, recording_duration_);
-    if (is_writing_) {
-        DCERR("mkdir && cd to " << out_dir_ << std::endl);
+    if (!out_dir_.empty()) {
         wtl::ChDir cd(out_dir_, true);
         wtl::make_ofs("program_options.conf") << config_string_;
         wtl::ozfstream ost{"sample_family.tsv.gz"};

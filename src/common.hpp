@@ -6,13 +6,10 @@
 #define PBT_COMMON_HPP_
 
 #include <sfmt.hpp>
-#include <json.hpp>
 
 namespace pbt {
 
 using urbg_t = wtl::sfmt19937_64;
-
-namespace json = nlohmann;
 
 } // namespace pbt
 

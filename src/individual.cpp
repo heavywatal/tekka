@@ -37,7 +37,7 @@ boost::program_options::options_description Individual::options_desc() {
 }
 
 void Individual::set_default_values() {HERE;
-    from_json(json::json::parse(default_values));
+    from_json(nlohmann::json::parse(default_values));
 }
 
 void Individual::set_dependent_static() {HERE;
@@ -62,7 +62,7 @@ void Individual::set_dependent_static() {HERE;
                    });
 }
 
-void Individual::from_json(const json::json& obj) {HERE;
+void Individual::from_json(const nlohmann::json& obj) {HERE;
     NATURAL_MORTALITY_ = obj.at("natural_mortality").get<decltype(NATURAL_MORTALITY_)>();
     FISHING_MORTALITY_ = obj.at("fishing_mortality").get<decltype(FISHING_MORTALITY_)>();
     WEIGHT_FOR_AGE_ = obj.at("weight_for_age").get<decltype(WEIGHT_FOR_AGE_)>();
@@ -70,7 +70,7 @@ void Individual::from_json(const json::json& obj) {HERE;
     set_dependent_static();
 }
 
-void Individual::to_json(json::json& obj) {HERE;
+void Individual::to_json(nlohmann::json& obj) {HERE;
     obj["natural_mortality"] = NATURAL_MORTALITY_;
     obj["fishing_mortality"] = FISHING_MORTALITY_;
     obj["weight_for_age"] = WEIGHT_FOR_AGE_;
@@ -101,6 +101,18 @@ std::ostream& Individual::write_ids(std::ostream& ost) const {
 //! shortcut Individual::write(ost)
 std::ostream& operator<<(std::ostream& ost, const Individual& x) {
     return x.write(ost);
+}
+
+void Individual::read_json(std::istream& ist) {
+    nlohmann::json obj;
+    ist >> obj;
+    Individual::from_json(obj);
+}
+
+void Individual::write_json(std::ostream& ost) {
+    nlohmann::json obj;
+    Individual::to_json(obj);
+    ost << obj;
 }
 
 } // namespace pbt

@@ -13,6 +13,7 @@
 #include <random>
 #include <memory>
 
+#include <json.hpp>  // namespace nlohmann
 #include <boost/program_options.hpp>
 
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////
@@ -68,10 +69,10 @@ class Individual {
     static boost::program_options::options_description options_desc();
     //! set static variables from config.hpp
     static void set_default_values();
-    //! set class variables from json
-    static void from_json(const json::json&);
-    //! encode class variables to json
-    static void to_json(json::json&);
+    //! Read class variables from stream in json
+    static void read_json(std::istream&);
+    //! Write class variables to stream in json
+    static void write_json(std::ostream&);
 
     //! number of locations
     static size_t num_locations() {
@@ -93,6 +94,10 @@ class Individual {
   private:
     //! set static variables that depend on other variables
     static void set_dependent_static();
+    //! set class variables from json
+    static void from_json(const nlohmann::json&);
+    //! encode class variables to json
+    static void to_json(nlohmann::json&);
     //! maximum age to consider
     constexpr static uint_fast32_t MAX_AGE_ = 80u;
     //! \f$K\f$ in weight()

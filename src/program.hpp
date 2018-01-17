@@ -43,8 +43,6 @@ class Program {
     uint_fast32_t recording_duration_ = 2u;
     //! number of threads
     unsigned int concurrency_ = 1u;
-    //! `-w`
-    bool is_writing_ = false;
     //! name of output directory
     std::string out_dir_ = "";
     //! writen to "program_options.conf"
