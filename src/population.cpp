@@ -26,7 +26,7 @@ Population::Population(const size_t initial_size) {HERE;
 Population::~Population() {} // to allow forward declaration of Individual
 
 void Population::run(const uint_fast32_t simulating_duration,
-                     const size_t sample_size_,
+                     const double sample_rate,
                      const uint_fast32_t recording_duration) {HERE;
     auto recording_start = simulating_duration - recording_duration;
     for (year_ = 4u; year_ < simulating_duration; ++year_) {
@@ -36,10 +36,10 @@ void Population::run(const uint_fast32_t simulating_duration,
         survive(1u);
         survive(2u);
         survive(3u);
-        migrate();
         if (year_ >= recording_start) {
-            sample(sample_size_);
+            sample(sample_rate);
         }
+        migrate();
     }
     DCERR(year_ << ": " << sizes() << std::endl);
 }
@@ -87,25 +87,54 @@ void Population::migrate() {
     for (auto& p: females_) {p->migrate(year_, engine_);}
 }
 
-void Population::sample(const size_t n) {
-    if (n == 0u) return;
-    auto& bag = year_samples_[year_];
-    bag.reserve(n);
-    auto impl = [&bag,this](const decltype(males_)& v, const size_t sample_size) {
+void Population::sample(const double rate) {
+    auto impl = [rate,this](decltype(males_)* individuals) {
         decltype(males_) survivors;
-        survivors.reserve(v.size() - sample_size);
-        auto indices = wtl::sample(v.size(), sample_size, engine_);
-        for (size_t i=0; i<v.size(); ++i) {
-            if (indices.find(i) == indices.end()) {
-                survivors.emplace_back(std::move(v[i]));
+        survivors.reserve(individuals->size());
+        std::vector<std::vector<size_t>> adults(Individual::num_breeding_places());
+        std::vector<std::vector<size_t>> juveniles(Individual::num_breeding_places());
+        size_t num_adults = 0u;
+        for (size_t i=0; i<individuals->size(); ++i) {
+            auto& p = individuals->at(i);
+            if (p->is_in_breeding_place()) {
+                if (p->birth_year() == year_) {
+                    juveniles[p->location()].emplace_back(i);
+                } else {
+                    adults[p->location()].emplace_back(i);
+                    ++num_adults;
+                }
             } else {
-                bag.emplace_back(v[i]);
+                survivors.emplace_back(p);
             }
         }
-        return survivors;
+        decltype(males_) samples;
+        samples.reserve(static_cast<size_t>(std::round(3.0 * rate * num_adults)));
+        auto sort = [&](const std::vector<size_t>& indices, const size_t k) {
+            const auto chosen = wtl::sample(indices.size(), k, engine_);
+            for (size_t i=0; i<indices.size(); ++i) {
+                if (chosen.find(i) == chosen.end()) {
+                    survivors.emplace_back(individuals->at(indices[i]));
+                } else {
+                    samples.emplace_back(individuals->at(indices[i]));
+                }
+            }
+        };
+        for (uint_fast32_t loc=0; loc<Individual::num_breeding_places(); ++loc) {
+            const size_t n_adults = adults[loc].size();
+            const size_t n_adult_samples = static_cast<size_t>(std::round(rate * n_adults));
+            const size_t n_juvenile_samples = 2u * n_adult_samples;
+            sort(adults[loc], n_adult_samples);
+            sort(juveniles[loc], n_juvenile_samples);
+        }
+        individuals->swap(survivors);
+        return samples;
     };
-    males_ = impl(males_, n / 2ul);
-    females_ = impl(females_, n - n / 2ul);
+    auto m_samples = impl(&males_);
+    auto f_samples = impl(&females_);
+    auto& samples = year_samples_[year_];
+    samples.reserve(m_samples.size() + f_samples.size());
+    std::copy(m_samples.begin(), m_samples.end(), std::back_inserter(samples));
+    std::copy(f_samples.begin(), f_samples.end(), std::back_inserter(samples));
 }
 
 std::ostream& Population::write_sample_header(std::ostream& ost) const {

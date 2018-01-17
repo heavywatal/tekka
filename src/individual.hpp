@@ -35,7 +35,7 @@ class Individual {
 
     //! evaluate maturity
     bool is_in_breeding_place() const {
-        return location_ < 2u;
+        return location_ < num_breeding_places();
     }
 
     //! number of juveniles
@@ -77,12 +77,16 @@ class Individual {
     static size_t num_locations() {
         return MIGRATION_MATRICES_[0].size();
     }
+    //! number of breeding places
+    static constexpr size_t num_breeding_places() {return 2u;}
     //! getter of #WEIGHT_FOR_AGE_
     double weight(const uint_fast32_t year) const {
         return WEIGHT_FOR_AGE_[4u * (year - birth_year_)];
     }
     //! getter of #id_
     uint_fast32_t id() const {return id_;}
+    //! getter of #birth_year_
+    uint_fast32_t birth_year() const {return birth_year_;};
     //! getter of #location_
     uint_fast32_t location() const {return location_;}
 

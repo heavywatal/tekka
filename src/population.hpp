@@ -29,7 +29,7 @@ class Population {
 
     //! main iteration
     void run(const uint_fast32_t simulating_duration,
-             const size_t sample_size,
+             const double sample_rate,
              const uint_fast32_t recording_duration=1u);
 
     //! count individuals for each location
@@ -52,8 +52,8 @@ class Population {
     //! evaluate migration
     void migrate();
 
-    //! sample n individuals
-    void sample(const size_t n);
+    //! sample individuals
+    void sample(const double rate);
 
     //! write column names for write_sample()
     std::ostream& write_sample_header(std::ostream&) const;

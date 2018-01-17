@@ -35,12 +35,12 @@ class Program {
 
     //! initial population size
     size_t pop_size_ = 1000u;
-    //! number of samples per year
-    size_t sample_size_ = 0u;
+    //! proportion of sampling per year
+    double sample_rate_ = 0.02;
     //! maximum years to simulate
     uint_fast32_t simulating_duration_ = 40u;
     //! last years to record samples
-    uint_fast32_t recording_duration_ = 1u;
+    uint_fast32_t recording_duration_ = 2u;
     //! number of threads
     unsigned int concurrency_ = 1u;
     //! `-w`

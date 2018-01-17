@@ -47,7 +47,7 @@ po::options_description Program::options_desc() {HERE;
       ("popsize,n", po::value(&pop_size_)->default_value(pop_size_))
       ("years,y", po::value(&simulating_duration_)->default_value(simulating_duration_))
       ("last,l", po::value(&recording_duration_)->default_value(recording_duration_))
-      ("sample,s", po::value(&sample_size_)->default_value(sample_size_))
+      ("sample,s", po::value(&sample_rate_)->default_value(sample_rate_))
       ("parallel,j", po::value(&concurrency_)->default_value(concurrency_))
       ("write,w", po::bool_switch(&is_writing_))
       ("default,d", po::bool_switch(), "write default parameters to json")
@@ -112,7 +112,7 @@ void Program::run() {HERE;
 
 void Program::main() {HERE;
     Population pop(pop_size_);
-    pop.run(simulating_duration_, sample_size_, recording_duration_);
+    pop.run(simulating_duration_, sample_rate_, recording_duration_);
     if (is_writing_) {
         DCERR("mkdir && cd to " << out_dir_ << std::endl);
         wtl::ChDir cd(out_dir_, true);
