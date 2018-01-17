@@ -17,14 +17,23 @@ Individual-based simulator of pacific bluefin tuna
 
 ## Installation
 
-Use `BOOST_ROOT` environment variable so that CMake can find your boost library.
+The easiest way is to use [Homebrew](https://brew.sh/)/[Linuxbrew](http://linuxbrew.sh/).
+The following command installs blackthunnus and all the dependencies:
+```sh
+brew install --HEAD heavywatal/tap/blackthunnus
+```
 
+Alternatively, you can get the source code from GitHub manually:
 ```sh
 git clone https://github.com/heavywatal/blackthunnus.git
-mkdir build-blackthunnus
-cd build-blackthunnus/
-# export BOOST_ROOT=${HOME}/local
-cmake -DCMAKE_INSTALL_PREFIX=${HOME}/local ../blackthunnus
-cmake --build .
-cmake --build . --target install
+cd blackthunnus/
+mkdir build
+cd build/
+YOUR_PREFIX=${HOME}/local  # or /usr/local
+cmake -DCMAKE_INSTALL_PREFIX=$YOUR_PREFIX ..
+make -j2
+make install
 ```
+
+If needed, set `CMAKE_PREFIX_PATH` or `BOOST_ROOT` variable so that CMake can find your libraries,
+e.g., `cmake -DCMAKE_INSTALL_PREFIX=$(brew --prefix) ..`
