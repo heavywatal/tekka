@@ -36,7 +36,7 @@ class Program {
     //! initial population size
     size_t pop_size_ = 1000u;
     //! number of samples per year
-    size_t sample_size_ = 10u;
+    size_t sample_size_ = 0u;
     //! maximum years to simulate
     uint_fast32_t simulating_duration_ = 40u;
     //! last years to record samples

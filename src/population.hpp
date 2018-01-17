@@ -32,12 +32,12 @@ class Population {
              const size_t sample_size,
              const uint_fast32_t recording_duration=1u);
 
-    //! Construct tree from samples
-    void sample_tree(const size_t n, std::ostream& ost);
-
     //! count individuals for each location
     std::vector<size_t> sizes() const;
-
+    //! write sampled individuals
+    std::ostream& write_sample(std::ostream&) const;
+    //! Construct and write tree from samples
+    std::ostream& write_sample_family(std::ostream& ost) const;
     //! write
     std::ostream& write(std::ostream&) const;
     friend std::ostream& operator<<(std::ostream&, const Population&);
@@ -54,17 +54,16 @@ class Population {
 
     //! sample n individuals
     void sample(const size_t n);
-    //! write column names for write_samples()
-    static std::ostream& write_samples_header(std::ostream&);
-    //! write sampled individuals
-    std::ostream& write_samples(std::ostream&) const;
+
+    //! write column names for write_sample()
+    std::ostream& write_sample_header(std::ostream&) const;
 
     //! Individual array males
     std::vector<std::shared_ptr<Individual>> males_;
     //! Individual array females
     std::vector<std::shared_ptr<Individual>> females_;
     //! samples: capture_year => individuals
-    std::map<uint_fast32_t, std::vector<std::shared_ptr<Individual>>> samples_;
+    std::map<uint_fast32_t, std::vector<std::shared_ptr<Individual>>> year_samples_;
     //! year
     uint_fast32_t year_ = 0;
     //! random bit generator

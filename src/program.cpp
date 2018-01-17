@@ -115,10 +115,12 @@ void Program::main() {HERE;
     pop.run(simulating_duration_, sample_size_, recording_duration_);
     if (is_writing_) {
         DCERR("mkdir && cd to " << out_dir_ << std::endl);
-        wtl::ChDir cd_outdir(out_dir_, true);
+        wtl::ChDir cd(out_dir_, true);
         wtl::make_ofs("program_options.conf") << config_string_;
-        wtl::ozfstream{"population.tsv.gz"} << pop;
-        std::cerr << wtl::iso8601datetime() << std::endl;
+        wtl::ozfstream ost{"sample_family.tsv.gz"};
+        pop.write_sample_family(ost);
+    } else {
+        pop.write_sample_family(std::cout);
     }
 }
 

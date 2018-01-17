@@ -29,7 +29,6 @@ void Population::run(const uint_fast32_t simulating_duration,
                      const size_t sample_size_,
                      const uint_fast32_t recording_duration) {HERE;
     auto recording_start = simulating_duration - recording_duration;
-    write_samples_header(std::cout);
     for (year_ = 4u; year_ < simulating_duration; ++year_) {
         DCERR(year_ << ": " << sizes() << std::endl);
         reproduce();
@@ -42,7 +41,6 @@ void Population::run(const uint_fast32_t simulating_duration,
             sample(sample_size_);
         }
     }
-    write_samples(std::cout);
     DCERR(year_ << ": " << sizes() << std::endl);
 }
 
@@ -90,7 +88,8 @@ void Population::migrate() {
 }
 
 void Population::sample(const size_t n) {
-    auto& bag = samples_[year_];
+    if (n == 0u) return;
+    auto& bag = year_samples_[year_];
     bag.reserve(n);
     auto impl = [&bag,this](const decltype(males_)& v, const size_t sample_size) {
         decltype(males_) survivors;
@@ -109,27 +108,38 @@ void Population::sample(const size_t n) {
     females_ = impl(females_, n - n / 2ul);
 }
 
-void Population::sample_tree(const size_t n, std::ostream& ost) {
-    auto samples = wtl::sample(males_, n, engine_);
-    std::map<uint_fast32_t, Individual*> nodes;
-    for (const auto& p: samples) {
-        p->trace_back(&nodes);
-    }
-    ost << "id\tfather_id\tmother_id\n";
-    for (const auto& p: nodes) {
-        p.second->write_ids(ost) << "\n";
-    }
-}
-
-std::ostream& Population::write_samples_header(std::ostream& ost) {
+std::ostream& Population::write_sample_header(std::ostream& ost) const {
+    if (year_samples_.empty()) return ost;
     return wtl::join(Individual::names(), ost, "\t") << "\tcapture_year\n";
 }
 
-std::ostream& Population::write_samples(std::ostream& ost) const {
-    for (const auto& item: samples_) {
-        for (const auto& p: item.second) {
-            ost << *p << "\t" << item.first << "\n";
+std::ostream& Population::write_sample(std::ostream& ost) const {
+    write_sample_header(ost);
+    for (const auto& ys: year_samples_) {
+        for (const auto& p: ys.second) {
+            ost << *p << "\t" << ys.first << "\n";
         }
+    }
+    return ost;
+}
+
+std::ostream& Population::write_sample_family(std::ostream& ost) const {
+    std::unordered_map<uint_fast32_t, uint_fast32_t> id_year;
+    std::map<uint_fast32_t, Individual*> nodes;
+    for (const auto& ys: year_samples_) {
+        for (const auto& p: ys.second) {
+            p->trace_back(&nodes);
+            id_year.emplace(p->id(), ys.first);
+        }
+    }
+    write_sample_header(ost);
+    for (const auto& p: nodes) {
+        ost << *p.second;
+        auto it = id_year.find(p.first);
+        if (it != id_year.end()) {
+            ost << "\t" << it->second;
+        }
+        ost << "\n";
     }
     return ost;
 }
