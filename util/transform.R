@@ -1,7 +1,9 @@
 library(tidyverse)
 
-min_adult_age = 3L
-tsv = read_tsv('output.tsv')
+min_adult_age = 5L
+tsv = read_tsv('sample_family.tsv.gz', col_types = cols(capture_year='i')) %>%
+  dplyr::filter(!is.na(capture_year)) %>%
+  print()
 
 # #######1#########2#########3#########4#########5#########6#########7#########
 # POPs
