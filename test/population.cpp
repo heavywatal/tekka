@@ -5,7 +5,7 @@
 
 int main() {
     pbt::Individual::set_default_values();
-    pbt::Population pop(42u);
-    pop.run(8u, 8u);
+    pbt::Population pop(1000u);
+    pop.run(10u, 0.01);
     return 0;
 }
