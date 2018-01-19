@@ -1,0 +1,38 @@
+language: cpp
+sudo: false
+matrix:
+  include:
+  - os: osx
+  - os: linux
+    compiler: clang
+  - os: linux
+    addons:
+      apt:
+        sources:
+        - ubuntu-toolchain-r-test
+        packages:
+        - g++-5
+    env:
+    - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
+  - os: linux
+    addons:
+      apt:
+        sources:
+        - ubuntu-toolchain-r-test
+        packages:
+        - g++-7
+    env:
+    - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+before_install:
+- eval "${MATRIX_EVAL}"
+script:
+- mkdir build
+- cd build
+- cmake -DCMAKE_INSTALL_PREFIX=${HOME}/local ..
+- cmake --build .
+- cmake --build . --target install
+- ctest -V
+notifications:
+  email: false
+  slack:
+    secure: OQX5oh4QHdW5PFuAY3UyzO9nuOyFraBc3GL2HEJ+k4C7dsDno4Q8uln+f571CiPoihs1cOGqg4/+eVEltlEuOqABuD4NuVBfPVsXxE1ibWsug6g2gJxXEPY5JhjlSXm3u3U0pQOkOcOYzLAd606O0l3gzyVp8c5zQzgO8Wn/F09lHsLhg1KSZgvZZpCaZgvvXvzes6rfBuUzqM2lV/Hw0Gh9UDrjMbE7yl2SAbpY2+HpN8zTDq5We40hrmGhiLMiR4tgjwm8uFvNFm2b0QMZtxsJvwCL9D2cbvfO7GpLVGmie2ceKQ+ZnyPoBOohG/j2EkbAosebbZ7iat/ILobDRR1LKhMx41x1Sbw2wqLOtNwsDrA1lKxlYaFGLiNAG1D98kIUFfM/k+yP6EPCuS4UBpM3CfBqSN3ioC0yWknNacn/LHMCScvOEWi6eO8xusm5d7l7sWZaiiwrRh5Rk9z2QTcFscwFmMl98XRwZPBjBOn8kZNoZMzrScbdlHuw6rcDx4OLt/MmHhwqa+5nqqQZH+xzaqfL6+SLD+f92eptUNHMQgMWqZFijsZltxEhYoNXWcW6Se96PZGZGdMH2FwWSssTVoVP65C86aOcWYyooQAixbWtEHlAe3inDbfHM9iUc7WO+v8GCuXEhNf9hdKIMiCV3k7BoQyOW8kO3VvzW2I=
