@@ -23,12 +23,18 @@ matrix:
         - g++-7
     env:
     - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+cache:
+  directories:
+    - $HOME/.linuxbrew/
 before_install:
+- if [[ $TRAVIS_OS_NAME = linux ]]; test -d $HOME/.linuxbrew/bin || git clone https://github.com/Linuxbrew/brew.git ~/.linuxbrew; fi
+- if [[ $TRAVIS_OS_NAME = linux ]]; PATH=$HOME/.linuxbrew/bin:$PATH; fi
+- brew install boost nlohmann/json/nlohmann_json heavywatal/tap/sfmt-class heavywatal/tap/cxxwtl
 - eval "${MATRIX_EVAL}"
 script:
 - mkdir build
 - cd build
-- cmake -DCMAKE_INSTALL_PREFIX=${HOME}/local ..
+- cmake -DCMAKE_PREFIX_PATH=$(brew --prefix) -DCMAKE_INSTALL_PREFIX=${HOME}/local ..
 - cmake --build .
 - cmake --build . --target install
 - ctest -V
