@@ -87,7 +87,7 @@ class Individual {
     //! getter of #id_
     uint_fast32_t id() const {return id_;}
     //! getter of #birth_year_
-    uint_fast32_t birth_year() const {return birth_year_;};
+    uint_fast32_t birth_year() const {return birth_year_;}
     //! getter of #location_
     uint_fast32_t location() const {return location_;}
 
