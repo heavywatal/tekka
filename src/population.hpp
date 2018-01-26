@@ -5,17 +5,19 @@
 #ifndef PBT_POPULATION_HPP_
 #define PBT_POPULATION_HPP_
 
-#include "common.hpp"
-
+#include <cstdint>
 #include <iosfwd>
 #include <vector>
 #include <map>
 #include <memory>
 
+namespace wtl {class sfmt19937_64;}
+
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////
 
 namespace pbt {
 
+using URBG = wtl::sfmt19937_64;
 class Individual;
 
 /*! @brief Population class
@@ -67,7 +69,7 @@ class Population {
     //! year
     uint_fast32_t year_ = 0;
     //! random bit generator
-    urbg_t engine_;
+    std::unique_ptr<URBG> engine_;
 };
 
 } // namespace pbt

@@ -7,13 +7,13 @@
 #include <wtl/debug.hpp>
 #include <wtl/iostr.hpp>
 #include <wtl/random.hpp>
-
-#include <iostream>
+#include <sfmt.hpp>
 
 namespace pbt {
 
-Population::Population(const size_t initial_size) {HERE;
-    engine_.seed(wtl::random_device_64{}());
+Population::Population(const size_t initial_size)
+: engine_(std::make_unique<URBG>(wtl::random_device_64{}())) {HERE;
+    Individual::set_default_values();
     const size_t half = initial_size / 2UL;
     const size_t rest = initial_size - half;
     males_.reserve(half);
@@ -55,11 +55,11 @@ void Population::reproduce() {
         if (!mother->is_in_breeding_place()) continue;
         const auto& potential_fathers = males_located[mother->location()];
         if (potential_fathers.empty()) continue;
-        const uint_fast32_t num_juveniles = mother->recruitment(year_, engine_);
-        const std::shared_ptr<Individual> father = *wtl::choice(potential_fathers.begin(), potential_fathers.end(), engine_);
+        const uint_fast32_t num_juveniles = mother->recruitment(year_, *engine_);
+        const std::shared_ptr<Individual> father = *wtl::choice(potential_fathers.begin(), potential_fathers.end(), *engine_);
         // TODO: multiple fathers
         for (uint_fast32_t i=0; i<num_juveniles; ++i) {
-            if (wtl::generate_canonical(engine_) < 0.5) {
+            if (wtl::generate_canonical(*engine_) < 0.5) {
                 boys.emplace_back(new Individual(father, mother, year_));
             } else {
                 girls.emplace_back(new Individual(father, mother, year_));
@@ -75,7 +75,7 @@ void Population::survive(const uint_fast32_t quarter) {
         decltype(males_) survivors;
         survivors.reserve(v.size());
         std::copy_if(v.begin(), v.end(), std::back_inserter(survivors),
-                     [&](const auto& p) {return p->has_survived(year_, quarter, engine_);});
+                     [&](const auto& p) {return p->has_survived(year_, quarter, *engine_);});
         return survivors;
     };
     males_ = impl(males_);
@@ -83,8 +83,8 @@ void Population::survive(const uint_fast32_t quarter) {
 }
 
 void Population::migrate() {
-    for (auto& p: males_) {p->migrate(year_, engine_);}
-    for (auto& p: females_) {p->migrate(year_, engine_);}
+    for (auto& p: males_) {p->migrate(year_, *engine_);}
+    for (auto& p: females_) {p->migrate(year_, *engine_);}
 }
 
 void Population::sample(const double rate) {
@@ -110,7 +110,7 @@ void Population::sample(const double rate) {
         decltype(males_) samples;
         samples.reserve(static_cast<size_t>(std::round(3.0 * rate * num_adults)));
         auto sort = [&](const std::vector<size_t>& indices, const size_t k) {
-            const auto chosen = wtl::sample(indices.size(), k, engine_);
+            const auto chosen = wtl::sample(indices.size(), k, *engine_);
             for (size_t i=0; i<indices.size(); ++i) {
                 if (chosen.find(i) == chosen.end()) {
                     survivors.emplace_back(individuals->at(indices[i]));

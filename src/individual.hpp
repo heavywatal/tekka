@@ -5,20 +5,20 @@
 #ifndef PBT_INDIVIDUAL_HPP_
 #define PBT_INDIVIDUAL_HPP_
 
-#include "common.hpp"
-
-#include <iosfwd>
 #include <cstdint>
-#include <cmath>
-#include <random>
+#include <iosfwd>
 #include <memory>
 
 #include <json.hpp>  // namespace nlohmann
 #include <boost/program_options.hpp>
 
+namespace wtl {class sfmt19937_64;}
+
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////
 
 namespace pbt {
+
+using URBG = wtl::sfmt19937_64;
 
 /*! @brief Individual class
 */
@@ -32,7 +32,7 @@ class Individual {
       birth_year_(year), location_(mother->location()) {}
 
     //! evaluate survival
-    bool has_survived(const uint_fast32_t year, const uint_fast32_t quarter, urbg_t&) const;
+    bool has_survived(const uint_fast32_t year, const uint_fast32_t quarter, URBG&) const;
 
     //! evaluate maturity
     bool is_in_breeding_place() const {
@@ -40,16 +40,10 @@ class Individual {
     }
 
     //! number of juveniles
-    uint_fast32_t recruitment(const uint_fast32_t year, urbg_t& g) const {
-        const double mean = RECRUITMENT_COEF_ * weight(year);
-        std::poisson_distribution<uint_fast32_t> poisson(mean);
-        return poisson(g);
-    }
+    uint_fast32_t recruitment(const uint_fast32_t year, URBG&) const;
 
     //! change #location_
-    void migrate(const uint_fast32_t year, urbg_t& g) {
-        location_ = MIGRATION_DISTRIBUTIONS_[year - birth_year_][location_](g);
-    }
+    void migrate(const uint_fast32_t year, URBG&);
 
     void trace_back(std::map<uint_fast32_t, Individual*>* nodes) {
         if (nodes->emplace(id_, this).second && father_) {
@@ -116,8 +110,6 @@ class Individual {
     static std::vector<double> WEIGHT_FOR_AGE_;
     //! transition matrix for migration
     static std::vector<std::vector<std::vector<double>>> MIGRATION_MATRICES_;
-    //! discrete distributions for migration
-    static std::vector<std::vector<std::discrete_distribution<uint_fast32_t>>> MIGRATION_DISTRIBUTIONS_;
     //! ID for a new instance
     static uint_fast32_t LAST_ID_;
 

@@ -7,6 +7,7 @@
 #include <wtl/debug.hpp>
 #include <wtl/iostr.hpp>
 #include <wtl/random.hpp>
+#include <sfmt.hpp>
 
 namespace pbt {
 
@@ -16,8 +17,10 @@ std::vector<double> Individual::FISHING_MORTALITY_;
 std::vector<double> Individual::SURVIVAL_RATE_;
 std::vector<double> Individual::WEIGHT_FOR_AGE_;
 std::vector<std::vector<std::vector<double>>> Individual::MIGRATION_MATRICES_;
-std::vector<std::vector<std::discrete_distribution<uint_fast32_t>>> Individual::MIGRATION_DISTRIBUTIONS_;
 uint_fast32_t Individual::LAST_ID_ = 0;
+
+//! discrete distributions for migration
+static std::vector<std::vector<std::discrete_distribution<uint_fast32_t>>> MIGRATION_DISTRIBUTIONS;
 
 //! Program options
 /*! @ingroup params
@@ -37,22 +40,23 @@ boost::program_options::options_description Individual::options_desc() {
 }
 
 void Individual::set_default_values() {HERE;
+    if (!NATURAL_MORTALITY_.empty()) return;
     from_json(nlohmann::json::parse(default_values));
 }
 
 void Individual::set_dependent_static() {HERE;
-    MIGRATION_DISTRIBUTIONS_.clear();
-    MIGRATION_DISTRIBUTIONS_.reserve(MAX_AGE_);
+    MIGRATION_DISTRIBUTIONS.clear();
+    MIGRATION_DISTRIBUTIONS.reserve(MAX_AGE_);
     for (const auto& matrix: MIGRATION_MATRICES_) {
-        decltype(MIGRATION_DISTRIBUTIONS_)::value_type dists;
+        decltype(MIGRATION_DISTRIBUTIONS)::value_type dists;
         dists.reserve(matrix.size());
         for (const auto& row: matrix) {
             dists.emplace_back(row.begin(), row.end());
         }
-        MIGRATION_DISTRIBUTIONS_.emplace_back(std::move(dists));
+        MIGRATION_DISTRIBUTIONS.emplace_back(std::move(dists));
     }
-    for (size_t i=MIGRATION_DISTRIBUTIONS_.size(); i<MAX_AGE_; ++i) {
-        MIGRATION_DISTRIBUTIONS_.emplace_back(MIGRATION_DISTRIBUTIONS_.back());
+    for (size_t i=MIGRATION_DISTRIBUTIONS.size(); i<MAX_AGE_; ++i) {
+        MIGRATION_DISTRIBUTIONS.emplace_back(MIGRATION_DISTRIBUTIONS.back());
     }
     SURVIVAL_RATE_.resize(NATURAL_MORTALITY_.size());
     std::transform(NATURAL_MORTALITY_.begin(), NATURAL_MORTALITY_.end(),
@@ -77,9 +81,19 @@ void Individual::to_json(nlohmann::json& obj) {HERE;
     obj["migration_matrices"] = MIGRATION_MATRICES_;
 }
 
-bool Individual::has_survived(const uint_fast32_t year, const uint_fast32_t quarter, urbg_t& g) const {
+bool Individual::has_survived(const uint_fast32_t year, const uint_fast32_t quarter, URBG& engine) const {
     const auto age = year - birth_year_;
-    return (wtl::generate_canonical(g) < SURVIVAL_RATE_[4U * age + quarter]);
+    return (wtl::generate_canonical(engine) < SURVIVAL_RATE_[4U * age + quarter]);
+}
+
+uint_fast32_t Individual::recruitment(const uint_fast32_t year, URBG& engine) const {
+    const double mean = RECRUITMENT_COEF_ * weight(year);
+    std::poisson_distribution<uint_fast32_t> poisson(mean);
+    return poisson(engine);
+}
+
+void Individual::migrate(const uint_fast32_t year, URBG& engine) {
+    location_ = MIGRATION_DISTRIBUTIONS[year - birth_year_][location_](engine);
 }
 
 std::vector<std::string> Individual::names() {
