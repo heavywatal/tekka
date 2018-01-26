@@ -163,10 +163,10 @@ std::ostream& Population::write_sample_family(std::ostream& ost) const {
     }
     write_sample_header(ost);
     for (const auto& p: nodes) {
-        ost << *p.second;
+        ost << *p.second << "\t";
         auto it = id_year.find(p.first);
         if (it != id_year.end()) {
-            ost << "\t" << it->second;
+            ost << it->second;
         }
         ost << "\n";
     }
