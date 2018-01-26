@@ -6,3 +6,5 @@
 #' @importFrom rlang .data
 #' @importFrom Rcpp sourceCpp
 NULL
+# to suppress NOTE
+utils::globalVariables(c(".", "n"))
