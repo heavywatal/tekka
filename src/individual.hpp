@@ -8,11 +8,12 @@
 #include <cstdint>
 #include <iosfwd>
 #include <memory>
-
-#include <json.hpp>  // namespace nlohmann
-#include <boost/program_options.hpp>
+#include <vector>
+#include <map>
 
 namespace wtl {class sfmt19937_64;}
+
+namespace boost {namespace program_options {class options_description;}}
 
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////
 
@@ -88,10 +89,6 @@ class Individual {
   private:
     //! set static variables that depend on other variables
     static void set_dependent_static();
-    //! set class variables from json
-    static void from_json(const nlohmann::json&);
-    //! encode class variables to json
-    static void to_json(nlohmann::json&);
     //! maximum age to consider
     constexpr static uint_fast32_t MAX_AGE_ = 80u;
     //! \f$K\f$ in weight()

@@ -15,6 +15,8 @@
 #include <wtl/chrono.hpp>
 #include <sfmt.hpp>
 
+#include <boost/program_options.hpp>
+
 namespace pbt {
 
 namespace fs = boost::filesystem;

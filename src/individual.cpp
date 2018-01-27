@@ -8,6 +8,8 @@
 #include <wtl/iostr.hpp>
 #include <wtl/random.hpp>
 #include <sfmt.hpp>
+#include <json.hpp>  // namespace nlohmann
+#include <boost/program_options.hpp>
 
 namespace pbt {
 
@@ -41,7 +43,8 @@ boost::program_options::options_description Individual::options_desc() {
 
 void Individual::set_default_values() {HERE;
     if (!NATURAL_MORTALITY_.empty()) return;
-    from_json(nlohmann::json::parse(default_values));
+    std::istringstream iss(default_values);
+    read_json(iss);
 }
 
 void Individual::set_dependent_static() {HERE;
@@ -64,21 +67,6 @@ void Individual::set_dependent_static() {HERE;
                    [](double n, double f) {
                        return std::exp(-n - f);
                    });
-}
-
-void Individual::from_json(const nlohmann::json& obj) {HERE;
-    NATURAL_MORTALITY_ = obj.at("natural_mortality").get<decltype(NATURAL_MORTALITY_)>();
-    FISHING_MORTALITY_ = obj.at("fishing_mortality").get<decltype(FISHING_MORTALITY_)>();
-    WEIGHT_FOR_AGE_ = obj.at("weight_for_age").get<decltype(WEIGHT_FOR_AGE_)>();
-    MIGRATION_MATRICES_ = obj.at("migration_matrices").get<decltype(MIGRATION_MATRICES_)>();
-    set_dependent_static();
-}
-
-void Individual::to_json(nlohmann::json& obj) {HERE;
-    obj["natural_mortality"] = NATURAL_MORTALITY_;
-    obj["fishing_mortality"] = FISHING_MORTALITY_;
-    obj["weight_for_age"] = WEIGHT_FOR_AGE_;
-    obj["migration_matrices"] = MIGRATION_MATRICES_;
 }
 
 bool Individual::has_survived(const uint_fast32_t year, const uint_fast32_t quarter, URBG& engine) const {
@@ -120,12 +108,19 @@ std::ostream& operator<<(std::ostream& ost, const Individual& x) {
 void Individual::read_json(std::istream& ist) {
     nlohmann::json obj;
     ist >> obj;
-    Individual::from_json(obj);
+    NATURAL_MORTALITY_ = obj.at("natural_mortality").get<decltype(NATURAL_MORTALITY_)>();
+    FISHING_MORTALITY_ = obj.at("fishing_mortality").get<decltype(FISHING_MORTALITY_)>();
+    WEIGHT_FOR_AGE_ = obj.at("weight_for_age").get<decltype(WEIGHT_FOR_AGE_)>();
+    MIGRATION_MATRICES_ = obj.at("migration_matrices").get<decltype(MIGRATION_MATRICES_)>();
+    set_dependent_static();
 }
 
 void Individual::write_json(std::ostream& ost) {
     nlohmann::json obj;
-    Individual::to_json(obj);
+    obj["natural_mortality"] = NATURAL_MORTALITY_;
+    obj["fishing_mortality"] = FISHING_MORTALITY_;
+    obj["weight_for_age"] = WEIGHT_FOR_AGE_;
+    obj["migration_matrices"] = MIGRATION_MATRICES_;
     ost << obj;
 }
 
