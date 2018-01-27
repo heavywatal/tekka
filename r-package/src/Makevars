@@ -1,3 +1,0 @@
-CXX_STD = CXX14
-PKG_CPPFLAGS = -DSTRICT_R_HEADERS -I${HOME}/local/include
-PKG_LIBS = -L${HOME}/local/lib -lblackthunnus
