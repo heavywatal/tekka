@@ -37,3 +37,7 @@ make install
 
 If needed, set `CMAKE_PREFIX_PATH` or `BOOST_ROOT` variable so that CMake can find your libraries,
 e.g., `cmake -DCMAKE_INSTALL_PREFIX=$(brew --prefix) ..`
+
+## R interface
+
+You can use this program via [R package "tekkamaki"](https://github.com/heavywatal/blackthunnus/tree/master/r-package).
