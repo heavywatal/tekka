@@ -15,6 +15,6 @@ set(CPPFLAGS "-I${CXX_INCLUDEDIR}")
 set(LDFLAGS "-L${CXX_LIBDIR}")
 set(LDLIBS "-l${CXX_PROJECT}")
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/Makevars.in
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/Makevars @ONLY
+  ${CMAKE_CURRENT_SOURCE_DIR}/Makevars.in
+  ${CMAKE_CURRENT_SOURCE_DIR}/Makevars @ONLY
 )
