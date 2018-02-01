@@ -2,16 +2,40 @@
 % Please edit documentation in R/graph.R
 \name{as_igraph}
 \alias{as_igraph}
+\alias{leaf_V}
+\alias{find_kinship}
 \title{convert result to igraph}
 \usage{
 as_igraph(.tbl)
+
+leaf_V(graph, mode = "out")
+
+find_kinship(graph, nodes, order = 4L)
 }
 \arguments{
 \item{.tbl}{result tibble}
+
+\item{graph}{The graph to analyze.}
+
+\item{mode}{Character string, \dQuote{out} for out-degree, \dQuote{in} for
+in-degree or \dQuote{total} for the sum of the two. For undirected graphs
+this argument is ignored. \dQuote{all} is a synonym of \dQuote{total}.}
+
+\item{nodes}{The vertices for which the calculation is performed.}
+
+\item{order}{Integer giving the order of the neighborhood.}
 }
 \value{
 igraph
+
+vertices
+
+tibble
 }
 \description{
 convert result to igraph
+
+return vertices with zero degree
+
+find kinship below max_degree
 }

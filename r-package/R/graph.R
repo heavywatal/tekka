@@ -10,3 +10,30 @@ as_igraph = function(.tbl) {
     dplyr::select(.data$parent_id, .data$id) %>%
     igraph::graph_from_data_frame()
 }
+
+#' return vertices with zero degree
+#' @inheritParams igraph::degree
+#' @return vertices
+#' @rdname graph
+#' @export
+leaf_V = function(graph, mode = "out") {
+  igraph::V(graph)[igraph::degree(graph, mode = mode) < 1]
+}
+
+#' find kinship below max_degree
+#' @inheritParams igraph::ego
+#' @return tibble
+#' @rdname graph
+#' @export
+find_kinship = function(graph, nodes, order = 4L) {
+  purrr::map_dfr(seq_len(order), ~{
+      tibble::tibble(
+        degree = .x,
+        from = as.integer(nodes),
+        to = igraph::ego(graph, order=.x, nodes=nodes, mode = "all", mindist=.x) %>%
+          purrr::map(., ~{as.integer(.x$name[.x$name %in% nodes])})
+      )
+  }) %>%
+    tidyr::unnest() %>%
+    dplyr::filter(.data$from < .data$to)
+}
