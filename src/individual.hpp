@@ -46,7 +46,7 @@ class Individual {
     //! change #location_
     void migrate(const uint_fast32_t year, URBG&);
 
-    void trace_back(std::map<uint_fast32_t, Individual*>* nodes) {
+    void trace_back(std::map<uint_fast32_t, const Individual*>* nodes) const {
         if (nodes->emplace(id_, this).second && father_) {
             father_->trace_back(nodes);
             mother_->trace_back(nodes);
