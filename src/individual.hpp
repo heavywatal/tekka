@@ -9,7 +9,7 @@
 #include <iosfwd>
 #include <memory>
 #include <vector>
-#include <map>
+#include <set>
 
 namespace wtl {class sfmt19937_64;}
 
@@ -46,8 +46,14 @@ class Individual {
     //! change #location_
     void migrate(const uint_fast32_t year, URBG&);
 
-    void trace_back(std::map<uint_fast32_t, const Individual*>* nodes) const {
-        if (nodes->emplace(id_, this).second && father_) {
+    struct less {
+        bool operator()(const Individual* const px, const Individual* const py) const {
+            return px->id_ < py->id_;
+        }
+    };
+
+    void trace_back(std::set<const Individual*, less>* nodes) const {
+        if (nodes->emplace(this).second && father_) {
             father_->trace_back(nodes);
             mother_->trace_back(nodes);
         }
