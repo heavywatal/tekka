@@ -5,7 +5,7 @@
 #' @export
 as_igraph = function(.tbl) {
   .tbl %>%
-    dplyr::filter(.data$id > 0L) %>%
+    dplyr::filter(.data$father_id > 0L) %>%
     gather_chromosome() %>%
     dplyr::select(.data$parent_id, .data$id) %>%
     igraph::graph_from_data_frame()
