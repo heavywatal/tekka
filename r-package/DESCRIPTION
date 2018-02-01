@@ -11,6 +11,7 @@ Suggests: tidyverse
 Imports:
   dplyr,
   ggplot2,
+  igraph,
   magrittr,
   purrr,
   readr,
