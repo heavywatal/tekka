@@ -7,10 +7,16 @@
 
 #include <vector>
 #include <string>
+#include <memory>
 
-namespace boost {namespace program_options {class options_description;}}
+namespace boost {namespace program_options {
+  class options_description;
+  class variables_map;
+}}
 
 namespace pbt {
+
+class Population;
 
 /*! @brief Program class
 */
@@ -21,34 +27,26 @@ class Program {
     //! parse command arguments
     Program(int argc, char* argv[])
     : Program(std::vector<std::string>(argv, argv + argc)) {}
-
+    //! non-default destructor for forward declaration
+    ~Program();
     //! top level function that should be called once from global main
     void run();
+    //! getter of #population_ reference for Rcpp
+    const Population& population() const {return *population_;}
 
   private:
-    //! options description for Program class
-    boost::program_options::options_description options_desc();
     //! print help message and exit
     [[noreturn]] void help_and_exit();
-
-    //! initial population size
-    size_t pop_size_ = 1000u;
-    //! proportion of sampling per year
-    double sample_rate_ = 0.02;
-    //! mutation rate per segment per generation
-    double mutation_rate_ = 0.1;
-    //! maximum years to simulate
-    uint_fast32_t simulating_duration_ = 40u;
-    //! last years to record samples
-    uint_fast32_t recording_duration_ = 2u;
-    //! write individual genealogy
-    bool output_family_tree_ = false;
-    //! number of threads
-    unsigned int concurrency_ = 1u;
+    //! options description for Program class
+    boost::program_options::options_description options_desc();
+    //! optional variables
+    std::unique_ptr<boost::program_options::variables_map> vars_;
     //! name of output directory
     std::string out_dir_ = "";
     //! writen to "program_options.conf"
     std::string config_string_;
+    //! Population instance
+    std::unique_ptr<Population> population_;
 };
 
 } // namespace pbt
