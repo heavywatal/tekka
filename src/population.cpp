@@ -13,7 +13,8 @@
 namespace pbt {
 
 Population::Population(const size_t initial_size)
-: engine_(std::make_unique<URBG>(wtl::random_device_64{}())) {HERE;
+: seed_(wtl::random_device_64{}()),
+  engine_(std::make_unique<URBG>(seed_)) {HERE;
     Individual::set_default_values();
     const size_t half = initial_size / 2UL;
     const size_t rest = initial_size - half;
@@ -218,7 +219,7 @@ std::ostream& Population::write_ms(double lambda, std::ostream& ost) const {
         current.clear();
         next.swap(current);
     }
-    std::cerr << "uncoalesced: " << num_uncoalesced << "\n";
+    DCERR("uncoalesced: " << num_uncoalesced << " / " << sampled_nodes.size() << "\n");
     WTL_ASSERT(num_coalesced + num_uncoalesced == sampled_nodes.size());
 
     std::set<double> positions_collector;
@@ -227,6 +228,11 @@ std::ostream& Population::write_ms(double lambda, std::ostream& ost) const {
     }
     std::vector<double> positions(positions_collector.begin(), positions_collector.end());
 
+    ost << seed_ << "\n\n\n"
+        << "//\n"
+        << "segsites: " << positions.size() << "\n"
+        << "positions: ";
+    wtl::join(positions, ost, " ") << "\n";
     for (const auto& p: sampled_nodes) {
         std::set<double> genotype;
         p->accumulate(&genotype);

@@ -75,7 +75,7 @@ po::options_description Program::options_desc() {HERE;
 
 Program::Program(const std::vector<std::string>& arguments)
 : vars_(std::make_unique<po::variables_map>()) {HERE;
-    wtl::join(arguments, std::cerr, " ") << std::endl;
+    wtl::join(arguments, std::cout, " ") << std::endl;
     std::ios::sync_with_stdio(false);
     std::cin.tie(0);
     std::cout.precision(15);
