@@ -3,6 +3,7 @@
 */
 #include "population.hpp"
 #include "individual.hpp"
+#include "segment.hpp"
 
 #include <wtl/debug.hpp>
 #include <wtl/iostr.hpp>
