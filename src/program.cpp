@@ -42,6 +42,7 @@ inline po::options_description general_desc() {HERE;
     `-y,--years`        |         | Program::simulating_duration_
     `-l,--last`         |         | Program::recording_duration_
     `-s,--sample`       |         | Program::sample_size_
+    `-u,--mutation`     |         | Program::mutation_rate_
     `-j,--parallel`     |         | Program::concurrency_
     `-o,--outdir`       |         | Program::out_dir_
 */
@@ -52,10 +53,12 @@ po::options_description Program::options_desc() {HERE;
       ("years,y", po::value(&simulating_duration_)->default_value(simulating_duration_))
       ("last,l", po::value(&recording_duration_)->default_value(recording_duration_), "Sample last _ years")
       ("sample,s", po::value(&sample_rate_)->default_value(sample_rate_))
+      ("mutation,u", po::value(&mutation_rate_)->default_value(mutation_rate_))
       ("parallel,j", po::value(&concurrency_)->default_value(concurrency_))
       ("outdir-predefined,O", po::bool_switch(), OUT_DIR.c_str())
       ("default,d", po::bool_switch(), "Print default parameters in json")
       ("infile,i", po::value<std::string>(), "config file in json format")
+      ("tree,t", po::bool_switch(&output_family_tree_), "Output family tree")
       ("outdir,o", po::value(&out_dir_));
     // description.add(Population::options_desc());
     description.add(Individual::options_desc());
@@ -109,23 +112,23 @@ Program::Program(const std::vector<std::string>& arguments) {HERE;
 }
 
 void Program::run() {HERE;
-    try {
-        main();
-    } catch (const wtl::KeyboardInterrupt& e) {
-        std::cerr << e.what() << std::endl;
-    }
-}
-
-void Program::main() {HERE;
     Population pop(pop_size_);
     pop.run(simulating_duration_, sample_rate_, recording_duration_);
     if (!out_dir_.empty()) {
         wtl::ChDir cd(out_dir_, true);
         wtl::make_ofs("program_options.conf") << config_string_;
-        wtl::ozfstream ost{"sample_family.tsv.gz"};
-        pop.write_sample_family(ost);
+        if (output_family_tree_) {
+            wtl::ozfstream ost{"sample_family.tsv.gz"};
+            pop.write_sample_family(ost);
+        }
+        wtl::ozfstream ost{"msout.txt.gz"};
+        pop.write_ms(mutation_rate_, ost);
     } else {
-        pop.write_sample_family(std::cout);
+        if (output_family_tree_) {
+            pop.write_sample_family(std::cout);
+        } else {
+            pop.write_ms(mutation_rate_, std::cout);
+        }
     }
 }
 

@@ -26,8 +26,6 @@ class Program {
     void run();
 
   private:
-    //! called from run()
-    void main();
     //! options description for Program class
     boost::program_options::options_description options_desc();
     //! print help message and exit
@@ -37,10 +35,14 @@ class Program {
     size_t pop_size_ = 1000u;
     //! proportion of sampling per year
     double sample_rate_ = 0.02;
+    //! mutation rate per segment per generation
+    double mutation_rate_ = 0.1;
     //! maximum years to simulate
     uint_fast32_t simulating_duration_ = 40u;
     //! last years to record samples
     uint_fast32_t recording_duration_ = 2u;
+    //! write individual genealogy
+    bool output_family_tree_ = false;
     //! number of threads
     unsigned int concurrency_ = 1u;
     //! name of output directory
