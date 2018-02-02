@@ -137,4 +137,10 @@ void Program::run() {HERE;
     }
 }
 
+std::string Program::sample_family() const {
+    std::ostringstream oss;
+    population_->write_sample_family(oss);
+    return oss.str();
+}
+
 } // namespace pbt

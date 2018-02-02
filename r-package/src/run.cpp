@@ -8,9 +8,6 @@
 // [[Rcpp::export]]
 std::vector<std::string> cpp_blackthunnus(const std::vector<std::string>& args) {
     pbt::Program program(args);
-    std::stringbuf bypass;
-    std::streambuf* original_buf = std::cout.rdbuf(&bypass);
     program.run();
-    std::cout.rdbuf(original_buf);
-    return {bypass.str()};
+    return {program.sample_family()};
 }

@@ -31,8 +31,8 @@ class Program {
     ~Program();
     //! top level function that should be called once from global main
     void run();
-    //! getter of #population_ reference for Rcpp
-    const Population& population() const {return *population_;}
+    //! output for Rcpp
+    std::string sample_family() const;
 
   private:
     //! print help message and exit
