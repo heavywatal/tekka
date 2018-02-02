@@ -40,6 +40,8 @@ class Population {
     std::ostream& write_sample(std::ostream&) const;
     //! Construct and write tree from samples
     std::ostream& write_sample_family(std::ostream& ost) const;
+    //! output ms-like sequences
+    std::ostream& write_ms(double, std::ostream&) const;
     //! write
     std::ostream& write(std::ostream&) const;
     friend std::ostream& operator<<(std::ostream&, const Population&);

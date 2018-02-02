@@ -7,6 +7,7 @@
 #include <wtl/debug.hpp>
 #include <wtl/iostr.hpp>
 #include <wtl/random.hpp>
+#include <wtl/exception.hpp>
 #include <sfmt.hpp>
 
 namespace pbt {
@@ -167,6 +168,70 @@ std::ostream& Population::write_sample_family(std::ostream& ost) const {
         auto it = id_year.find(p->id());
         if (it != id_year.end()) {
             ost << it->second;
+        }
+        ost << "\n";
+    }
+    return ost;
+}
+
+std::ostream& Population::write_ms(double lambda, std::ostream& ost) const {
+    std::poisson_distribution<uint_fast32_t> poisson(lambda);
+    auto runif = [&poisson](URBG& engine) {
+        uint_fast32_t n = poisson(engine);
+        std::vector<double> v(n);
+        for (uint_fast32_t i=0; i<n; ++i) {
+            v[i] = wtl::generate_canonical(engine);
+        }
+        return v;
+    };
+
+    std::set<Segment, Segment::less> nodes;
+    std::vector<const Segment*> sampled_nodes;
+    for (const auto& ys: year_samples_) {
+        for (const auto& p: ys.second) {
+            for (bool b: {true, false}) {
+                auto it = nodes.emplace(p.get(), b, runif(*engine_)).first;
+                sampled_nodes.push_back(&*it);
+            }
+        }
+    }
+    std::vector<const Segment*> current(sampled_nodes);
+    uint_fast32_t num_coalesced = 0u;
+    uint_fast32_t num_uncoalesced = 0u;
+    while (current.size() > 1u) {
+        std::vector<const Segment*> next;
+        for (auto& x: current) {
+            if (x->is_first_gen()) {
+                ++num_uncoalesced;
+                continue;
+            }
+            auto p = nodes.emplace(x->ancestral_segment(wtl::generate_canonical(*engine_) < 0.5));
+            if (!p.second) {
+                ++num_coalesced;
+                continue;
+            }
+            p.first->set_mutations(runif(*engine_));
+            auto ancp = const_cast<Segment*>(&*p.first);
+            x->set_ancestor(ancp);
+            next.push_back(ancp);
+        }
+        current.clear();
+        next.swap(current);
+    }
+    std::cerr << "uncoalesced: " << num_uncoalesced << "\n";
+    WTL_ASSERT(num_coalesced + num_uncoalesced == sampled_nodes.size());
+
+    std::set<double> positions_collector;
+    for (const auto& s: nodes) {
+        positions_collector.insert(s.begin(), s.end());
+    }
+    std::vector<double> positions(positions_collector.begin(), positions_collector.end());
+
+    for (const auto& p: sampled_nodes) {
+        std::set<double> genotype;
+        p->accumulate(&genotype);
+        for (double x: positions) {
+            ost << (genotype.find(x) != genotype.end());
         }
         ost << "\n";
     }
