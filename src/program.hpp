@@ -41,8 +41,6 @@ class Program {
     boost::program_options::options_description options_desc();
     //! optional variables
     std::unique_ptr<boost::program_options::variables_map> vars_;
-    //! name of output directory
-    std::string out_dir_ = "";
     //! writen to "program_options.conf"
     std::string config_string_;
     //! Population instance

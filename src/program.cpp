@@ -22,8 +22,6 @@ namespace pbt {
 namespace fs = boost::filesystem;
 namespace po = boost::program_options;
 
-const std::string OUT_DIR = wtl::strftime("thunnus_%Y%m%d_%H%M_") + std::to_string(::getpid());
-
 //! options description for general arguments
 inline po::options_description general_desc() {HERE;
     po::options_description description("General");
@@ -47,6 +45,7 @@ inline po::options_description general_desc() {HERE;
     `-j,--parallel`     |         |
 */
 po::options_description Program::options_desc() {HERE;
+    const std::string OUT_DIR = wtl::strftime("thunnus_%Y%m%d_%H%M%S");
     po::options_description description("Program");
     description.add_options()
       ("popsize,n", po::value<size_t>()->default_value(1000u), "Initial population size")
@@ -54,11 +53,10 @@ po::options_description Program::options_desc() {HERE;
       ("last,l", po::value<uint_fast32_t>()->default_value(2u), "Sample last _ years")
       ("sample,s", po::value<double>()->default_value(0.02))
       ("mutation,u", po::value<double>()->default_value(0.1))
-      ("outdir-predefined,O", po::bool_switch(), OUT_DIR.c_str())
       ("default,d", po::bool_switch(), "Print default parameters in json")
       ("infile,i", po::value<std::string>(), "config file in json format")
+      ("outdir,o", po::value<std::string>()->default_value("")->implicit_value(OUT_DIR))
       ("tree,t", po::bool_switch(), "Output family tree")
-      ("outdir,o", po::value(&out_dir_))
     ;
     description.add(Individual::options_desc());
     return description;
@@ -104,12 +102,6 @@ Program::Program(const std::vector<std::string>& arguments)
         std::cerr << config_string_ << std::endl;
         Individual::write_json(std::cerr);
     }
-    if (vm["outdir-predefined"].as<bool>()) {
-        if (vm.count("outdir")) {
-            throw std::runtime_error("cannot use -o and -O at the same time");
-        }
-        out_dir_ = OUT_DIR;
-    }
 }
 
 Program::~Program() {HERE;}
@@ -123,11 +115,12 @@ void Program::run() {HERE;
     const auto last_years = vm["last"].as<uint_fast32_t>();
     const auto sampling_rate = vm["sample"].as<double>();
     const auto mutation_rate = vm["mutation"].as<double>();
+    const auto outdir = vm["outdir"].as<std::string>();
     population_ = std::make_unique<Population>(popsize);
     population_->run(years, sampling_rate, last_years);
     if (quiet) return;
-    if (!out_dir_.empty()) {
-        wtl::ChDir cd(out_dir_, true);
+    if (!outdir.empty()) {
+        wtl::ChDir cd(outdir, true);
         wtl::make_ofs("program_options.conf") << config_string_;
         if (writing_tree) {
             wtl::ozfstream ost{"sample_family.tsv.gz"};
