@@ -116,23 +116,30 @@ Program::~Program() {HERE;}
 
 void Program::run() {HERE;
     auto& vm = *vars_;
-    population_ = std::make_unique<Population>(vm["popsize"].as<size_t>());
-    population_->run(vm["years"].as<uint_fast32_t>(), vm["sample"].as<double>(), vm["last"].as<uint_fast32_t>());
-    if (vm["quiet"].as<bool>()) return;
+    const auto quiet = vm["quiet"].as<bool>();
+    const auto writing_tree = vm["tree"].as<bool>();
+    const auto popsize = vm["popsize"].as<size_t>();
+    const auto years = vm["years"].as<uint_fast32_t>();
+    const auto last_years = vm["last"].as<uint_fast32_t>();
+    const auto sampling_rate = vm["sample"].as<double>();
+    const auto mutation_rate = vm["mutation"].as<double>();
+    population_ = std::make_unique<Population>(popsize);
+    population_->run(years, sampling_rate, last_years);
+    if (quiet) return;
     if (!out_dir_.empty()) {
         wtl::ChDir cd(out_dir_, true);
         wtl::make_ofs("program_options.conf") << config_string_;
-        if (vm["tree"].as<bool>()) {
+        if (writing_tree) {
             wtl::ozfstream ost{"sample_family.tsv.gz"};
             population_->write_sample_family(ost);
         }
         wtl::ozfstream ost{"msout.txt.gz"};
-        population_->write_ms(vm["mutation"].as<double>(), ost);
+        population_->write_ms(mutation_rate, ost);
     } else {
-        if (vm["tree"].as<bool>()) {
+        if (writing_tree) {
             population_->write_sample_family(std::cout);
         } else {
-            population_->write_ms(vm["mutation"].as<double>(), std::cout);
+            population_->write_ms(mutation_rate, std::cout);
         }
     }
 }
