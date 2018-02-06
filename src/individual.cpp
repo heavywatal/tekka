@@ -8,7 +8,7 @@
 #include <wtl/iostr.hpp>
 #include <wtl/random.hpp>
 #include <sfmt.hpp>
-#include <json.hpp>  // namespace nlohmann
+#include <nlohmann/json.hpp>
 #include <boost/program_options.hpp>
 
 namespace pbt {
