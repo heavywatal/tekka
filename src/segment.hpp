@@ -15,8 +15,8 @@ namespace pbt {
 */
 class Segment {
   public:
-    Segment(const Individual* i, bool b, const std::vector<double>& v={})
-    : individual(i), is_from_father(b), mutations_(v) {}
+    Segment(const Individual* i, bool b)
+    : individual(i), is_from_father(b) {}
 
     struct less {
         bool operator()(const Segment& x, const Segment& y) const {

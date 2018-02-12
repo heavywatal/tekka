@@ -192,7 +192,7 @@ std::ostream& Population::write_ms(double lambda, std::ostream& ost) const {
     for (const auto& ys: year_samples_) {
         for (const auto& p: ys.second) {
             for (bool b: {true, false}) {
-                auto it = nodes.emplace(p.get(), b, runif(*engine_)).first;
+                auto it = nodes.emplace(p.get(), b).first;
                 sampled_nodes.push_back(&*it);
             }
         }
@@ -203,6 +203,7 @@ std::ostream& Population::write_ms(double lambda, std::ostream& ost) const {
     while (current.size() > 1u) {
         std::vector<const Segment*> next;
         for (auto& x: current) {
+            x->set_mutations(runif(*engine_));
             if (x->is_first_gen()) {
                 ++num_uncoalesced;
                 continue;
@@ -212,7 +213,6 @@ std::ostream& Population::write_ms(double lambda, std::ostream& ost) const {
                 ++num_coalesced;
                 continue;
             }
-            p.first->set_mutations(runif(*engine_));
             auto ancp = const_cast<Segment*>(&*p.first);
             x->set_ancestor(ancp);
             next.push_back(ancp);
