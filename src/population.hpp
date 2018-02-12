@@ -25,7 +25,7 @@ class Individual;
 class Population {
   public:
     //! constructor
-    Population(const size_t initial_size);
+    Population(const size_t initial_size, unsigned int seed);
     //! destructor
     ~Population();
 
@@ -70,8 +70,6 @@ class Population {
     std::map<uint_fast32_t, std::vector<std::shared_ptr<Individual>>> year_samples_;
     //! year
     uint_fast32_t year_ = 0;
-    //! seed for URBG
-    const uint64_t seed_;
     //! random bit generator
     std::unique_ptr<URBG> engine_;
 };

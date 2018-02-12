@@ -57,6 +57,7 @@ po::options_description Program::options_desc() {HERE;
       ("infile,i", po::value<std::string>(), "config file in json format")
       ("outdir,o", po::value<std::string>()->default_value("")->implicit_value(OUT_DIR))
       ("tree,t", po::bool_switch(), "Output family tree")
+      ("seed", po::value<std::random_device::result_type>()->default_value(std::random_device{}()))
     ;
     description.add(Individual::options_desc());
     return description;
@@ -72,8 +73,8 @@ po::options_description Program::options_desc() {HERE;
 }
 
 Program::Program(const std::vector<std::string>& arguments)
-: vars_(std::make_unique<po::variables_map>()) {HERE;
-    wtl::join(arguments, std::cout, " ") << std::endl;
+: vars_(std::make_unique<po::variables_map>()),
+  command_args_(arguments) {HERE;
     std::ios::sync_with_stdio(false);
     std::cin.tie(0);
     std::cout.precision(15);
@@ -116,7 +117,8 @@ void Program::run() {HERE;
     const auto sampling_rate = vm["sample"].as<double>();
     const auto mutation_rate = vm["mutation"].as<double>();
     const auto outdir = vm["outdir"].as<std::string>();
-    population_ = std::make_unique<Population>(popsize);
+    const auto seed = vm["seed"].as<std::random_device::result_type>();
+    population_ = std::make_unique<Population>(popsize, seed);
     population_->run(years, sampling_rate, last_years);
     if (quiet) return;
     if (!outdir.empty()) {
@@ -132,6 +134,8 @@ void Program::run() {HERE;
         if (writing_tree) {
             population_->write_sample_family(std::cout);
         } else {
+            wtl::join(command_args_, std::cout, " ") << "\n";
+            std::cout << seed << "\n";
             population_->write_ms(mutation_rate, std::cout);
         }
     }

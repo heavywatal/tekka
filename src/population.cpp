@@ -13,9 +13,8 @@
 
 namespace pbt {
 
-Population::Population(const size_t initial_size)
-: seed_(wtl::random_device_64{}()),
-  engine_(std::make_unique<URBG>(seed_)) {HERE;
+Population::Population(const size_t initial_size, std::random_device::result_type seed)
+: engine_(std::make_unique<URBG>(seed)) {HERE;
     Individual::set_default_values();
     const size_t half = initial_size / 2UL;
     const size_t rest = initial_size - half;
@@ -229,8 +228,7 @@ std::ostream& Population::write_ms(double lambda, std::ostream& ost) const {
     }
     std::vector<double> positions(positions_collector.begin(), positions_collector.end());
 
-    ost << seed_ << "\n\n\n"
-        << "//\n"
+    ost << "\n//\n"
         << "segsites: " << positions.size() << "\n"
         << "positions: ";
     wtl::join(positions, ost, " ") << "\n";
