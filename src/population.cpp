@@ -200,7 +200,7 @@ std::ostream& Population::write_ms(double lambda, std::ostream& ost) const {
     std::vector<const Segment*> current(sampled_nodes);
     uint_fast32_t num_coalesced = 0u;
     uint_fast32_t num_uncoalesced = 0u;
-    while (current.size() > 1u) {
+    while (!current.empty()) {
         std::vector<const Segment*> next;
         for (auto& x: current) {
             x->set_mutations(runif(*engine_));
@@ -209,13 +209,13 @@ std::ostream& Population::write_ms(double lambda, std::ostream& ost) const {
                 continue;
             }
             auto p = nodes.emplace(x->ancestor(), wtl::generate_canonical(*engine_) < 0.5);
-            if (!p.second) {
-                ++num_coalesced;
-                continue;
-            }
             auto ancp = const_cast<Segment*>(&*p.first);
             x->set_ancestral_segment(ancp);
-            next.push_back(ancp);
+            if (p.second) {
+                next.push_back(ancp);
+            } else {
+                ++num_coalesced;
+            }
         }
         current.clear();
         next.swap(current);
