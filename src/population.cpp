@@ -235,12 +235,7 @@ std::ostream& Population::write_ms(double lambda, std::ostream& ost) const {
         << "positions: ";
     wtl::join(positions, ost, " ") << "\n";
     for (const auto& p: sampled_nodes) {
-        std::set<double> genotype;
-        p->accumulate(&genotype);
-        for (double x: positions) {
-            ost << (genotype.find(x) != genotype.end());
-        }
-        ost << "\n";
+        wtl::join(p->binary_genotype(positions), ost, "") << "\n";
     }
     return ost;
 }
