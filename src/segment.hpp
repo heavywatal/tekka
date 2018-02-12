@@ -27,20 +27,20 @@ class Segment {
     void set_mutations(std::vector<double>&& v) const {
         mutations_ = v;
     }
-    void set_ancestor(Segment* p) const {
-        ancestor_ = p;
+    void set_ancestral_segment(Segment* p) const {
+        ancestral_segment_ = p;
     }
-    Segment ancestral_segment(bool is_from_grandpa) const {
+    const Individual* ancestor() const {
         if (is_from_father) {
-            return Segment(individual->father_get(), is_from_grandpa);
+            return individual->father_get();
         } else {
-            return Segment(individual->mother_get(), is_from_grandpa);
+            return individual->mother_get();
         }
     }
     void accumulate(std::set<double>* genotype) const {
         genotype->insert(begin(), end());
-        if (ancestor_) {
-            ancestor_->accumulate(genotype);
+        if (ancestral_segment_) {
+            ancestral_segment_->accumulate(genotype);
         }
     }
 
@@ -52,7 +52,7 @@ class Segment {
     const bool is_from_father;
   private:
     mutable std::vector<double> mutations_;
-    mutable Segment* ancestor_ = nullptr;
+    mutable Segment* ancestral_segment_ = nullptr;
 };
 
 } // namespace pbt

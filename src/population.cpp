@@ -208,13 +208,13 @@ std::ostream& Population::write_ms(double lambda, std::ostream& ost) const {
                 ++num_uncoalesced;
                 continue;
             }
-            auto p = nodes.emplace(x->ancestral_segment(wtl::generate_canonical(*engine_) < 0.5));
+            auto p = nodes.emplace(x->ancestor(), wtl::generate_canonical(*engine_) < 0.5);
             if (!p.second) {
                 ++num_coalesced;
                 continue;
             }
             auto ancp = const_cast<Segment*>(&*p.first);
-            x->set_ancestor(ancp);
+            x->set_ancestral_segment(ancp);
             next.push_back(ancp);
         }
         current.clear();
