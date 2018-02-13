@@ -5,7 +5,7 @@
 #' @export
 as_igraph = function(.tbl) {
   .tbl %>%
-    dplyr::filter(.data$father_id > 0L) %>%
+    dplyr::filter(.data$father_id != "0x0") %>%
     gather_chromosome() %>%
     dplyr::select(.data$parent_id, .data$id) %>%
     igraph::graph_from_data_frame()
@@ -26,13 +26,14 @@ leaf_V = function(graph, mode = "out") {
 #' @rdname graph
 #' @export
 find_kinship = function(graph, nodes, order = 4L) {
+  stopifnot(is.character(nodes))
   purrr::map_dfr(seq_len(order), ~{
-      tibble::tibble(
-        degree = .x,
-        from = as.integer(nodes),
-        to = igraph::ego(graph, order=.x, nodes=nodes, mode = "all", mindist=.x) %>%
-          purrr::map(., ~{as.integer(.x$name[.x$name %in% nodes])})
-      )
+    tibble::tibble(
+      degree = .x,
+      from = nodes,
+      to = igraph::ego(graph, order = .x, nodes = nodes, mode = "all", mindist = .x) %>%
+        purrr::map(., ~.x$name[.x$name %in% nodes])
+    )
   }) %>%
     tidyr::unnest() %>%
     dplyr::filter(.data$from < .data$to)
