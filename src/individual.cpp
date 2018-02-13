@@ -19,7 +19,6 @@ std::vector<double> Individual::FISHING_MORTALITY_;
 std::vector<double> Individual::SURVIVAL_RATE_;
 std::vector<double> Individual::WEIGHT_FOR_AGE_;
 std::vector<std::vector<std::vector<double>>> Individual::MIGRATION_MATRICES_;
-uint_fast32_t Individual::LAST_ID_ = 0;
 
 //! discrete distributions for migration
 static std::vector<std::vector<std::discrete_distribution<uint_fast32_t>>> MIGRATION_DISTRIBUTIONS;
@@ -89,15 +88,11 @@ std::vector<std::string> Individual::names() {
 }
 
 std::ostream& Individual::write(std::ostream& ost) const {
-    return write_ids(ost) << "\t"
+    return ost << this << "\t"
+               << father_ << "\t"
+               << mother_ << "\t"
                << birth_year_ << "\t"
                << location_;
-}
-
-std::ostream& Individual::write_ids(std::ostream& ost) const {
-    return ost << id_ << "\t"
-               << (father_ ? father_->id() : 0u) << "\t"
-               << (mother_ ? mother_->id() : 0u);
 }
 
 //! shortcut Individual::write(ost)

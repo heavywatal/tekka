@@ -155,18 +155,18 @@ std::ostream& Population::write_sample(std::ostream& ost) const {
 }
 
 std::ostream& Population::write_sample_family(std::ostream& ost) const {
-    std::unordered_map<uint_fast32_t, uint_fast32_t> id_year;
+    std::unordered_map<const Individual*, uint_fast32_t> id_year;
     std::set<const Individual*, Individual::less> nodes;
     for (const auto& ys: year_samples_) {
         for (const auto& p: ys.second) {
             p->trace_back(&nodes);
-            id_year.emplace(p->id(), ys.first);
+            id_year.emplace(p.get(), ys.first);
         }
     }
     write_sample_header(ost);
     for (const auto& p: nodes) {
         ost << *p << "\t";
-        auto it = id_year.find(p->id());
+        auto it = id_year.find(p);
         if (it != id_year.end()) {
             ost << it->second;
         }

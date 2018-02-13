@@ -29,7 +29,7 @@ class Individual {
     Individual() = default;
     //! sexual reproduction
     Individual(const std::shared_ptr<Individual>& father, const std::shared_ptr<Individual>& mother, const uint_fast32_t year)
-    : father_(father), mother_(mother), id_(++LAST_ID_),
+    : father_(father), mother_(mother),
       birth_year_(year), location_(mother->location()) {}
 
     //! evaluate survival
@@ -48,7 +48,7 @@ class Individual {
 
     struct less {
         bool operator()(const Individual* const px, const Individual* const py) const {
-            return px->id_ < py->id_;
+            return px < py;
         }
     };
 
@@ -61,8 +61,6 @@ class Individual {
 
     //! write all the data members in TSV
     std::ostream& write(std::ostream&) const;
-    //! write ids in TSV
-    std::ostream& write_ids(std::ostream&) const;
     friend std::ostream& operator<<(std::ostream&, const Individual&);
     //! column names for write()
     static std::vector<std::string> names();
@@ -93,8 +91,6 @@ class Individual {
     const Individual* father_get() const {return father_.get();}
     //! getter of #mother_
     const Individual* mother_get() const {return mother_.get();}
-    //! getter of #id_
-    uint_fast32_t id() const {return id_;}
     //! getter of #birth_year_
     uint_fast32_t birth_year() const {return birth_year_;}
     //! getter of #location_
@@ -121,15 +117,11 @@ class Individual {
     static std::vector<double> WEIGHT_FOR_AGE_;
     //! transition matrix for migration
     static std::vector<std::vector<std::vector<double>>> MIGRATION_MATRICES_;
-    //! ID for a new instance
-    static uint_fast32_t LAST_ID_;
 
     //! father
     const std::shared_ptr<Individual> father_ = nullptr;
     //! mother
     const std::shared_ptr<Individual> mother_ = nullptr;
-    //! ID
-    const uint_fast32_t id_ = 0;
     //! year of birth
     uint_fast32_t birth_year_ = 0;
     //! current location
