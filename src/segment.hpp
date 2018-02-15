@@ -15,8 +15,8 @@ namespace pbt {
 */
 class Segment {
   public:
-    Segment(const Individual* i, bool b)
-    : individual_(i), is_from_father_(b) {}
+    Segment(const Individual* i, bool b, bool s=false)
+    : individual_(i), is_from_father_(b), is_sampled_(s) {}
 
     struct less {
         bool operator()(const Segment& x, const Segment& y) const {
@@ -51,6 +51,7 @@ class Segment {
     bool is_first_gen() const {return individual_->is_first_gen();}
     std::vector<double>::const_iterator begin() const {return mutations_.begin();}
     std::vector<double>::const_iterator end() const {return mutations_.end();}
+    bool is_sampled() const {return is_sampled_;}
 
   private:
     void accumulate(std::set<double>* genotype) const {
@@ -62,6 +63,7 @@ class Segment {
 
     const Individual* individual_;
     const bool is_from_father_;
+    const bool is_sampled_;
     mutable std::vector<double> mutations_;
     mutable Segment* ancestral_segment_ = nullptr;
 };

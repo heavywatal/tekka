@@ -193,41 +193,41 @@ class RunifPoisson {
 
 std::ostream& Population::write_ms(double lambda, std::ostream& ost) const {
     std::set<Segment, Segment::less> nodes;
-    std::vector<const Segment*> sampled_nodes;
+    std::vector<const Segment*> queue;
     for (const auto& ys: year_samples_) {
         for (const auto& p: ys.second) {
             for (bool b: {true, false}) {
-                auto it = nodes.emplace(p.get(), b).first;
-                sampled_nodes.push_back(&*it);
+                auto it = nodes.emplace(p.get(), b, true).first;
+                queue.push_back(&*it);
             }
         }
     }
-    std::vector<const Segment*> current(sampled_nodes);
+    const size_t sample_size = queue.size();
     RunifPoisson runif(lambda);
     uint_fast32_t num_coalesced = 0u;
     uint_fast32_t num_uncoalesced = 0u;
-    while (!current.empty()) {
-        std::vector<const Segment*> next;
-        for (auto& x: current) {
+    while (!queue.empty()) {
+        std::vector<const Segment*> next_queue;
+        for (auto& x: queue) {
             x->set_mutations(runif(*engine_));
             if (x->is_first_gen()) {
                 ++num_uncoalesced;
                 continue;
             }
-            auto p = nodes.emplace(x->ancestor(), wtl::generate_canonical(*engine_) < 0.5);
+            auto p = nodes.emplace(x->ancestor(), wtl::generate_canonical(*engine_) < 0.5, false);
             auto ancp = const_cast<Segment*>(&*p.first);
             x->set_ancestral_segment(ancp);
             if (p.second) {
-                next.push_back(ancp);
+                next_queue.push_back(ancp);
             } else {
                 ++num_coalesced;
             }
         }
-        current.clear();
-        next.swap(current);
+        queue.clear();
+        queue.swap(next_queue);
     }
-    DCERR("uncoalesced: " << num_uncoalesced << " / " << sampled_nodes.size() << "\n");
-    WTL_ASSERT(num_coalesced + num_uncoalesced == sampled_nodes.size());
+    DCERR("uncoalesced: " << num_uncoalesced << " / " << sample_size << "\n");
+    WTL_ASSERT(num_coalesced + num_uncoalesced == sample_size);
 
     std::set<double> positions_collector;
     for (const auto& s: nodes) {
@@ -239,8 +239,10 @@ std::ostream& Population::write_ms(double lambda, std::ostream& ost) const {
         << "segsites: " << positions.size() << "\n"
         << "positions: ";
     wtl::join(positions, ost, " ") << "\n";
-    for (const auto& p: sampled_nodes) {
-        wtl::join(p->binary_genotype(positions), ost, "") << "\n";
+    for (const auto& p: nodes) {
+        if (p.is_sampled()) {
+            wtl::join(p.binary_genotype(positions), ost, "") << "\n";
+        }
     }
     return ost;
 }
