@@ -9,5 +9,5 @@ R interface to [blackthunnus](https://github.com/heavywatal/blackthunnus)
 1.  Install [devtools](https://github.com/hadley/devtools) in R:
     `install.packages('devtools')`
 
-1.  Execute `devtools::install_github('heavywatal/blackthunnus/r-package')` in R.
+1.  Execute `devtools::install_github('heavywatal/blackthunnus/r')` in R.
     You may need `Sys.setenv(CMAKE_PREFIX_PATH='/prefix/to/blackthunnus')` to tell R the location of blackthunnus installation.
