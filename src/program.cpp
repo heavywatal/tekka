@@ -5,6 +5,7 @@
 #include "program.hpp"
 #include "population.hpp"
 #include "individual.hpp"
+#include "segment.hpp"
 
 #include <wtl/exception.hpp>
 #include <wtl/debug.hpp>
@@ -129,14 +130,16 @@ void Program::run() {HERE;
             population_->write_sample_family(ost);
         }
         wtl::ozfstream ost{"msout.txt.gz"};
-        population_->write_ms(mutation_rate, ost);
+        auto tree = population_->coalesce();
+        population_->write_ms(tree, mutation_rate, ost);
     } else {
         if (writing_tree) {
             population_->write_sample_family(std::cout);
         } else {
             wtl::join(command_args_, std::cout, " ") << "\n";
             std::cout << seed << "\n";
-            population_->write_ms(mutation_rate, std::cout);
+            auto tree = population_->coalesce();
+            population_->write_ms(tree, mutation_rate, std::cout);
         }
     }
 }

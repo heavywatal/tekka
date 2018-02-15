@@ -8,6 +8,7 @@
 #include <cstdint>
 #include <iosfwd>
 #include <vector>
+#include <set>
 #include <map>
 #include <memory>
 
@@ -19,6 +20,8 @@ namespace pbt {
 
 using URBG = wtl::sfmt19937_64;
 class Individual;
+class Segment;
+class less_Segment;
 
 /*! @brief Population class
 */
@@ -34,14 +37,18 @@ class Population {
              const double sample_rate,
              const uint_fast32_t recording_duration=1u);
 
+    //! make tree from samples
+    std::set<Segment, less_Segment> coalesce() const;
+
     //! count individuals for each location
     std::vector<size_t> sizes() const;
+
     //! write sampled individuals
     std::ostream& write_sample(std::ostream&) const;
     //! Construct and write tree from samples
     std::ostream& write_sample_family(std::ostream& ost) const;
-    //! output ms-like sequences
-    std::ostream& write_ms(double, std::ostream&) const;
+    //! write sampled segments in ms format
+    std::ostream& write_ms(const std::set<Segment, less_Segment>&, double, std::ostream&) const;
     //! write
     std::ostream& write(std::ostream&) const;
     friend std::ostream& operator<<(std::ostream&, const Population&);

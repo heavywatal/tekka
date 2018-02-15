@@ -191,8 +191,8 @@ class RunifPoisson {
     std::poisson_distribution<uint_fast32_t> poisson_;
 };
 
-std::ostream& Population::write_ms(double lambda, std::ostream& ost) const {
-    std::set<Segment, Segment::less> nodes;
+std::set<Segment, less_Segment> Population::coalesce() const {
+    std::set<Segment, less_Segment> nodes;
     std::vector<const Segment*> queue;
     for (const auto& ys: year_samples_) {
         for (const auto& p: ys.second) {
@@ -203,13 +203,11 @@ std::ostream& Population::write_ms(double lambda, std::ostream& ost) const {
         }
     }
     const size_t sample_size = queue.size();
-    RunifPoisson runif(lambda);
     uint_fast32_t num_coalesced = 0u;
     uint_fast32_t num_uncoalesced = 0u;
     while (!queue.empty()) {
         std::vector<const Segment*> next_queue;
         for (auto& x: queue) {
-            x->set_mutations(runif(*engine_));
             if (x->is_first_gen()) {
                 ++num_uncoalesced;
                 continue;
@@ -228,20 +226,26 @@ std::ostream& Population::write_ms(double lambda, std::ostream& ost) const {
     }
     DCERR("uncoalesced: " << num_uncoalesced << " / " << sample_size << "\n");
     WTL_ASSERT(num_coalesced + num_uncoalesced == sample_size);
+    return nodes;
+}
 
-    std::set<double> positions_collector;
-    for (const auto& s: nodes) {
-        positions_collector.insert(s.begin(), s.end());
+std::ostream& Population::write_ms(const std::set<Segment, less_Segment>& nodes, double lambda, std::ostream& ost) const {
+    RunifPoisson runif(lambda);
+    std::set<double> collector;
+    for (const auto& x: nodes) {
+        auto sites = runif(*engine_);
+        collector.insert(sites.begin(), sites.end());
+        x.set_mutations(std::move(sites));
     }
-    std::vector<double> positions(positions_collector.begin(), positions_collector.end());
+    std::vector<double> positions(collector.begin(), collector.end());
 
     ost << "\n//\n"
         << "segsites: " << positions.size() << "\n"
         << "positions: ";
     wtl::join(positions, ost, " ") << "\n";
-    for (const auto& p: nodes) {
-        if (p.is_sampled()) {
-            wtl::join(p.binary_genotype(positions), ost, "") << "\n";
+    for (const auto& x: nodes) {
+        if (x.is_sampled_) {
+            wtl::join(x.binary_genotype(positions), ost, "") << "\n";
         }
     }
     return ost;
