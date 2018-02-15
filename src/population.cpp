@@ -175,17 +175,23 @@ std::ostream& Population::write_sample_family(std::ostream& ost) const {
     return ost;
 }
 
-std::ostream& Population::write_ms(double lambda, std::ostream& ost) const {
-    std::poisson_distribution<uint_fast32_t> poisson(lambda);
-    auto runif = [&poisson](URBG& engine) {
-        uint_fast32_t n = poisson(engine);
+//! Generate [0,1) doubles; size ~ Poisson(lambda)
+class RunifPoisson {
+  public:
+    RunifPoisson(double lambda): poisson_(lambda) {}
+    std::vector<double> operator()(URBG& engine) {
+        uint_fast32_t n = poisson_(engine);
         std::vector<double> v(n);
         for (uint_fast32_t i=0; i<n; ++i) {
             v[i] = wtl::generate_canonical(engine);
         }
         return v;
-    };
+    }
+  private:
+    std::poisson_distribution<uint_fast32_t> poisson_;
+};
 
+std::ostream& Population::write_ms(double lambda, std::ostream& ost) const {
     std::set<Segment, Segment::less> nodes;
     std::vector<const Segment*> sampled_nodes;
     for (const auto& ys: year_samples_) {
@@ -197,6 +203,7 @@ std::ostream& Population::write_ms(double lambda, std::ostream& ost) const {
         }
     }
     std::vector<const Segment*> current(sampled_nodes);
+    RunifPoisson runif(lambda);
     uint_fast32_t num_coalesced = 0u;
     uint_fast32_t num_uncoalesced = 0u;
     while (!current.empty()) {
