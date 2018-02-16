@@ -139,19 +139,15 @@ void Population::sample(const double rate) {
     std::copy(f_samples.begin(), f_samples.end(), std::back_inserter(samples));
 }
 
-std::ostream& Population::write_sample_header(std::ostream& ost) const {
-    if (year_samples_.empty()) return ost;
-    return wtl::join(Individual::names(), ost, "\t") << "\tcapture_year\n";
-}
-
 std::ostream& Population::write_sample_family(std::ostream& ost) const {
+    if (year_samples_.empty()) return ost;
     std::map<const Individual*, uint_fast32_t, Individual::less> nodes;
     for (const auto& ys: year_samples_) {
         for (const auto& p: ys.second) {
             p->trace_back(&nodes, ys.first);
         }
     }
-    write_sample_header(ost);
+    wtl::join(Individual::names(), ost, "\t") << "\tcapture_year\n";
     for (const auto& p: nodes) {
         ost << *p.first << "\t";
         if (p.second > 0u) {

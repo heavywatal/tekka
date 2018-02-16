@@ -64,9 +64,6 @@ class Population {
     //! sample individuals
     void sample(const double rate);
 
-    //! write column names for write_sample()
-    std::ostream& write_sample_header(std::ostream&) const;
-
     //! Individual array males
     std::vector<std::shared_ptr<Individual>> males_;
     //! Individual array females
