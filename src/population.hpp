@@ -56,7 +56,7 @@ class Population {
     void reproduce();
 
     //! evaluate survival
-    void survive(const uint_fast32_t quarter);
+    void survive(const uint_fast32_t quarter, bool shrink=true);
 
     //! evaluate migration
     void migrate();

@@ -34,10 +34,10 @@ void Population::run(const uint_fast32_t simulating_duration,
     for (year_ = 4u; year_ < simulating_duration; ++year_) {
         DCERR(year_ << ": " << sizes() << std::endl);
         reproduce();
-        survive(0u);
-        survive(1u);
-        survive(2u);
-        survive(3u);
+        survive(0u, false);
+        survive(1u, false);
+        survive(2u, false);
+        survive(3u, true);
         if (year_ >= recording_start) {
             sample(sample_rate);
         }
@@ -72,16 +72,27 @@ void Population::reproduce() {
     std::copy(girls.begin(), girls.end(), std::back_inserter(females_));
 }
 
-void Population::survive(const uint_fast32_t quarter) {
-    auto impl = [quarter,this](const decltype(males_)& v) {
-        decltype(males_) survivors;
-        survivors.reserve(v.size());
-        std::copy_if(v.begin(), v.end(), std::back_inserter(survivors),
-                     [&](const auto& p) {return p->has_survived(year_, quarter, *engine_);});
-        return survivors;
+void Population::survive(const uint_fast32_t quarter, bool shrink) {
+    auto has_survived = [quarter,this](const auto& p) -> bool {
+        return p && p->has_survived(year_, quarter, *engine_);
     };
-    males_ = impl(males_);
-    females_ = impl(females_);
+    if (shrink) {
+        auto impl = [&has_survived,this](decltype(males_)* v) {
+            decltype(males_) survivors;
+            survivors.reserve(v->size() / 4u);
+            std::copy_if(v->begin(), v->end(), std::back_inserter(survivors), has_survived);
+            survivors.swap(*v);
+        };
+        impl(&males_);
+        impl(&females_);
+    } else {
+        for (auto& p: males_) {
+            if (!has_survived(p)) p.reset();
+        }
+        for (auto& p: females_) {
+            if (!has_survived(p)) p.reset();
+        }
+    }
 }
 
 void Population::migrate() {
