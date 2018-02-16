@@ -43,8 +43,6 @@ class Population {
     //! count individuals for each location
     std::vector<size_t> sizes() const;
 
-    //! write sampled individuals
-    std::ostream& write_sample(std::ostream&) const;
     //! Construct and write tree from samples
     std::ostream& write_sample_family(std::ostream& ost) const;
     //! write sampled segments in ms format

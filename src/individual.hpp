@@ -9,7 +9,7 @@
 #include <iosfwd>
 #include <memory>
 #include <vector>
-#include <set>
+#include <map>
 
 namespace wtl {class sfmt19937_64;}
 
@@ -52,8 +52,8 @@ class Individual {
         }
     };
 
-    void trace_back(std::set<const Individual*, less>* nodes) const {
-        if (nodes->emplace(this).second && father_) {
+    void trace_back(std::map<const Individual*, uint_fast32_t, less>* nodes, uint_fast32_t year=0u) const {
+        if (nodes->emplace(this, year).second && father_) {
             father_->trace_back(nodes);
             mother_->trace_back(nodes);
         }
