@@ -13,7 +13,7 @@
 
 namespace pbt {
 
-double Individual::RECRUITMENT_COEF_ = 1.0;
+double Individual::RECRUITMENT_COEF_ = 0.73;
 std::vector<double> Individual::NATURAL_MORTALITY_;
 std::vector<double> Individual::FISHING_MORTALITY_;
 std::vector<double> Individual::SURVIVAL_RATE_;
@@ -46,9 +46,18 @@ void Individual::set_default_values() {HERE;
     read_json(iss);
 }
 
+template <class T> inline
+void elongate(std::vector<T>* v, size_t n) {
+    for (size_t i=v->size(); i<n; ++i) {
+        v->emplace_back(v->back());
+    }
+}
+
 void Individual::set_dependent_static() {HERE;
+    constexpr uint_fast32_t max_age = 80u;
+    constexpr uint_fast32_t max_qage = 4u * (max_age + 1u);
     MIGRATION_DISTRIBUTIONS.clear();
-    MIGRATION_DISTRIBUTIONS.reserve(MAX_AGE_);
+    MIGRATION_DISTRIBUTIONS.reserve(max_age);
     for (const auto& matrix: MIGRATION_MATRICES_) {
         decltype(MIGRATION_DISTRIBUTIONS)::value_type dists;
         dists.reserve(matrix.size());
@@ -57,20 +66,20 @@ void Individual::set_dependent_static() {HERE;
         }
         MIGRATION_DISTRIBUTIONS.emplace_back(std::move(dists));
     }
-    for (size_t i=MIGRATION_DISTRIBUTIONS.size(); i<MAX_AGE_; ++i) {
-        MIGRATION_DISTRIBUTIONS.emplace_back(MIGRATION_DISTRIBUTIONS.back());
-    }
+    elongate(&MIGRATION_DISTRIBUTIONS, max_age);
+    SURVIVAL_RATE_.reserve(max_qage);
     SURVIVAL_RATE_.resize(NATURAL_MORTALITY_.size());
     std::transform(NATURAL_MORTALITY_.begin(), NATURAL_MORTALITY_.end(),
                    FISHING_MORTALITY_.begin(), SURVIVAL_RATE_.begin(),
                    [](double n, double f) {
                        return std::exp(-n - f);
                    });
+    elongate(&SURVIVAL_RATE_, max_qage);
 }
 
 bool Individual::has_survived(const uint_fast32_t year, const uint_fast32_t quarter, URBG& engine) const {
-    const auto age = year - birth_year_;
-    return (wtl::generate_canonical(engine) < SURVIVAL_RATE_[4U * age + quarter]);
+    uint_fast32_t qage = 4u * (year - birth_year_) + quarter;
+    return (wtl::generate_canonical(engine) < SURVIVAL_RATE_.at(qage));
 }
 
 uint_fast32_t Individual::recruitment(const uint_fast32_t year, URBG& engine) const {
@@ -80,7 +89,7 @@ uint_fast32_t Individual::recruitment(const uint_fast32_t year, URBG& engine) co
 }
 
 void Individual::migrate(const uint_fast32_t year, URBG& engine) {
-    location_ = MIGRATION_DISTRIBUTIONS[year - birth_year_][location_](engine);
+    location_ = MIGRATION_DISTRIBUTIONS.at(year - birth_year_)[location_](engine);
 }
 
 std::vector<std::string> Individual::names() {

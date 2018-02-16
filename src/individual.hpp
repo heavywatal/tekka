@@ -99,8 +99,6 @@ class Individual {
   private:
     //! set static variables that depend on other variables
     static void set_dependent_static();
-    //! maximum age to consider
-    constexpr static uint_fast32_t MAX_AGE_ = 80u;
     //! \f$K\f$ in weight()
     constexpr static double GROWTH_RATE_ = 0.08;
     //! \f$L\f$ in weight()
