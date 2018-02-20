@@ -28,7 +28,7 @@ sprinkle_mutations = function(.tbl, lambda) {
   .row = dplyr::filter(.tbl, .data$id == .id, .data$chr == .chr)
   .pos = .row$pos
   .id = .row$parent_id
-  while (.id > 0L) {
+  while (.id != "0x0") {
     .chr = sample.int(2L, 1L)
     .row = dplyr::filter(.tbl, .data$id == .id, .data$chr == .chr)
     .pos = c(.pos, .row$pos)
