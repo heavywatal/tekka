@@ -11,6 +11,7 @@ Individual-based simulator of pacific bluefin tuna
 - C++14 compiler (clang++ >= Apple LLVM 8.1, g++ >= 5.3)
 - [CMake](https://cmake.org/)
 - [Boost C++ Libraries](http://www.boost.org/) (>= 1.64.0)
+- [nlohmann/json.hpp](https://github.com/nlohmann/json)
 - [sfmt-class](https://github.com/heavywatal/sfmt-class)
 - [cxxwtl](https://github.com/heavywatal/cxxwtl)
 
