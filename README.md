@@ -21,7 +21,7 @@ Individual-based simulator of pacific bluefin tuna
 The easiest way is to use [Homebrew](https://brew.sh/)/[Linuxbrew](http://linuxbrew.sh/).
 The following command installs blackthunnus and all the dependencies:
 ```sh
-brew install --HEAD heavywatal/tap/blackthunnus
+brew install heavywatal/tap/blackthunnus
 ```
 
 Alternatively, you can get the source code from GitHub manually:
