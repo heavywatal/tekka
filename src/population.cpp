@@ -170,6 +170,7 @@ std::ostream& Population::write_sample_family(std::ostream& ost) const {
 }
 
 //! Generate [0,1) doubles; size ~ Poisson(lambda)
+//! @cond
 class RunifPoisson {
   public:
     RunifPoisson(double lambda): poisson_(lambda) {}
@@ -184,6 +185,7 @@ class RunifPoisson {
   private:
     std::poisson_distribution<uint_fast32_t> poisson_;
 };
+//! @endcond
 
 std::set<Segment, less_Segment> Population::coalesce() const {
     std::set<Segment, less_Segment> nodes;
@@ -202,7 +204,7 @@ std::set<Segment, less_Segment> Population::coalesce() const {
     while (!queue.empty()) {
         std::vector<const Segment*> next_queue;
         for (auto& x: queue) {
-            if (x->is_first_gen()) {
+            if (x->individual_->is_first_gen()) {
                 ++num_uncoalesced;
                 continue;
             }

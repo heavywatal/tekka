@@ -46,6 +46,7 @@ void Individual::set_default_values() {HERE;
     read_json(iss);
 }
 
+//! append the last element until v->size() reaches n
 template <class T> inline
 void elongate(std::vector<T>* v, size_t n) {
     for (size_t i=v->size(); i<n; ++i) {

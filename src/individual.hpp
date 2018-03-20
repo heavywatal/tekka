@@ -19,6 +19,7 @@ namespace boost {namespace program_options {class options_description;}}
 
 namespace pbt {
 
+//! alias of uniform random bit generator
 using URBG = wtl::sfmt19937_64;
 
 /*! @brief Individual class
@@ -46,12 +47,15 @@ class Individual {
     //! change #location_
     void migrate(const uint_fast32_t year, URBG&);
 
+    //! compare Individual pointer
     struct less {
+        //! compare Individual pointer
         bool operator()(const Individual* const px, const Individual* const py) const {
             return px < py;
         }
     };
 
+    //! collect ancestoral IDs
     void trace_back(std::map<const Individual*, uint_fast32_t, less>* nodes, uint_fast32_t year=0u) const {
         if (nodes->emplace(this, year).second && father_) {
             father_->trace_back(nodes);
@@ -99,11 +103,8 @@ class Individual {
   private:
     //! set static variables that depend on other variables
     static void set_dependent_static();
-    //! \f$K\f$ in weight()
-    constexpr static double GROWTH_RATE_ = 0.08;
-    //! \f$L\f$ in weight()
-    constexpr static double MAX_WEIGHT_ = 500.0;
     //! parameter for recruitment()
+    //! @ingroup params
     static double RECRUITMENT_COEF_;
     //! mortality due to natural causes
     static std::vector<double> NATURAL_MORTALITY_;

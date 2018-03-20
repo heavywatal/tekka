@@ -36,24 +36,24 @@ inline po::options_description general_desc() {HERE;
 
 /*! @ingroup params
 
-    Command line option | Symbol  | Variable
-    ------------------- | ------- | -------------------------
-    `-n,--popsize`      | \f$N\f$ |
-    `-y,--years`        |         |
-    `-l,--last`         |         |
-    `-s,--sample`       |         |
-    `-u,--mutation`     |         |
-    `-j,--parallel`     |         |
+    Command line option | Symbol
+    ------------------- | -------
+    `-n,--popsize`      | \f$N\f$
+    `-y,--years`        |
+    `-l,--last`         |
+    `-s,--sample`       |
+    `-u,--mutation`     |
+    `-j,--parallel`     |
 */
 po::options_description Program::options_desc() {HERE;
     const std::string OUT_DIR = wtl::strftime("thunnus_%Y%m%d_%H%M%S");
     po::options_description description("Program");
     description.add_options()
       ("popsize,n", po::value<size_t>()->default_value(1000u), "Initial population size")
-      ("years,y", po::value<uint_fast32_t>()->default_value(40u))
+      ("years,y", po::value<uint_fast32_t>()->default_value(40u), "Duration of simulation")
       ("last,l", po::value<uint_fast32_t>()->default_value(2u), "Sample last _ years")
-      ("sample,s", po::value<double>()->default_value(0.02))
-      ("mutation,u", po::value<double>()->default_value(0.1))
+      ("sample,s", po::value<double>()->default_value(0.02), "per location")
+      ("mutation,u", po::value<double>()->default_value(0.1), "per generation per haploid")
       ("default,d", po::bool_switch(), "Print default parameters in json")
       ("infile,i", po::value<std::string>(), "config file in json format")
       ("outdir,o", po::value<std::string>()->default_value("")->implicit_value(OUT_DIR))
