@@ -19,8 +19,8 @@ summarize_hsp = function(.tbl) {
 }
 
 #' Convert a result data frame to HSP format
-#' @param .tbl result data frame
-#' @return tibble
+#' @param .tbl A result data frame
+#' @return tibble with additional class name "hsp"
 #' @rdname hsp
 #' @export
 as_hsp = function(.tbl) {
@@ -32,7 +32,8 @@ as_hsp = function(.tbl) {
 }
 
 #' Write a HSP data frame to a file
-#' @inheritParams readr::write_tsv
+#' @param x An outcome of as_hsp()
+#' @param path A file name or connection to write to
 #' @rdname hsp
 #' @export
 write_hsp = function(x, path="hsp.txt") {

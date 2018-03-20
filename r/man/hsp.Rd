@@ -10,14 +10,14 @@ as_hsp(.tbl)
 write_hsp(x, path = "hsp.txt")
 }
 \arguments{
-\item{.tbl}{result data frame}
+\item{.tbl}{A result data frame}
 
-\item{x}{A data frame to write to disk}
+\item{x}{An outcome of as_hsp()}
 
-\item{path}{Path or connection to write to.}
+\item{path}{A file name or connection to write to}
 }
 \value{
-tibble
+tibble with additional class name "hsp"
 }
 \description{
 Convert a result data frame to HSP format

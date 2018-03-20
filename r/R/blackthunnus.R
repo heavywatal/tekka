@@ -1,5 +1,5 @@
 #' Run C++ simulation
-#' @param args command line arguments as a string vector or list of strings
+#' @param args command line arguments as a string vector
 #' @return tibble
 #' @rdname blackthunnus
 #' @export

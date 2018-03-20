@@ -10,16 +10,16 @@ as_pop(.tbl, min_adult_age = 5L)
 write_pop(x, path = "pop.txt")
 }
 \arguments{
-\item{.tbl}{result data frame}
+\item{.tbl}{A result data frame}
 
 \item{min_adult_age}{integer}
 
-\item{x}{A data frame to write to disk}
+\item{x}{An outcome of as_pop()}
 
-\item{path}{Path or connection to write to.}
+\item{path}{A file name or connection to write to}
 }
 \value{
-tibble
+tibble with additional class name "pop"
 }
 \description{
 Convert a result data frame to POP format

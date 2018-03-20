@@ -10,7 +10,7 @@ cpp_blackthunnus(args)
 blackthunnus(args = character(0L))
 }
 \arguments{
-\item{args}{command line arguments as a string vector or list of strings}
+\item{args}{command line arguments as a string vector}
 }
 \value{
 conf and population as strings

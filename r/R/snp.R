@@ -1,8 +1,21 @@
-#' row chromosome
+#' Make snp table from a result
 #' @param .tbl result tibble
-#' @return tibble
+#' @param lambda mutation rate per haploid per generation
+#' @param rho recombination rate per generation
 #' @rdname snp
 #' @export
+make_snp = function(.tbl, lambda, rho=0) {
+  if (!missing(rho)) {
+    stop('Recombination has not been implemented yet')
+  }
+  .tbl %>%
+    gather_chromosome() %>%
+    sprinkle_mutations(lambda=lambda) %>%
+    accumulate_mutations() %>%
+    complete_genotype()
+}
+
+# row chromosome
 gather_chromosome = function(.tbl) {
   .tbl %>%
     dplyr::transmute(.data$id, .data$father_id, .data$mother_id, is_sampled = !is.na(.data$capture_year)) %>%
@@ -11,10 +24,7 @@ gather_chromosome = function(.tbl) {
     dplyr::arrange(.data$id, .data$chr)
 }
 
-#' choose random mutation positions [0, 1)
-#' @param lambda mutation rate per haploid per generation
-#' @rdname snp
-#' @export
+# choose random mutation positions [0, 1)
 sprinkle_mutations = function(.tbl, lambda) {
   stopifnot(all(c('chr', 'parent_id') %in% names(.tbl)))
   dplyr::mutate(.tbl,
@@ -37,9 +47,7 @@ sprinkle_mutations = function(.tbl, lambda) {
   purrr::flatten_dbl(.pos)
 }
 
-#' trace back ancestors to collect mutation positions
-#' @rdname snp
-#' @export
+# trace back ancestors to collect mutation positions
 accumulate_mutations = function(.tbl) {
   .tbl %>%
     dplyr::filter(.data$is_sampled) %>%
@@ -50,9 +58,7 @@ accumulate_mutations = function(.tbl) {
     )
 }
 
-#' complete genotypes for all the positions
-#' @rdname snp
-#' @export
+# complete genotypes for all the positions
 complete_genotype = function(.tbl) {
   .tbl %>%
     dplyr::mutate(genotype=1L) %>%
@@ -60,26 +66,9 @@ complete_genotype = function(.tbl) {
     tidyr::complete_(c('id', 'chr', 'pos'), fill=list(genotype=0L))
 }
 
-#' spread data frame to wide format
-#' @rdname snp
-#' @export
+# spread data frame to wide format
 spread_genotype = function(.tbl) {
   .tbl %>%
     dplyr::mutate(pos = .data$pos %>% as.factor() %>% as.integer() %>% {sprintf('snp%04d', .)}) %>%
     tidyr::spread('pos', 'genotype', fill=0L)
-}
-
-#' shortcut to make snp table
-#' @param rho recombination rate per generation
-#' @rdname snp
-#' @export
-make_snp = function(.tbl, lambda, rho=0) {
-  if (!missing(rho)) {
-    stop('Recombination has not been implemented yet')
-  }
-  .tbl %>%
-    gather_chromosome() %>%
-    sprinkle_mutations(lambda=lambda) %>%
-    accumulate_mutations() %>%
-    complete_genotype()
 }
