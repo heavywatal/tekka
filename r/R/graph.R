@@ -37,8 +37,15 @@ find_kinship = function(graph, nodes, order = 4L) {
   }) %>%
     tidyr::unnest() %>%
     dplyr::filter(.data$from < .data$to) %>%
-    dplyr::mutate(paths = purrr::pmap(., function(from, to, ...) {
-      igraph::all_shortest_paths(graph, from, to, mode = "all", weights = NA)$res %>%
-        purrr::map(~.$name)
-    }))
+    dplyr::transmute(
+      .data$from,
+      .data$to,
+      .data$degree,
+      paths = purrr::pmap(., function(from, to, ...) {
+        igraph::all_shortest_paths(graph, from, to, mode = "all", weights = NA)$res %>%
+          purrr::map(~.$name)
+      })
+    ) %>%
+    dplyr::arrange(.data$from, .data$to) %>%
+    tidyr::unnest()
 }
