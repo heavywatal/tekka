@@ -19,32 +19,43 @@ leaf_V = function(graph, mode = "out") {
   igraph::V(graph)[igraph::degree(graph, mode = mode) < 1]
 }
 
-#' find kinship below max_degree
-#' @inheritParams igraph::ego
+#' find kinship below given order
+#' @param order integer
 #' @return tibble
 #' @rdname graph
 #' @export
-find_kinship = function(graph, nodes, order = 4L) {
+find_kinship = function(.tbl, order = 4L) {
+  graph = as_igraph(.tbl)
+  sampled_nodes = dplyr::filter(.tbl, !is.na(.data$capture_year))$id
+  birth_year = stats::setNames(.tbl$birth_year, .tbl$id)
+  find_kinship_impl(graph, sampled_nodes, order = order) %>%
+    find_shortest_paths(graph) %>%
+    dplyr::mutate(backward = purrr::map_int(.data$path, ~sum(diff(birth_year[.x]) < 0L)))
+}
+
+# find pairs
+find_kinship_impl = function(graph, nodes, order) {
   stopifnot(is.character(nodes))
-  purrr::map_dfr(seq_len(order), ~{
-    tibble::tibble(
-      degree = .x,
-      from = nodes,
-      to = igraph::ego(graph, order = .x, nodes = nodes, mode = "all", mindist = .x) %>%
-        purrr::map(., ~.x$name[.x$name %in% nodes])
-    )
-  }) %>%
+  tibble::tibble(
+    from = nodes,
+    to = igraph::ego(graph, order = order, nodes = nodes, mode = "all") %>%
+      purrr::map(., ~.x$name[.x$name %in% nodes])
+  ) %>%
     tidyr::unnest() %>%
     dplyr::filter(.data$from < .data$to) %>%
-    dplyr::transmute(
-      .data$from,
-      .data$to,
-      .data$degree,
-      paths = purrr::pmap(., function(from, to, ...) {
+    dplyr::arrange(.data$from, .data$to)
+}
+
+# add columns: path and degree
+find_shortest_paths = function(kinship, graph) {
+  kinship %>%
+    dplyr::mutate(
+      path = purrr::pmap(., function(from, to, ...) {
         igraph::all_shortest_paths(graph, from, to, mode = "all", weights = NA)$res %>%
           purrr::map(~.$name)
       })
     ) %>%
-    dplyr::arrange(.data$from, .data$to) %>%
-    tidyr::unnest()
+    tidyr::unnest() %>%
+    dplyr::filter(!purrr::map_lgl(.data$path, ~"0x0" %in% .x)) %>%
+    dplyr::mutate(degree = lengths(.data$path) - 1L)
 }

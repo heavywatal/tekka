@@ -10,7 +10,7 @@ as_igraph(.tbl)
 
 leaf_V(graph, mode = "out")
 
-find_kinship(graph, nodes, order = 4L)
+find_kinship(.tbl, order = 4L)
 }
 \arguments{
 \item{.tbl}{result tibble}
@@ -21,9 +21,7 @@ find_kinship(graph, nodes, order = 4L)
 in-degree or \dQuote{total} for the sum of the two. For undirected graphs
 this argument is ignored. \dQuote{all} is a synonym of \dQuote{total}.}
 
-\item{nodes}{The vertices for which the calculation is performed.}
-
-\item{order}{Integer giving the order of the neighborhood.}
+\item{order}{integer}
 }
 \value{
 igraph
@@ -37,5 +35,5 @@ convert result to igraph
 
 return vertices with zero degree
 
-find kinship below max_degree
+find kinship below given order
 }
