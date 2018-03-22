@@ -20,9 +20,8 @@ Population::Population(const size_t initial_size, std::random_device::result_typ
     const size_t rest = initial_size - half;
     males_.reserve(half);
     females_.reserve(rest);
-    auto founder = std::make_shared<Individual>();
-    for (size_t i=0; i<half; ++i) {males_.emplace_back(new Individual(founder, founder, 0));}
-    for (size_t i=0; i<rest; ++i) {females_.emplace_back(new Individual(founder, founder, 0));}
+    for (size_t i=0; i<half; ++i) {males_.emplace_back(new Individual());}
+    for (size_t i=0; i<rest; ++i) {females_.emplace_back(new Individual());}
 }
 
 Population::~Population() {} // to allow forward declaration of Individual

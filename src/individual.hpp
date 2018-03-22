@@ -29,9 +29,10 @@ class Individual {
     //! default constructor
     Individual() = default;
     //! sexual reproduction
-    Individual(const std::shared_ptr<Individual>& father, const std::shared_ptr<Individual>& mother, const uint_fast32_t year)
+    Individual(const std::shared_ptr<Individual>& father,
+               const std::shared_ptr<Individual>& mother, uint_fast32_t year)
     : father_(father), mother_(mother),
-      birth_year_(year), location_(mother->location()) {}
+      birth_year_(year), location_(mother ? mother->location() : 0u) {}
 
     //! evaluate survival
     bool has_survived(const uint_fast32_t year, const uint_fast32_t quarter, URBG&) const;
@@ -87,10 +88,8 @@ class Individual {
     double weight(const uint_fast32_t year) const {
         return WEIGHT_FOR_AGE_[4u * (year - birth_year_)];
     }
-    //! true if it is the first individual;
-    bool is_creator() const {return !father_;}
-    //! true if it is a child of the creator;
-    bool is_first_gen() const {return father_->is_creator();}
+    //! true if it is instantiated with nullptr;
+    bool is_first_gen() const {return !father_;}
     //! getter of #father_
     const Individual* father_get() const {return father_.get();}
     //! getter of #mother_
