@@ -8,6 +8,7 @@
 #include "individual.hpp"
 
 #include <set>
+#include <type_traits>
 
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////
 
@@ -21,16 +22,21 @@ class Segment {
     Segment(const Individual* i, bool b, bool s=false)
     : individual_(i), is_from_father_(b), is_sampled_(s) {}
 
+    Segment() = delete;
+    Segment(const Segment&) = delete;
+    //! move constructor
+    Segment(Segment&&) = default;
+
     //! setter of #mutations_
-    void set_mutations(std::vector<double>&& v) const {
-        mutations_ = v;
+    void set_mutations(std::vector<double>&& v) const noexcept {
+        mutations_ = std::move(v);
     }
     //! setter of #ancestral_segment_
-    void set_ancestral_segment(Segment* p) const {
+    void set_ancestral_segment(Segment* p) const noexcept {
         ancestral_segment_ = p;
     }
     //! return pointer to father or mother
-    const Individual* ancestor() const {
+    const Individual* ancestor() const noexcept {
         if (is_from_father_) {
             return individual_->father_get();
         } else {
@@ -38,7 +44,7 @@ class Segment {
         }
     }
     //! convert #mutations_ to boolean vector
-    std::vector<bool> binary_genotype(const std::vector<double>& positions) const {
+    std::vector<bool> binary_genotype(const std::vector<double>& positions) const noexcept {
         std::vector<bool> output;
         output.reserve(positions.size());
         std::set<double> genotype;
@@ -58,7 +64,7 @@ class Segment {
 
   private:
     //! accumulate #mutations_ recursively
-    void accumulate(std::set<double>* genotype) const {
+    void accumulate(std::set<double>* genotype) const noexcept {
         genotype->insert(mutations_.begin(), mutations_.end());
         if (ancestral_segment_) {
             ancestral_segment_->accumulate(genotype);
@@ -71,11 +77,15 @@ class Segment {
     mutable Segment* ancestral_segment_ = nullptr;
 };
 
+static_assert(!std::is_default_constructible<Segment>{}, "");
+static_assert(!std::is_copy_constructible<Segment>{}, "");
+static_assert(std::is_nothrow_move_constructible<Segment>{}, "");
+
 //! Compare Individual pointer
 class less_Segment {
   public:
     //! Compare Individual pointer
-    bool operator()(const Segment& x, const Segment& y) const {
+    bool operator()(const Segment& x, const Segment& y) const noexcept {
         return Individual::less{}(x.individual_, y.individual_) || (x.is_from_father_ < y.is_from_father_);
     }
 };

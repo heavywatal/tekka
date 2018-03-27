@@ -11,6 +11,8 @@
 #include <nlohmann/json.hpp>
 #include <boost/program_options.hpp>
 
+#include <type_traits>
+
 namespace pbt {
 
 double Individual::RECRUITMENT_COEF_ = 0.73;
@@ -22,6 +24,10 @@ std::vector<std::vector<std::vector<double>>> Individual::MIGRATION_MATRICES_;
 
 //! discrete distributions for migration
 static std::vector<std::vector<std::discrete_distribution<uint_fast32_t>>> MIGRATION_DISTRIBUTIONS;
+
+static_assert(std::is_nothrow_default_constructible<Individual>{}, "");
+static_assert(std::is_nothrow_copy_constructible<Individual>{}, "");
+static_assert(std::is_nothrow_move_constructible<Individual>{}, "");
 
 //! Program options
 /*! @ingroup params
@@ -48,7 +54,7 @@ void Individual::set_default_values() {HERE;
 
 //! append the last element until v->size() reaches n
 template <class T> inline
-void elongate(std::vector<T>* v, size_t n) {
+void elongate(std::vector<T>* v, size_t n) noexcept {
     for (size_t i=v->size(); i<n; ++i) {
         v->emplace_back(v->back());
     }
@@ -83,7 +89,7 @@ bool Individual::has_survived(const uint_fast32_t year, const uint_fast32_t quar
     return (wtl::generate_canonical(engine) < SURVIVAL_RATE_.at(qage));
 }
 
-uint_fast32_t Individual::recruitment(const uint_fast32_t year, URBG& engine) const {
+uint_fast32_t Individual::recruitment(const uint_fast32_t year, URBG& engine) const noexcept {
     const double mean = RECRUITMENT_COEF_ * weight(year);
     std::poisson_distribution<uint_fast32_t> poisson(mean);
     return poisson(engine);

@@ -38,12 +38,12 @@ class Individual {
     bool has_survived(const uint_fast32_t year, const uint_fast32_t quarter, URBG&) const;
 
     //! evaluate maturity
-    bool is_in_breeding_place() const {
+    bool is_in_breeding_place() const noexcept {
         return location_ < num_breeding_places();
     }
 
     //! number of juveniles
-    uint_fast32_t recruitment(const uint_fast32_t year, URBG&) const;
+    uint_fast32_t recruitment(const uint_fast32_t year, URBG&) const noexcept;
 
     //! change #location_
     void migrate(const uint_fast32_t year, URBG&);
@@ -51,13 +51,13 @@ class Individual {
     //! compare Individual pointer
     struct less {
         //! compare Individual pointer
-        bool operator()(const Individual* const px, const Individual* const py) const {
+        bool operator()(const Individual* const px, const Individual* const py) const noexcept {
             return px < py;
         }
     };
 
     //! collect ancestoral IDs
-    void trace_back(std::map<const Individual*, uint_fast32_t, less>* nodes, uint_fast32_t year=0u) const {
+    void trace_back(std::map<const Individual*, uint_fast32_t, less>* nodes, uint_fast32_t year=0u) const noexcept {
         if (nodes->emplace(this, year).second && father_) {
             father_->trace_back(nodes);
             mother_->trace_back(nodes);
@@ -79,25 +79,25 @@ class Individual {
     static void write_json(std::ostream&);
 
     //! number of locations
-    static size_t num_locations() {
-        return MIGRATION_MATRICES_[0].size();
+    static size_t num_locations() noexcept {
+        return MIGRATION_MATRICES_[0u].size();
     }
     //! number of breeding places
-    static constexpr size_t num_breeding_places() {return 2u;}
+    static constexpr size_t num_breeding_places() noexcept {return 2u;}
     //! getter of #WEIGHT_FOR_AGE_
-    double weight(const uint_fast32_t year) const {
+    double weight(const uint_fast32_t year) const noexcept {
         return WEIGHT_FOR_AGE_[4u * (year - birth_year_)];
     }
     //! true if it is instantiated with nullptr;
-    bool is_first_gen() const {return !father_;}
+    bool is_first_gen() const noexcept {return !father_;}
     //! getter of #father_
-    const Individual* father_get() const {return father_.get();}
+    const Individual* father_get() const noexcept {return father_.get();}
     //! getter of #mother_
-    const Individual* mother_get() const {return mother_.get();}
+    const Individual* mother_get() const noexcept {return mother_.get();}
     //! getter of #birth_year_
-    uint_fast32_t birth_year() const {return birth_year_;}
+    uint_fast32_t birth_year() const noexcept {return birth_year_;}
     //! getter of #location_
-    uint_fast32_t location() const {return location_;}
+    uint_fast32_t location() const noexcept {return location_;}
 
   private:
     //! set static variables that depend on other variables
@@ -121,9 +121,9 @@ class Individual {
     //! mother
     const std::shared_ptr<Individual> mother_ = nullptr;
     //! year of birth
-    uint_fast32_t birth_year_ = 0;
+    uint_fast32_t birth_year_ = 0u;
     //! current location
-    uint_fast32_t location_ = 0;
+    uint_fast32_t location_ = 0u;
 };
 
 } // namespace pbt
