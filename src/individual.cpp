@@ -16,7 +16,7 @@
 namespace pbt {
 
 double Individual::RECRUITMENT_COEF_ = 0.73;
-uint_fast32_t Individual::NEGATIVE_BINOM_K_ = std::numeric_limits<uint_fast32_t>::max();
+double Individual::NEGATIVE_BINOM_K_ = std::numeric_limits<double>::infinity();
 std::vector<double> Individual::NATURAL_MORTALITY_;
 std::vector<double> Individual::FISHING_MORTALITY_;
 std::vector<double> Individual::SURVIVAL_RATE_;
@@ -93,8 +93,12 @@ bool Individual::has_survived(const uint_fast32_t year, const uint_fast32_t quar
 
 uint_fast32_t Individual::recruitment(const uint_fast32_t year, URBG& engine) const noexcept {
     const double mean = RECRUITMENT_COEF_ * weight(year);
-    auto nbinom = wtl::make_negative_binomial_distribution(NEGATIVE_BINOM_K_, mean);
-    return nbinom(engine);
+    const double prob = NEGATIVE_BINOM_K_ / (mean + NEGATIVE_BINOM_K_);
+    if (prob < 1.0) {
+        return wtl::negative_binomial_distribution<uint_fast32_t>(NEGATIVE_BINOM_K_, prob)(engine);
+    } else {
+        return std::poisson_distribution<uint_fast32_t>(mean)(engine);
+    }
 }
 
 void Individual::migrate(const uint_fast32_t year, URBG& engine) {
