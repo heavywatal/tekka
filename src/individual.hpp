@@ -105,6 +105,9 @@ class Individual {
     //! parameter for recruitment()
     //! @ingroup params
     static double RECRUITMENT_COEF_;
+    //! \f$k\f$ for overdispersion in recruitment()
+    //! @ingroup params
+    static uint_fast32_t NEGATIVE_BINOM_K_;
     //! mortality due to natural causes
     static std::vector<double> NATURAL_MORTALITY_;
     //! mortality due to fishing activities
