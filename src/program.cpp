@@ -106,7 +106,7 @@ Program::Program(const std::vector<std::string>& arguments)
     }
 }
 
-Program::~Program() {HERE;}
+Program::~Program() = default;
 
 void Program::run() {HERE;
     auto& vm = *vars_;

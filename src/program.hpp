@@ -27,7 +27,7 @@ class Program {
     //! parse command arguments
     Program(int argc, char* argv[])
     : Program(std::vector<std::string>(argv, argv + argc)) {}
-    //! non-default destructor for forward declaration
+    //! destructor
     ~Program();
     //! top level function that should be called once from global main
     void run();

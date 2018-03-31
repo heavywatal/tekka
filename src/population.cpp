@@ -24,7 +24,7 @@ Population::Population(const size_t initial_size, std::random_device::result_typ
     for (size_t i=0; i<rest; ++i) {females_.emplace_back(std::make_shared<Individual>());}
 }
 
-Population::~Population() {} // to allow forward declaration of Individual
+Population::~Population() = default;
 
 void Population::run(const uint_fast32_t simulating_duration,
                      const double sample_rate,
