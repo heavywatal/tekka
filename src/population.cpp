@@ -20,8 +20,8 @@ Population::Population(const size_t initial_size, std::random_device::result_typ
     const size_t rest = initial_size - half;
     males_.reserve(half);
     females_.reserve(rest);
-    for (size_t i=0; i<half; ++i) {males_.emplace_back(new Individual());}
-    for (size_t i=0; i<rest; ++i) {females_.emplace_back(new Individual());}
+    for (size_t i=0; i<half; ++i) {males_.emplace_back(std::make_shared<Individual>());}
+    for (size_t i=0; i<rest; ++i) {females_.emplace_back(std::make_shared<Individual>());}
 }
 
 Population::~Population() {} // to allow forward declaration of Individual
@@ -61,9 +61,9 @@ void Population::reproduce() {
         // TODO: multiple fathers
         for (uint_fast32_t i=0; i<num_juveniles; ++i) {
             if (wtl::generate_canonical(*engine_) < 0.5) {
-                boys.emplace_back(new Individual(father, mother, year_));
+                boys.emplace_back(std::make_shared<Individual>(father, mother, year_));
             } else {
-                girls.emplace_back(new Individual(father, mother, year_));
+                girls.emplace_back(std::make_shared<Individual>(father, mother, year_));
             }
         }
     }
