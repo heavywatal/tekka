@@ -121,7 +121,8 @@ void Population::sample(const double rate) {
         }
         decltype(males_) samples;
         samples.reserve(static_cast<size_t>(std::round(3.0 * rate * num_adults)));
-        auto sort = [&](const std::vector<size_t>& indices, const size_t k) {
+        auto sort = [this,&individuals,&survivors,&samples]
+                    (const std::vector<size_t>& indices, const size_t k) {
             const auto chosen = wtl::sample(indices.size(), k, *engine_);
             for (size_t i=0; i<indices.size(); ++i) {
                 if (chosen.find(i) == chosen.end()) {
