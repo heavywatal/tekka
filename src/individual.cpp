@@ -84,6 +84,7 @@ void Individual::set_dependent_static() {HERE;
                        return std::exp(-n - f);
                    });
     elongate(&SURVIVAL_RATE_, max_qage);
+    elongate(&WEIGHT_FOR_AGE_, max_qage);
 }
 
 bool Individual::has_survived(const uint_fast32_t year, const uint_fast32_t quarter, URBG& engine) const {
