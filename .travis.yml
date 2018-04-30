@@ -3,39 +3,19 @@ sudo: false
 matrix:
   include:
   - os: osx
-  - os: linux
-    compiler: clang
-  - os: linux
-    addons:
-      apt:
-        sources:
-        - ubuntu-toolchain-r-test
-        packages:
-        - g++-5
-    env:
-    - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
-  - os: linux
-    addons:
-      apt:
-        sources:
-        - ubuntu-toolchain-r-test
-        packages:
-        - g++-7
-    env:
-    - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
-cache:
-  directories:
-    - $HOME/.linuxbrew/
+    osx_image: xcode9.3
+  - os: osx
+    osx_image: xcode8.3
 before_install:
-- if [[ $TRAVIS_OS_NAME = linux ]]; then test -d ~/.linuxbrew/bin || git clone https://github.com/Linuxbrew/brew.git ~/.linuxbrew; fi
-- if [[ $TRAVIS_OS_NAME = linux ]]; then PATH=$HOME/.linuxbrew/bin:$PATH; fi
-- brew install boost nlohmann/json/nlohmann_json heavywatal/tap/sfmt-class heavywatal/tap/cxxwtl
-- eval "${MATRIX_EVAL}"
+- uname -a; sw_vers
+install:
+- export HOMEBREW_NO_AUTO_UPDATE=1
+- brew tap heavywatal/tap
+- brew install sfmt-class cxxwtl nlohmann/json/nlohmann_json
 script:
-- mkdir build
-- cd build
-- cmake -DCMAKE_PREFIX_PATH=$(brew --prefix) -DCMAKE_INSTALL_PREFIX=${HOME}/local ..
-- cmake --build .
+- mkdir build && cd build
+- cmake -DCMAKE_INSTALL_PREFIX=${HOME}/local ..
+- cmake --build . -- --jobs=2
 - cmake --build . --target install
 - ctest -V
 notifications:
