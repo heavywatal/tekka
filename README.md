@@ -1,5 +1,7 @@
 # blackthunnus
 
+[![Build Status](https://travis-ci.org/heavywatal/blackthunnus.svg?branch=master)](https://travis-ci.org/heavywatal/blackthunnus)
+
 Individual-based simulator of pacific bluefin tuna
 
 [Project page on GitHub](https://github.com/heavywatal/blackthunnus)
