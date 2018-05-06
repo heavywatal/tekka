@@ -7,7 +7,12 @@
 //' @rdname blackthunnus
 // [[Rcpp::export]]
 std::vector<std::string> cpp_blackthunnus(const std::vector<std::string>& args) {
-    pbt::Program program(args);
-    program.run();
-    return {program.sample_family()};
+    try {
+        pbt::Program program(args);
+        program.run();
+        return {program.sample_family()};
+    } catch (const std::runtime_error& e) {
+        std::cerr << e.what() << std::endl;
+    }
+    return {};
 }

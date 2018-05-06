@@ -9,5 +9,6 @@ blackthunnus = function(args=character(0L)) {
   }
   args = c("blackthunnus", "-q", args)
   message(paste(args, collapse = " "))
-  cpp_blackthunnus(args) %>% read_result()
+  .out = cpp_blackthunnus(args)
+  if (length(.out) > 0L) read_result(.out)
 }
