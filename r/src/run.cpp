@@ -12,7 +12,7 @@ std::vector<std::string> cpp_blackthunnus(const std::vector<std::string>& args) 
         program.run();
         return {program.sample_family()};
     } catch (const std::runtime_error& e) {
-        std::cerr << e.what() << std::endl;
+        Rcpp::Rcerr << e.what() << "\n";
     }
     return {};
 }
