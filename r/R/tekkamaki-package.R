@@ -1,10 +1,9 @@
 #' tekkamaki: Individual-based simulator of pacific bluefin tuna
-#' @docType package
-#' @name tekkamaki
-#' @useDynLib tekkamaki
+#' @useDynLib tekkamaki, .registration = TRUE
+#' @importFrom Rcpp sourceCpp
 #' @importFrom magrittr %>%
 #' @importFrom rlang .data
-#' @importFrom Rcpp sourceCpp
-NULL
+#' @keywords internal
+"_PACKAGE"
 # to suppress NOTE
 utils::globalVariables(c(".", "n"))

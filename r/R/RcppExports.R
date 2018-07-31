@@ -5,6 +5,6 @@
 #' @return conf and population as strings
 #' @rdname blackthunnus
 cpp_blackthunnus <- function(args) {
-    .Call('_tekkamaki_cpp_blackthunnus', PACKAGE = 'tekkamaki', args)
+    .Call(`_tekkamaki_cpp_blackthunnus`, args)
 }
 

@@ -22,7 +22,7 @@ Imports:
   Rcpp
 URL: https://github.com/heavywatal/blackthunnus
 BugReports: https://github.com/heavywatal/blackthunnus/issues
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.0
 Roxygen: list(markdown = TRUE)
 LinkingTo: Rcpp
 SystemRequirements: C++11
