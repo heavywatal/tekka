@@ -76,7 +76,7 @@ void Population::survive(const uint_fast32_t quarter, bool shrink) {
         return p && p->has_survived(year_, quarter, *engine_);
     };
     if (shrink) {
-        auto impl = [&has_survived,this](decltype(males_)* v) {
+        auto impl = [&has_survived](decltype(males_)* v) {
             decltype(males_) survivors;
             survivors.reserve(v->size() / 4u);
             std::copy_if(v->begin(), v->end(), std::back_inserter(survivors), has_survived);
