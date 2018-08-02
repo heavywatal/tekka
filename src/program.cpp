@@ -10,10 +10,10 @@
 #include <wtl/exception.hpp>
 #include <wtl/debug.hpp>
 #include <wtl/iostr.hpp>
-#include <wtl/zfstream.hpp>
+#include <wtl/chrono.hpp>
+#include <wtl/zlib.hpp>
 #include <wtl/filesystem.hpp>
 #include <wtl/getopt.hpp>
-#include <wtl/chrono.hpp>
 #include <sfmt.hpp>
 
 #include <boost/program_options.hpp>
@@ -126,10 +126,10 @@ void Program::run() {HERE;
         wtl::ChDir cd(outdir, true);
         wtl::make_ofs("program_options.conf") << config_string_;
         if (writing_tree) {
-            wtl::ozfstream ost{"sample_family.tsv.gz"};
+            wtl::zlib::ofstream ost{"sample_family.tsv.gz"};
             population_->write_sample_family(ost);
         }
-        wtl::ozfstream ost{"msout.txt.gz"};
+        wtl::zlib::ofstream ost{"msout.txt.gz"};
         auto tree = population_->coalesce();
         population_->write_ms(tree, mutation_rate, ost);
     } else {
