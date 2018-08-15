@@ -154,4 +154,10 @@ std::string Program::sample_family() const {
     return oss.str();
 }
 
+std::string Program::demography() const {
+    std::ostringstream oss;
+    population_->write_demography(oss);
+    return oss.str();
+}
+
 } // namespace pbt

@@ -6,7 +6,7 @@
 using namespace Rcpp;
 
 // cpp_blackthunnus
-std::vector<std::string> cpp_blackthunnus(const std::vector<std::string>& args);
+Rcpp::CharacterVector cpp_blackthunnus(const std::vector<std::string>& args);
 RcppExport SEXP _tekkamaki_cpp_blackthunnus(SEXP argsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;

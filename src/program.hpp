@@ -33,6 +33,8 @@ class Program {
     void run();
     //! output for Rcpp
     std::string sample_family() const;
+    //! output for Rcpp
+    std::string demography() const;
 
   private:
     //! print help message and exit
