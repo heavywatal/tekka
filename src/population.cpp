@@ -31,7 +31,8 @@ void Population::run(const uint_fast32_t simulating_duration,
                      const uint_fast32_t recording_duration) {HERE;
     auto recording_start = simulating_duration - recording_duration;
     for (year_ = 4u; year_ < simulating_duration; ++year_) {
-        DCERR(year_ << ": " << sizes() << std::endl);
+        demography_.emplace_hint(demography_.end(), year_, sizes());
+        DCERR(year_ << ": " << demography_.at(year_) << std::endl);
         reproduce();
         survive(0u, false);
         survive(1u, false);
@@ -42,7 +43,8 @@ void Population::run(const uint_fast32_t simulating_duration,
         }
         migrate();
     }
-    DCERR(year_ << ": " << sizes() << std::endl);
+    demography_.emplace_hint(demography_.end(), year_, sizes());
+    DCERR(year_ << ": " << demography_.at(year_) << std::endl);
 }
 
 void Population::reproduce() {
@@ -252,6 +254,19 @@ std::vector<size_t> Population::sizes() const {
     for (const auto& p: males_) {++counter[p->location()];}
     for (const auto& p: females_) {++counter[p->location()];}
     return counter;
+}
+
+std::ostream& Population::write_demography(std::ostream& ost) const {
+    ost << "year";
+    for (size_t i=0; i<Individual::num_locations(); ++i) {
+        ost << "\tloc_" << i;
+    }
+    ost << "\n";
+    for (const auto& p: demography_) {
+        ost << p.first << "\t";
+        wtl::join(p.second, ost, "\t") << "\n";
+    }
+    return ost;
 }
 
 std::ostream& Population::write(std::ostream& ost) const {

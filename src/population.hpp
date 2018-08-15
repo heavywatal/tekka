@@ -47,6 +47,8 @@ class Population {
     std::ostream& write_sample_family(std::ostream& ost) const;
     //! write sampled segments in ms format
     std::ostream& write_ms(const std::set<Segment, less_Segment>&, double, std::ostream&) const;
+    //! write #demography_
+    std::ostream& write_demography(std::ostream&) const;
     //! write
     std::ostream& write(std::ostream&) const;
     friend std::ostream& operator<<(std::ostream&, const Population&);
@@ -70,6 +72,8 @@ class Population {
     std::vector<std::shared_ptr<Individual>> females_;
     //! samples: capture_year => individuals
     std::map<uint_fast32_t, std::vector<std::shared_ptr<Individual>>> year_samples_;
+    //! year => population size per location
+    std::map<uint_fast32_t, std::vector<size_t>> demography_;
     //! year
     uint_fast32_t year_ = 0;
     //! random bit generator

@@ -129,6 +129,10 @@ void Program::run() {HERE;
             wtl::zlib::ofstream ost{"sample_family.tsv.gz"};
             population_->write_sample_family(ost);
         }
+        {
+            wtl::zlib::ofstream ost{"demography.tsv.gz"};
+            population_->write_demography(ost);
+        }
         wtl::zlib::ofstream ost{"msout.txt.gz"};
         auto tree = population_->coalesce();
         population_->write_ms(tree, mutation_rate, ost);
