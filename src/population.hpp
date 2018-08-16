@@ -40,8 +40,8 @@ class Population {
     //! make tree from samples
     std::set<Segment, less_Segment> coalesce() const;
 
-    //! count individuals for each location
-    std::vector<size_t> sizes() const;
+    //! append current state to #demography_
+    void append_demography();
 
     //! Construct and write tree from samples
     std::ostream& write_sample_family(std::ostream& ost) const;
@@ -72,8 +72,8 @@ class Population {
     std::vector<std::shared_ptr<Individual>> females_;
     //! samples: capture_year => individuals
     std::map<uint_fast32_t, std::vector<std::shared_ptr<Individual>>> year_samples_;
-    //! year => population size per location
-    std::map<uint_fast32_t, std::vector<size_t>> demography_;
+    //! year => [(age => count) for each location]
+    std::map<uint_fast32_t, std::vector<std::map<uint_fast32_t, size_t>>> demography_;
     //! year
     uint_fast32_t year_ = 0;
     //! random bit generator

@@ -31,7 +31,7 @@ void Population::run(const uint_fast32_t simulating_duration,
                      const uint_fast32_t recording_duration) {HERE;
     auto recording_start = simulating_duration - recording_duration;
     for (year_ = 4u; year_ < simulating_duration; ++year_) {
-        demography_.emplace_hint(demography_.end(), year_, sizes());
+        append_demography();
         DCERR(year_ << ": " << demography_.at(year_) << std::endl);
         reproduce();
         survive(0u, false);
@@ -43,7 +43,7 @@ void Population::run(const uint_fast32_t simulating_duration,
         }
         migrate();
     }
-    demography_.emplace_hint(demography_.end(), year_, sizes());
+    append_demography();
     DCERR(year_ << ": " << demography_.at(year_) << std::endl);
 }
 
@@ -249,22 +249,25 @@ std::ostream& Population::write_ms(const std::set<Segment, less_Segment>& nodes,
     return ost;
 }
 
-std::vector<size_t> Population::sizes() const {
-    std::vector<size_t> counter(Individual::num_locations(), 0u);
-    for (const auto& p: males_) {++counter[p->location()];}
-    for (const auto& p: females_) {++counter[p->location()];}
-    return counter;
+void Population::append_demography() {
+    std::vector<std::map<uint_fast32_t, size_t>> counter(Individual::num_locations());
+    for (const auto& p: males_) {++counter[p->location()][year_ - p->birth_year()];}
+    for (const auto& p: females_) {++counter[p->location()][year_ - p->birth_year()];}
+    demography_.emplace_hint(demography_.end(), year_, counter);
 }
 
 std::ostream& Population::write_demography(std::ostream& ost) const {
-    ost << "year";
-    for (size_t i=0; i<Individual::num_locations(); ++i) {
-        ost << "\tloc_" << i;
-    }
-    ost << "\n";
-    for (const auto& p: demography_) {
-        ost << p.first << "\t";
-        wtl::join(p.second, ost, "\t") << "\n";
+    ost << "year\tlocation\tage\tcount\n";
+    for (const auto& year_structure: demography_) {
+        const auto year = year_structure.first;
+        for (size_t loc=0; loc<Individual::num_locations(); ++loc) {
+            const auto structure = year_structure.second[loc];
+            for (const auto& age_count: structure) {
+                ost << year << "\t" << loc << "\t"
+                    << age_count.first << "\t"
+                    << age_count.second << "\n";
+            }
+        }
     }
     return ost;
 }
