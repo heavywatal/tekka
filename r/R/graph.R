@@ -31,6 +31,8 @@ find_kinship = function(.tbl, order = 4L) {
   find_kinship_impl(graph, sampled_nodes, order = order) %>%
     find_shortest_paths(graph) %>%
     dplyr::mutate(direction = purrr::map(.data$path, ~as.integer(diff(birth_year[.x]) < 0L))) %>%
+    dplyr::filter(purrr::map_lgl(.data$direction, ~length(rle(.x)$lengths) < 3L)) %>%
+    dplyr::mutate(degree = lengths(.data$direction)) %>%
     dplyr::mutate(backward = purrr::map_int(.data$direction, sum))
 }
 
@@ -57,6 +59,5 @@ find_shortest_paths = function(kinship, graph) {
       })
     ) %>%
     tidyr::unnest() %>%
-    dplyr::filter(!purrr::map_lgl(.data$path, ~"0x0" %in% .x)) %>%
-    dplyr::mutate(degree = lengths(.data$path) - 1L)
+    dplyr::filter(!purrr::map_lgl(.data$path, ~"0x0" %in% .x))
 }
