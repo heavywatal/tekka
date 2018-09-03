@@ -30,7 +30,8 @@ find_kinship = function(.tbl, order = 4L) {
   birth_year = stats::setNames(.tbl$birth_year, .tbl$id)
   find_kinship_impl(graph, sampled_nodes, order = order) %>%
     find_shortest_paths(graph) %>%
-    dplyr::mutate(backward = purrr::map_int(.data$path, ~sum(diff(birth_year[.x]) < 0L)))
+    dplyr::mutate(direction = purrr::map(.data$path, ~as.integer(diff(birth_year[.x]) < 0L))) %>%
+    dplyr::mutate(backward = purrr::map_int(.data$direction, sum))
 }
 
 # find pairs
