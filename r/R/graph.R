@@ -30,10 +30,9 @@ find_kinship = function(.tbl, order = 4L) {
   birth_year = stats::setNames(.tbl$birth_year, .tbl$id)
   find_kinship_impl(graph, sampled_nodes, order = order) %>%
     find_shortest_paths(graph) %>%
-    dplyr::mutate(direction = purrr::map(.data$path, ~as.integer(diff(birth_year[.x]) < 0L))) %>%
-    dplyr::filter(purrr::map_lgl(.data$direction, ~length(rle(.x)$lengths) < 3L)) %>%
-    dplyr::mutate(degree = lengths(.data$direction)) %>%
-    dplyr::mutate(backward = purrr::map_int(.data$direction, sum))
+    dplyr::mutate(path = purrr::map(.data$path, ~as.integer(diff(birth_year[.x]) < 0L))) %>%
+    dplyr::filter(purrr::map_lgl(.data$path, ~length(rle(.x)$lengths) < 3L && !identical(.x, c(0L, 1L)))) %>%
+    label_kinship()
 }
 
 # find pairs
@@ -59,4 +58,17 @@ find_shortest_paths = function(kinship, graph) {
     dplyr::mutate(path = .path) %>%
     tidyr::unnest() %>%
     dplyr::filter(!purrr::map_lgl(.data$path, ~"0x0" %in% .x))
+}
+
+label_kinship = function(kinship) {
+  kinship %>%
+    dplyr::mutate(path = purrr::map_chr(.data$path, paste0, collapse="")) %>%
+    dplyr::count(.data$from, .data$to, .data$path) %>%
+    dplyr::ungroup() %>%
+    dplyr::mutate(
+      degree = nchar(.data$path),
+      path = paste(.data$path, .data$n, sep="_"),
+      n = NULL,
+      label = kinlabels[.data$path]
+    )
 }
