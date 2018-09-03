@@ -39,10 +39,10 @@ find_kinship = function(.tbl, order = 4L) {
 # find pairs
 find_kinship_impl = function(graph, nodes, order) {
   stopifnot(is.character(nodes))
+  .ego = igraph::ego(graph, order = order, nodes = nodes, mode = "all")
   tibble::tibble(
     from = nodes,
-    to = igraph::ego(graph, order = order, nodes = nodes, mode = "all") %>%
-      purrr::map(., ~.x$name[.x$name %in% nodes])
+    to = purrr::map(.ego, ~.x$name[.x$name %in% nodes])
   ) %>%
     tidyr::unnest() %>%
     dplyr::filter(.data$from < .data$to) %>%
@@ -51,13 +51,12 @@ find_kinship_impl = function(graph, nodes, order) {
 
 # add columns: path and degree
 find_shortest_paths = function(kinship, graph) {
+  .path = purrr::pmap(kinship, function(from, to, ...) {
+    igraph::all_shortest_paths(graph, from, to, mode = "all", weights = NA)$res %>%
+      purrr::map(igraph::as_ids)
+  })
   kinship %>%
-    dplyr::mutate(
-      path = purrr::pmap(., function(from, to, ...) {
-        igraph::all_shortest_paths(graph, from, to, mode = "all", weights = NA)$res %>%
-          purrr::map(~.$name)
-      })
-    ) %>%
+    dplyr::mutate(path = .path) %>%
     tidyr::unnest() %>%
     dplyr::filter(!purrr::map_lgl(.data$path, ~"0x0" %in% .x))
 }

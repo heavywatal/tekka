@@ -5,5 +5,3 @@
 #' @importFrom rlang .data
 #' @keywords internal
 "_PACKAGE"
-# to suppress NOTE
-utils::globalVariables(c(".", "n"))

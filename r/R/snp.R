@@ -29,7 +29,7 @@ sprinkle_mutations = function(.tbl, lambda) {
   stopifnot(all(c("chr", "parent_id") %in% names(.tbl)))
   dplyr::mutate(
     .tbl,
-    num_mutation = stats::rpois(n(), lambda),
+    num_mutation = stats::rpois(dplyr::n(), lambda),
     pos = purrr::map(.data$num_mutation, stats::runif, min = 0.0, max = 1.0),
     num_mutation = NULL
   )
@@ -70,8 +70,6 @@ complete_genotype = function(.tbl) {
 # spread data frame to wide format
 spread_genotype = function(.tbl) {
   .tbl %>%
-    dplyr::mutate(pos = .data$pos %>% as.factor() %>% as.integer() %>% {
-      sprintf("snp%04d", .)
-    }) %>%
+    dplyr::mutate(pos = sprintf("snp%04d", .data$pos %>% as.factor() %>% as.integer())) %>%
     tidyr::spread("pos", "genotype", fill = 0L)
 }

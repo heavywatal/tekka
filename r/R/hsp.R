@@ -14,7 +14,7 @@ pairwise_half_sibling = function(.tbl) {
 summarize_hsp = function(.tbl) {
   .tbl %>%
     dplyr::group_by(.data$cohort_i, .data$cohort_j) %>%
-    dplyr::summarise(comps = n(), hsps = sum(.data$is_hsp)) %>%
+    dplyr::summarise(comps = dplyr::n(), hsps = sum(.data$is_hsp)) %>%
     dplyr::ungroup()
 }
 

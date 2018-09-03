@@ -13,8 +13,6 @@ blackthunnus(args = character(0L))
 \item{args}{command line arguments as a string vector}
 }
 \value{
-conf and population as strings
-
 tibble
 }
 \description{
