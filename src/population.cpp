@@ -195,48 +195,41 @@ struct less_shptr_Segment {
 };
 //! @endcond
 
-std::vector<std::shared_ptr<Segment>> Population::coalesce() const {
+std::list<std::shared_ptr<Segment>> Population::coalesce() const {
     std::set<std::shared_ptr<Segment>, less_shptr_Segment> nodeset;
-    std::vector<std::shared_ptr<Segment>> nodes;
-    std::vector<std::shared_ptr<Segment>> queue;
+    std::list<std::shared_ptr<Segment>> nodes;
     for (const auto& ys: year_samples_) {
         for (const auto& p: ys.second) {
             for (bool b: {true, false}) {
                 auto it = nodeset.emplace(std::make_shared<Segment>(p.get(), b, true)).first;
                 nodes.push_back(*it);
-                queue.push_back(*it);
             }
         }
     }
-    const size_t sample_size = queue.size();
+    const size_t sample_size = nodes.size();
     uint_fast32_t num_coalesced = 0u;
     uint_fast32_t num_uncoalesced = 0u;
-    while (!queue.empty()) {
-        std::vector<std::shared_ptr<Segment>> next_queue;
-        for (auto& x: queue) {
-            if (x->individual_->is_first_gen()) {
-                ++num_uncoalesced;
-                continue;
-            }
-            auto res = nodeset.emplace(std::make_shared<Segment>(x->ancestor(), wtl::generate_canonical(*engine_) < 0.5, false));
-            auto ancp = const_cast<Segment*>(res.first->get());
-            x->set_ancestral_segment(ancp);
-            if (res.second) {
-                next_queue.push_back(*res.first);
-                nodes.push_back(*res.first);
-            } else {
-                ++num_coalesced;
-            }
+    for (auto it = nodes.begin(); it != nodes.end(); ++it) {
+        auto& p = *it;
+        if (p->individual_->is_first_gen()) {
+            ++num_uncoalesced;
+            continue;
         }
-        queue.clear();
-        queue.swap(next_queue);
+        auto res = nodeset.emplace(std::make_shared<Segment>(p->ancestor(), wtl::generate_canonical(*engine_) < 0.5, false));
+        auto ancp = const_cast<Segment*>(res.first->get());
+        p->set_ancestral_segment(ancp);
+        if (res.second) {
+            nodes.push_back(*res.first);
+        } else {
+            ++num_coalesced;
+        }
     }
     DCERR("uncoalesced: " << num_uncoalesced << " / " << sample_size << "\n");
     WTL_ASSERT(num_coalesced + num_uncoalesced == sample_size);
     return nodes;
 }
 
-std::ostream& Population::write_ms(const std::vector<std::shared_ptr<Segment>>& nodes, double lambda, std::ostream& ost) const {
+std::ostream& Population::write_ms(const std::list<std::shared_ptr<Segment>>& nodes, double lambda, std::ostream& ost) const {
     RunifPoisson runif(lambda);
     std::set<double> collector;
     for (const auto& x: nodes) {
