@@ -187,16 +187,24 @@ class RunifPoisson {
   private:
     std::poisson_distribution<uint_fast32_t> poisson_;
 };
+
+struct less_shptr_Segment {
+    bool operator()(const std::shared_ptr<Segment>& lhs, const std::shared_ptr<Segment>& rhs) const noexcept {
+        return *lhs < *rhs;
+    }
+};
 //! @endcond
 
-std::set<Segment> Population::coalesce() const {
-    std::set<Segment> nodes;
-    std::vector<const Segment*> queue;
+std::vector<std::shared_ptr<Segment>> Population::coalesce() const {
+    std::set<std::shared_ptr<Segment>, less_shptr_Segment> nodeset;
+    std::vector<std::shared_ptr<Segment>> nodes;
+    std::vector<std::shared_ptr<Segment>> queue;
     for (const auto& ys: year_samples_) {
         for (const auto& p: ys.second) {
             for (bool b: {true, false}) {
-                auto it = nodes.emplace(p.get(), b, true).first;
-                queue.push_back(&*it);
+                auto it = nodeset.emplace(std::make_shared<Segment>(p.get(), b, true)).first;
+                nodes.push_back(*it);
+                queue.push_back(*it);
             }
         }
     }
@@ -204,17 +212,18 @@ std::set<Segment> Population::coalesce() const {
     uint_fast32_t num_coalesced = 0u;
     uint_fast32_t num_uncoalesced = 0u;
     while (!queue.empty()) {
-        std::vector<const Segment*> next_queue;
+        std::vector<std::shared_ptr<Segment>> next_queue;
         for (auto& x: queue) {
             if (x->individual_->is_first_gen()) {
                 ++num_uncoalesced;
                 continue;
             }
-            auto p = nodes.emplace(x->ancestor(), wtl::generate_canonical(*engine_) < 0.5, false);
-            auto ancp = const_cast<Segment*>(&*p.first);
+            auto res = nodeset.emplace(std::make_shared<Segment>(x->ancestor(), wtl::generate_canonical(*engine_) < 0.5, false));
+            auto ancp = const_cast<Segment*>(res.first->get());
             x->set_ancestral_segment(ancp);
-            if (p.second) {
-                next_queue.push_back(ancp);
+            if (res.second) {
+                next_queue.push_back(*res.first);
+                nodes.push_back(*res.first);
             } else {
                 ++num_coalesced;
             }
@@ -227,13 +236,13 @@ std::set<Segment> Population::coalesce() const {
     return nodes;
 }
 
-std::ostream& Population::write_ms(const std::set<Segment>& nodes, double lambda, std::ostream& ost) const {
+std::ostream& Population::write_ms(const std::vector<std::shared_ptr<Segment>>& nodes, double lambda, std::ostream& ost) const {
     RunifPoisson runif(lambda);
     std::set<double> collector;
     for (const auto& x: nodes) {
         auto sites = runif(*engine_);
         collector.insert(sites.begin(), sites.end());
-        x.set_mutations(std::move(sites));
+        x->set_mutations(std::move(sites));
     }
     std::vector<double> positions(collector.begin(), collector.end());
 
@@ -242,8 +251,8 @@ std::ostream& Population::write_ms(const std::set<Segment>& nodes, double lambda
         << "positions: ";
     wtl::join(positions, ost, " ") << "\n";
     for (const auto& x: nodes) {
-        if (x.is_sampled_) {
-            wtl::join(x.binary_genotype(positions), ost, "") << "\n";
+        if (x->is_sampled_) {
+            wtl::join(x->binary_genotype(positions), ost, "") << "\n";
         }
     }
     return ost;
