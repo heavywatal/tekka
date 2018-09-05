@@ -21,7 +21,6 @@ namespace pbt {
 using URBG = wtl::sfmt19937_64;
 class Individual;
 class Segment;
-class less_Segment;
 
 /*! @brief Population class
 */
@@ -38,7 +37,7 @@ class Population {
              const uint_fast32_t recording_duration=1u);
 
     //! make tree from samples
-    std::set<Segment, less_Segment> coalesce() const;
+    std::set<Segment> coalesce() const;
 
     //! append current state to #demography_
     void append_demography();
@@ -46,7 +45,7 @@ class Population {
     //! Construct and write tree from samples
     std::ostream& write_sample_family(std::ostream& ost) const;
     //! write sampled segments in ms format
-    std::ostream& write_ms(const std::set<Segment, less_Segment>&, double, std::ostream&) const;
+    std::ostream& write_ms(const std::set<Segment>&, double, std::ostream&) const;
     //! write #demography_
     std::ostream& write_demography(std::ostream&) const;
     //! write

@@ -189,8 +189,8 @@ class RunifPoisson {
 };
 //! @endcond
 
-std::set<Segment, less_Segment> Population::coalesce() const {
-    std::set<Segment, less_Segment> nodes;
+std::set<Segment> Population::coalesce() const {
+    std::set<Segment> nodes;
     std::vector<const Segment*> queue;
     for (const auto& ys: year_samples_) {
         for (const auto& p: ys.second) {
@@ -227,7 +227,7 @@ std::set<Segment, less_Segment> Population::coalesce() const {
     return nodes;
 }
 
-std::ostream& Population::write_ms(const std::set<Segment, less_Segment>& nodes, double lambda, std::ostream& ost) const {
+std::ostream& Population::write_ms(const std::set<Segment>& nodes, double lambda, std::ostream& ost) const {
     RunifPoisson runif(lambda);
     std::set<double> collector;
     for (const auto& x: nodes) {

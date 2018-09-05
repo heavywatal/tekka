@@ -54,6 +54,12 @@ class Segment {
         }
         return output;
     }
+    //! operator for std::set
+    bool operator<(const Segment& other) const noexcept {
+        return (&individual_ < &other.individual_) ||
+               ((&individual_ == &other.individual_) &&
+                (is_from_father_ < other.is_from_father_));
+    }
 
     //! pointer to holder
     const Individual* individual_;
@@ -80,15 +86,6 @@ class Segment {
 static_assert(!std::is_default_constructible<Segment>{}, "");
 static_assert(!std::is_copy_constructible<Segment>{}, "");
 static_assert(std::is_nothrow_move_constructible<Segment>{}, "");
-
-//! Compare Individual pointer
-class less_Segment {
-  public:
-    //! Compare Individual pointer
-    bool operator()(const Segment& x, const Segment& y) const noexcept {
-        return Individual::less{}(x.individual_, y.individual_) || (x.is_from_father_ < y.is_from_father_);
-    }
-};
 
 } // namespace pbt
 
