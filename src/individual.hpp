@@ -26,9 +26,9 @@ using URBG = wtl::sfmt19937_64;
 */
 class Individual {
   public:
-    //! default constructor
+    //! for initial population
     Individual() = default;
-    //! sexual reproduction
+    //! for sexual reproduction
     Individual(const std::shared_ptr<Individual>& father,
                const std::shared_ptr<Individual>& mother, uint_fast32_t year)
     : father_(father), mother_(mother),
@@ -84,20 +84,18 @@ class Individual {
     }
     //! number of breeding places
     static constexpr size_t num_breeding_places() noexcept {return 2u;}
-    //! getter of #WEIGHT_FOR_AGE_
+
+    //! @name Getter functions
+    //@{
     double weight(const uint_fast32_t year) const noexcept {
         return WEIGHT_FOR_AGE_[4u * (year - birth_year_)];
     }
-    //! true if it is instantiated with nullptr;
     bool is_first_gen() const noexcept {return !father_;}
-    //! getter of #father_
     const Individual* father_get() const noexcept {return father_.get();}
-    //! getter of #mother_
     const Individual* mother_get() const noexcept {return mother_.get();}
-    //! getter of #birth_year_
     uint_fast32_t birth_year() const noexcept {return birth_year_;}
-    //! getter of #location_
     uint_fast32_t location() const noexcept {return location_;}
+    //@}
 
   private:
     //! set static variables that depend on other variables

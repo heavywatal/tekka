@@ -34,9 +34,10 @@ static_assert(std::is_nothrow_move_constructible<Individual>{}, "");
 /*! @ingroup params
     @return Program options description
 
-    Command line option | Symbol         | Variable
-    ------------------- | -------------- | -------------------------------
-    `-r,--recruitment`  | -              | Individual::RECRUITMENT_COEF_
+    Command line option  | Symbol         | Variable
+    -------------------- | -------------- | -------------------------------
+    `-r,--recruitment`   | -              | Individual::RECRUITMENT_COEF_
+    `-k,--overdispersion`| -              | Individual::NEGATIVE_BINOM_K_
 */
 boost::program_options::options_description Individual::options_desc() {
     namespace po = boost::program_options;

@@ -18,23 +18,24 @@ namespace pbt {
 */
 class Segment {
   public:
-    //! constructor
+    //! @name Constructors
+    //@{
     Segment(const Individual* i, bool b, bool s=false)
     : individual_(i), is_from_father_(b), is_sampled_(s) {}
-
     Segment() = delete;
     Segment(const Segment&) = delete;
-    //! move constructor
     Segment(Segment&&) = default;
+    //@}
 
-    //! setter of #mutations_
+    //! @name Setter functions
+    //@{
     void set_mutations(std::vector<double>&& v) const noexcept {
         mutations_ = std::move(v);
     }
-    //! setter of #ancestral_segment_
     void set_ancestral_segment(Segment* p) const noexcept {
         ancestral_segment_ = p;
     }
+    //@}
     //! return pointer to father or mother
     const Individual* ancestor() const noexcept {
         if (is_from_father_) {

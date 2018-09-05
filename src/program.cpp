@@ -39,11 +39,10 @@ inline po::options_description general_desc() {HERE;
     Command line option | Symbol
     ------------------- | -------
     `-n,--popsize`      | \f$N\f$
-    `-y,--years`        |
-    `-l,--last`         |
-    `-s,--sample`       |
-    `-u,--mutation`     |
-    `-j,--parallel`     |
+    `-y,--years`        | -
+    `-l,--last`         | -
+    `-s,--sample`       | -
+    `-u,--mutation`     | -
 */
 po::options_description Program::options_desc() {HERE;
     const std::string OUT_DIR = wtl::strftime("thunnus_%Y%m%d_%H%M%S");
