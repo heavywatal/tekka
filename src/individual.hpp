@@ -48,16 +48,8 @@ class Individual {
     //! change #location_
     void migrate(const uint_fast32_t year, URBG&);
 
-    //! compare Individual pointer
-    struct less {
-        //! compare Individual pointer
-        bool operator()(const Individual* const px, const Individual* const py) const noexcept {
-            return px < py;
-        }
-    };
-
     //! collect ancestoral IDs
-    void trace_back(std::map<const Individual*, uint_fast32_t, less>* nodes, uint_fast32_t year=0u) const noexcept {
+    void trace_back(std::map<const Individual*, uint_fast32_t>* nodes, uint_fast32_t year=0u) const noexcept {
         if (nodes->emplace(this, year).second && father_) {
             father_->trace_back(nodes);
             mother_->trace_back(nodes);

@@ -154,7 +154,7 @@ void Population::sample(const double rate) {
 
 std::ostream& Population::write_sample_family(std::ostream& ost) const {
     if (year_samples_.empty()) return ost;
-    std::map<const Individual*, uint_fast32_t, Individual::less> nodes;
+    std::map<const Individual*, uint_fast32_t> nodes;
     for (const auto& ys: year_samples_) {
         for (const auto& p: ys.second) {
             p->trace_back(&nodes, ys.first);
