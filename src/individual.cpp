@@ -107,6 +107,19 @@ void Individual::migrate(const uint_fast32_t year, URBG& engine) {
     location_ = MIGRATION_DISTRIBUTIONS.at(year - birth_year_)[location_](engine);
 }
 
+void Individual::trace_back(std::ostream& ost, std::map<const Individual*, size_t>* ids, uint_fast32_t year) const {
+    if (!ids->emplace(this, ids->size()).second) return;
+    if (father_) {
+        father_->trace_back(ost, ids);
+        mother_->trace_back(ost, ids);
+    }
+    write(ost, *ids) << "\t";
+    if (year > 0u) {
+        ost << year;
+    }
+    ost << "\n";
+}
+
 std::vector<std::string> Individual::names() {
     return {"id", "father_id", "mother_id", "birth_year", "location"};
 }
@@ -115,6 +128,14 @@ std::ostream& Individual::write(std::ostream& ost) const {
     return ost << this << "\t"
                << father_ << "\t"
                << mother_ << "\t"
+               << birth_year_ << "\t"
+               << location_;
+}
+
+std::ostream& Individual::write(std::ostream& ost, const std::map<const Individual*, size_t>& ids) const {
+    return ost << ids.at(this) << "\t"
+               << ids.at(father_.get()) << "\t"
+               << ids.at(mother_.get()) << "\t"
                << birth_year_ << "\t"
                << location_;
 }
