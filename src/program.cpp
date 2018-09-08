@@ -6,6 +6,7 @@
 #include "population.hpp"
 #include "individual.hpp"
 #include "segment.hpp"
+#include "config.hpp"
 
 #include <wtl/exception.hpp>
 #include <wtl/debug.hpp>
@@ -28,6 +29,7 @@ inline po::options_description general_desc() {HERE;
     po::options_description description("General");
     description.add_options()
       ("help,h", po::bool_switch(), "print this help")
+      ("version", po::bool_switch(), "print version")
       ("verbose,v", po::bool_switch(), "verbose output")
       ("quiet,q", po::bool_switch(), "suppress output")
     ;
@@ -67,8 +69,13 @@ po::options_description Program::options_desc() {HERE;
     auto description = general_desc();
     description.add(options_desc());
     // do not print positional arguments as options
-    std::cout << "Usage: blackthunnus [options]\n" << std::endl;
+    std::cout << "Usage: " << PROJECT_NAME << " [options]\n\n";
     description.print(std::cout);
+    throw wtl::ExitSuccess();
+}
+
+[[noreturn]] void Program::version_and_exit() {HERE;
+    std::cout << PROJECT_VERSION << "\n";
     throw wtl::ExitSuccess();
 }
 
@@ -87,6 +94,7 @@ Program::Program(const std::vector<std::string>& arguments)
     po::store(po::command_line_parser({arguments.begin() + 1, arguments.end()}).
               options(description).run(), vm);
     if (vm["help"].as<bool>()) {help_and_exit();}
+    if (vm["version"].as<bool>()) {version_and_exit();}
     po::notify(vm);
     Individual::set_default_values();
     if (vm["default"].as<bool>()) {

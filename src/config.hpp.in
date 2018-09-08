@@ -4,6 +4,9 @@
 
 namespace pbt {
 
+constexpr char static PROJECT_NAME[] = "@PROJECT_NAME@";
+constexpr char static PROJECT_VERSION[] = "@PROJECT_VERSION@";
+
 static auto default_values = R"(
 @PARAMETERS_JSON@
 )";
