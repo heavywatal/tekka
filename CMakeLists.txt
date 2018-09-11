@@ -8,11 +8,11 @@ set(CMAKE_VERBOSE_MAKEFILE TRUE)
 option(PROFILE "Use gperftools" FALSE)
 
 set(Boost_NO_BOOST_CMAKE TRUE)
-find_package(Boost REQUIRED COMPONENTS program_options filesystem)
+find_package(Boost REQUIRED COMPONENTS program_options)
 message(STATUS "Boost_INCLUDE_DIRS: ${Boost_INCLUDE_DIRS}")
 
 find_package(ZLIB REQUIRED)
-find_package(wtl 0.3.0)
+find_package(wtl 0.4.0)
 find_package(sfmt 0.5.0)
 
 set(CMAKE_CXX_STANDARD 14)

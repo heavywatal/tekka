@@ -21,7 +21,6 @@
 
 namespace pbt {
 
-namespace fs = boost::filesystem;
 namespace po = boost::program_options;
 
 //! options description for general arguments
