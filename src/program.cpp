@@ -47,6 +47,7 @@ inline po::options_description general_desc() {HERE;
 */
 po::options_description Program::options_desc() {HERE;
     const std::string OUT_DIR = wtl::strftime("thunnus_%Y%m%d_%H%M%S");
+    const int seed = std::random_device{}(); // 32-bit signed integer for R
     po::options_description description("Program");
     description.add_options()
       ("popsize,n", po::value<size_t>()->default_value(1000u), "Initial population size")
@@ -58,7 +59,7 @@ po::options_description Program::options_desc() {HERE;
       ("infile,i", po::value<std::string>(), "config file in json format")
       ("outdir,o", po::value<std::string>()->default_value("")->implicit_value(OUT_DIR))
       ("tree,t", po::bool_switch(), "Output family tree")
-      ("seed", po::value<std::random_device::result_type>()->default_value(std::random_device{}()))
+      ("seed", po::value<int>()->default_value(seed))
     ;
     return description;
 }
@@ -139,8 +140,8 @@ void Program::run() {HERE;
     const auto sampling_rate = vm["sample"].as<double>();
     const auto mutation_rate = vm["mutation"].as<double>();
     const auto outdir = vm["outdir"].as<std::string>();
-    const auto seed = vm["seed"].as<std::random_device::result_type>();
-    population_ = std::make_unique<Population>(popsize, seed);
+    const auto seed = vm["seed"].as<int>();
+    population_ = std::make_unique<Population>(popsize, static_cast<uint32_t>(seed));
     population_->run(years, sampling_rate, last_years);
     if (quiet) return;
     if (!outdir.empty()) {
