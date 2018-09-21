@@ -39,10 +39,6 @@ class Program {
     //@}
 
   private:
-    //! Print help message and exit
-    [[noreturn]] void help_and_exit();
-    //! Print version and exit
-    [[noreturn]] void version_and_exit();
     //! options description for Program class
     boost::program_options::options_description options_desc();
     //! optional variables

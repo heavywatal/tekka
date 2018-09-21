@@ -60,22 +60,26 @@ po::options_description Program::options_desc() {HERE;
       ("tree,t", po::bool_switch(), "Output family tree")
       ("seed", po::value<std::random_device::result_type>()->default_value(std::random_device{}()))
     ;
-    description.add(Individual::options_desc());
     return description;
 }
 
-[[noreturn]] void Program::help_and_exit() {HERE;
-    auto description = general_desc();
-    description.add(options_desc());
-    // do not print positional arguments as options
-    std::cout << "Usage: " << PROJECT_NAME << " [options]\n\n";
-    description.print(std::cout);
-    throw wtl::ExitSuccess();
-}
+//! Program options
+/*! @ingroup params
+    @return Program options description
 
-[[noreturn]] void Program::version_and_exit() {HERE;
-    std::cout << PROJECT_VERSION << "\n";
-    throw wtl::ExitSuccess();
+    Command line option  | Symbol         | Variable
+    -------------------- | -------------- | -------------------------------
+    `-r,--recruitment`   | -              | Individual::RECRUITMENT_COEF_
+    `-k,--overdispersion`| -              | Individual::NEGATIVE_BINOM_K_
+*/
+inline boost::program_options::options_description Individual_options(IndividualParams* p) {
+    namespace po = boost::program_options;
+    po::options_description desc{"Individual"};
+    desc.add_options()
+      ("recruitment,r", po::value(&p->RECRUITMENT_COEF)->default_value(p->RECRUITMENT_COEF))
+      ("overdispersion,k", po::value(&p->NEGATIVE_BINOM_K)->default_value(p->NEGATIVE_BINOM_K))
+    ;
+    return desc;
 }
 
 Program::Program(const std::vector<std::string>& arguments)
@@ -86,15 +90,26 @@ Program::Program(const std::vector<std::string>& arguments)
     std::cout.precision(15);
     std::cerr.precision(6);
 
+    IndividualParams individual_params;
     auto description = general_desc();
     description.add(options_desc());
+    description.add(Individual_options(&individual_params));
+
     // po::variables_map vm;
     auto& vm = *vars_;
     po::store(po::command_line_parser({arguments.begin() + 1, arguments.end()}).
               options(description).run(), vm);
-    if (vm["help"].as<bool>()) {help_and_exit();}
-    if (vm["version"].as<bool>()) {version_and_exit();}
+    if (vm["help"].as<bool>()) {
+        std::cout << "Usage: " << PROJECT_NAME << " [options]\n\n";
+        description.print(std::cout);
+        throw wtl::ExitSuccess();
+    }
+    if (vm["version"].as<bool>()) {
+        std::cout << PROJECT_VERSION << "\n";
+        throw wtl::ExitSuccess();
+    }
     po::notify(vm);
+    Individual::param(individual_params);
     Individual::set_default_values();
     if (vm["default"].as<bool>()) {
         Individual::write_json(std::cout);

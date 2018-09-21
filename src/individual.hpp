@@ -10,10 +10,9 @@
 #include <memory>
 #include <vector>
 #include <map>
+#include <limits>
 
 namespace wtl {class sfmt19937_64;}
-
-namespace boost {namespace program_options {class options_description;}}
 
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////
 
@@ -22,10 +21,24 @@ namespace pbt {
 //! alias of uniform random bit generator
 using URBG = wtl::sfmt19937_64;
 
+//! @brief Parameters for Individual class
+/*! @ingroup params
+*/
+struct IndividualParams {
+    //! parameter for recruitment()
+    //! @ingroup params
+    double RECRUITMENT_COEF = 0.73;
+    //! \f$k\f$ for overdispersion in recruitment()
+    //! @ingroup params
+    double NEGATIVE_BINOM_K = std::numeric_limits<double>::infinity();
+};
+
 /*! @brief Individual class
 */
 class Individual {
   public:
+    //! Alias
+    using param_type = IndividualParams;
     //! for initial population
     Individual() = default;
     //! for sexual reproduction
@@ -57,14 +70,16 @@ class Individual {
     friend std::ostream& operator<<(std::ostream&, const Individual&);
     //! column names for write()
     static std::vector<std::string> names();
-    //! options description for Individual class
-    static boost::program_options::options_description options_desc();
     //! set static variables from config.hpp
     static void set_default_values();
     //! Read class variables from stream in json
     static void read_json(std::istream&);
     //! Write class variables to stream in json
     static void write_json(std::ostream&);
+    //! Set #PARAM_
+    static void param(const param_type& p);
+    //! Get #PARAM_
+    static const param_type& param() {return PARAM_;}
 
     //! number of locations
     static size_t num_locations() noexcept {
@@ -86,14 +101,11 @@ class Individual {
     //@}
 
   private:
+    //! Parameters shared among instances
+    static param_type PARAM_;
+
     //! set static variables that depend on other variables
     static void set_dependent_static();
-    //! parameter for recruitment()
-    //! @ingroup params
-    static double RECRUITMENT_COEF_;
-    //! \f$k\f$ for overdispersion in recruitment()
-    //! @ingroup params
-    static double NEGATIVE_BINOM_K_;
     //! mortality due to natural causes
     static std::vector<double> NATURAL_MORTALITY_;
     //! mortality due to fishing activities

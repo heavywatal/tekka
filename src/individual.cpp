@@ -9,14 +9,12 @@
 #include <wtl/random.hpp>
 #include <sfmt.hpp>
 #include <nlohmann/json.hpp>
-#include <boost/program_options.hpp>
 
 #include <type_traits>
 
 namespace pbt {
 
-double Individual::RECRUITMENT_COEF_ = 0.73;
-double Individual::NEGATIVE_BINOM_K_ = std::numeric_limits<double>::infinity();
+Individual::param_type Individual::PARAM_;
 std::vector<double> Individual::NATURAL_MORTALITY_;
 std::vector<double> Individual::FISHING_MORTALITY_;
 std::vector<double> Individual::SURVIVAL_RATE_;
@@ -30,23 +28,8 @@ static_assert(std::is_nothrow_default_constructible<Individual>{}, "");
 static_assert(std::is_nothrow_copy_constructible<Individual>{}, "");
 static_assert(std::is_nothrow_move_constructible<Individual>{}, "");
 
-//! Program options
-/*! @ingroup params
-    @return Program options description
-
-    Command line option  | Symbol         | Variable
-    -------------------- | -------------- | -------------------------------
-    `-r,--recruitment`   | -              | Individual::RECRUITMENT_COEF_
-    `-k,--overdispersion`| -              | Individual::NEGATIVE_BINOM_K_
-*/
-boost::program_options::options_description Individual::options_desc() {
-    namespace po = boost::program_options;
-    po::options_description desc{"Individual"};
-    desc.add_options()
-        ("recruitment,r", po::value(&RECRUITMENT_COEF_)->default_value(RECRUITMENT_COEF_))
-        ("overdispersion,k", po::value(&NEGATIVE_BINOM_K_)->default_value(NEGATIVE_BINOM_K_))
-    ;
-    return desc;
+void Individual::param(const param_type& p) {
+    PARAM_ = p;
 }
 
 void Individual::set_default_values() {HERE;
@@ -94,10 +77,10 @@ bool Individual::has_survived(const uint_fast32_t year, const uint_fast32_t quar
 }
 
 uint_fast32_t Individual::recruitment(const uint_fast32_t year, URBG& engine) const noexcept {
-    const double mean = RECRUITMENT_COEF_ * weight(year);
-    const double prob = NEGATIVE_BINOM_K_ / (mean + NEGATIVE_BINOM_K_);
+    const double mean = param().RECRUITMENT_COEF * weight(year);
+    const double prob = param().NEGATIVE_BINOM_K / (mean + param().NEGATIVE_BINOM_K);
     if (prob < 1.0) {
-        return wtl::negative_binomial_distribution<uint_fast32_t>(NEGATIVE_BINOM_K_, prob)(engine);
+        return wtl::negative_binomial_distribution<uint_fast32_t>(param().NEGATIVE_BINOM_K, prob)(engine);
     } else {
         return std::poisson_distribution<uint_fast32_t>(mean)(engine);
     }
