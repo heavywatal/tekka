@@ -7,8 +7,9 @@
 
 //! Just instantiate and run Program
 int main(int argc, char* argv[]) {
+    std::vector<std::string> arguments(argv + 1, argv + argc);
     try {
-        pbt::Program program(argc, argv);
+        pbt::Program program(arguments);
         program.run();
     } catch (const std::runtime_error& e) {
         std::cerr << e.what() << std::endl;

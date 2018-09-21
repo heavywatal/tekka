@@ -12,8 +12,7 @@ Individual-based simulator of pacific bluefin tuna
 - Unix-like OS (macOS, Linux, etc.)
 - C++14 compiler (clang++ >= Apple LLVM 8.1, g++ >= 5.3)
 - [CMake](https://cmake.org/)
-- [Boost C++ Libraries](http://www.boost.org/) (>= 1.64.0)
-- [nlohmann/json.hpp](https://github.com/nlohmann/json)
+- [clippson](https://github.com/heavywatal/clippson)
 - [sfmt-class](https://github.com/heavywatal/sfmt-class)
 - [cxxwtl](https://github.com/heavywatal/cxxwtl)
 
@@ -38,7 +37,7 @@ make -j2
 make install
 ```
 
-If needed, set `CMAKE_PREFIX_PATH` or `BOOST_ROOT` variable so that CMake can find your libraries,
+If needed, set `CMAKE_PREFIX_PATH` variable so that CMake can find your libraries,
 e.g., `cmake -DCMAKE_INSTALL_PREFIX=$(brew --prefix) ..`
 
 ## R interface

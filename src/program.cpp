@@ -14,25 +14,21 @@
 #include <wtl/chrono.hpp>
 #include <wtl/zlib.hpp>
 #include <wtl/filesystem.hpp>
-#include <wtl/getopt.hpp>
 #include <sfmt.hpp>
-
-#include <boost/program_options.hpp>
+#include <clippson/clippson.hpp>
 
 namespace pbt {
 
-namespace po = boost::program_options;
+nlohmann::json VM;
 
-//! options description for general arguments
-inline po::options_description general_desc() {HERE;
-    po::options_description description("General");
-    description.add_options()
-      ("help,h", po::bool_switch(), "print this help")
-      ("version", po::bool_switch(), "print version")
-      ("verbose,v", po::bool_switch(), "verbose output")
-      ("quiet,q", po::bool_switch(), "suppress output")
-    ;
-    return description;
+//! Options description for general purpose
+inline clipp::group general_options(nlohmann::json* vm) {HERE;
+    return (
+      wtl::option(vm, {"h", "help"}, false, "print this help"),
+      wtl::option(vm, {"version"}, false, "print version"),
+      wtl::option(vm, {"v", "verbose"}, false, "verbose output"),
+      wtl::option(vm, {"default"}, false, "Print default parameters in json")
+    ).doc("General:");
 }
 
 /*! @ingroup params
@@ -45,23 +41,21 @@ inline po::options_description general_desc() {HERE;
     `-s,--sample`       | -
     `-u,--mutation`     | -
 */
-po::options_description Program::options_desc() {HERE;
+inline clipp::group program_options(nlohmann::json* vm) {HERE;
     const std::string OUT_DIR = wtl::strftime("thunnus_%Y%m%d_%H%M%S");
     const int seed = std::random_device{}(); // 32-bit signed integer for R
-    po::options_description description("Program");
-    description.add_options()
-      ("popsize,n", po::value<size_t>()->default_value(1000u), "Initial population size")
-      ("years,y", po::value<uint_fast32_t>()->default_value(40u), "Duration of simulation")
-      ("last,l", po::value<uint_fast32_t>()->default_value(2u), "Sample last _ years")
-      ("sample,s", po::value<double>()->default_value(0.02), "per location")
-      ("mutation,u", po::value<double>()->default_value(0.1), "per generation per haploid")
-      ("default,d", po::bool_switch(), "Print default parameters in json")
-      ("infile,i", po::value<std::string>(), "config file in json format")
-      ("outdir,o", po::value<std::string>()->default_value("")->implicit_value(OUT_DIR))
-      ("tree,t", po::bool_switch(), "Output family tree")
-      ("seed", po::value<int>()->default_value(seed))
-    ;
-    return description;
+    return (
+      wtl::option(vm, {"n", "popsize"}, 1000u, "Initial population size"),
+      wtl::option(vm, {"y", "years"}, 40u, "Duration of simulation"),
+      wtl::option(vm, {"l", "last"}, 2u, "Sample last _ years"),
+      wtl::option(vm, {"s", "sample"}, 0.02, "per location"),
+      wtl::option(vm, {"u", "mutation"}, 0.1, "per generation per haploid"),
+      wtl::option(vm, {"i", "infile"}, std::string(""), "config file in json format"),
+      wtl::option(vm, {"o", "outdir"}, OUT_DIR),
+      wtl::option(vm, {"q", "quiet"}, false, "suppress output"),
+      wtl::option(vm, {"t", "tree"}, false, "Output family tree"),
+      wtl::option(vm, {"seed"}, seed)
+    ).doc("Program:");
 }
 
 //! Program options
@@ -73,80 +67,76 @@ po::options_description Program::options_desc() {HERE;
     `-r,--recruitment`   | -              | Individual::RECRUITMENT_COEF_
     `-k,--overdispersion`| -              | Individual::NEGATIVE_BINOM_K_
 */
-inline boost::program_options::options_description Individual_options(IndividualParams* p) {
-    namespace po = boost::program_options;
-    po::options_description desc{"Individual"};
-    desc.add_options()
-      ("recruitment,r", po::value(&p->RECRUITMENT_COEF)->default_value(p->RECRUITMENT_COEF))
-      ("overdispersion,k", po::value(&p->NEGATIVE_BINOM_K)->default_value(p->NEGATIVE_BINOM_K))
-    ;
-    return desc;
+inline clipp::group individual_options(nlohmann::json* vm, IndividualParams* p) {HERE;
+    return (
+      wtl::option(vm, {"r", "recruitment"}, &p->RECRUITMENT_COEF),
+      wtl::option(vm, {"k", "overdispersion"}, &p->NEGATIVE_BINOM_K)
+    ).doc("Individual");
 }
 
 Program::Program(const std::vector<std::string>& arguments)
-: vars_(std::make_unique<po::variables_map>()),
-  command_args_(arguments) {HERE;
+: command_args_(arguments) {HERE;
     std::ios::sync_with_stdio(false);
     std::cin.tie(0);
     std::cout.precision(15);
     std::cerr.precision(6);
 
+    nlohmann::json vm_local;
     IndividualParams individual_params;
-    auto description = general_desc();
-    description.add(options_desc());
-    description.add(Individual_options(&individual_params));
-
-    // po::variables_map vm;
-    auto& vm = *vars_;
-    po::store(po::command_line_parser({arguments.begin() + 1, arguments.end()}).
-              options(description).run(), vm);
-    if (vm["help"].as<bool>()) {
+    auto cli = (
+      general_options(&vm_local),
+      program_options(&VM),
+      individual_options(&VM, &individual_params)
+    );
+    wtl::parse(cli, arguments);
+    auto fmt = wtl::doc_format();
+    if (vm_local.at("help")) {
         std::cout << "Usage: " << PROJECT_NAME << " [options]\n\n";
-        description.print(std::cout);
+        std::cout << clipp::documentation(cli, fmt) << "\n";
         throw wtl::ExitSuccess();
     }
-    if (vm["version"].as<bool>()) {
+    if (vm_local.at("version")) {
         std::cout << PROJECT_VERSION << "\n";
         throw wtl::ExitSuccess();
     }
-    po::notify(vm);
     Individual::param(individual_params);
     Individual::set_default_values();
-    if (vm["default"].as<bool>()) {
+    if (vm_local.at("default")) {
         Individual::write_json(std::cout);
         throw wtl::ExitSuccess();
     }
-    if (vm.count("infile")) {
-        auto ifs = wtl::make_ifs(vm["infile"].as<std::string>());
+    const std::string infile = VM.at("infile").get<std::string>();
+    if (!infile.empty()) {
+        auto ifs = wtl::make_ifs(infile);
         Individual::read_json(ifs);
     }
-    config_string_ = wtl::flags_into_string(vm);
-    if (vm["verbose"].as<bool>()) {
+    config_ = VM.dump(2) + "\n";
+    if (vm_local.at("verbose")) {
         std::cerr << wtl::iso8601datetime() << std::endl;
-        std::cerr << config_string_ << std::endl;
+        std::cerr << config_ << std::endl;
         Individual::write_json(std::cerr);
     }
+    HERE;
 }
 
 Program::~Program() = default;
 
 void Program::run() {HERE;
-    auto& vm = *vars_;
-    const auto quiet = vm["quiet"].as<bool>();
-    const auto writing_tree = vm["tree"].as<bool>();
-    const auto popsize = vm["popsize"].as<size_t>();
-    const auto years = vm["years"].as<uint_fast32_t>();
-    const auto last_years = vm["last"].as<uint_fast32_t>();
-    const auto sampling_rate = vm["sample"].as<double>();
-    const auto mutation_rate = vm["mutation"].as<double>();
-    const auto outdir = vm["outdir"].as<std::string>();
-    const auto seed = vm["seed"].as<int>();
+    const bool quiet = VM.at("quiet");
+    const bool writing_tree = VM.at("tree");
+    const size_t popsize = VM.at("popsize");
+    const uint_fast32_t years = VM.at("years");
+    const uint_fast32_t last_years = VM.at("last");
+    const double sampling_rate = VM.at("sample");
+    const double mutation_rate = VM.at("mutation");
+    const std::string outdir = VM.at("outdir");
+    const int seed = VM.at("seed");
     population_ = std::make_unique<Population>(popsize, static_cast<uint32_t>(seed));
     population_->run(years, sampling_rate, last_years);
     if (quiet) return;
     if (!outdir.empty()) {
         wtl::ChDir cd(outdir, true);
-        wtl::make_ofs("program_options.conf") << config_string_;
+        wtl::make_ofs("config.json") << config_;
         if (writing_tree) {
             wtl::zlib::ofstream ost{"sample_family.tsv.gz"};
             population_->write_sample_family(ost);

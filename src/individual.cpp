@@ -8,7 +8,7 @@
 #include <wtl/iostr.hpp>
 #include <wtl/random.hpp>
 #include <sfmt.hpp>
-#include <nlohmann/json.hpp>
+#include <clippson/json.hpp>
 
 #include <type_traits>
 
