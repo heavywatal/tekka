@@ -30,7 +30,7 @@ struct IndividualParams {
     double RECRUITMENT_COEF = 0.73;
     //! \f$k\f$ for overdispersion in recruitment()
     //! @ingroup params
-    double NEGATIVE_BINOM_K = std::numeric_limits<double>::infinity();
+    double NEGATIVE_BINOM_K = -1.0;
 };
 
 /*! @brief Individual class

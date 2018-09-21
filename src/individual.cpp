@@ -78,8 +78,8 @@ bool Individual::has_survived(const uint_fast32_t year, const uint_fast32_t quar
 
 uint_fast32_t Individual::recruitment(const uint_fast32_t year, URBG& engine) const noexcept {
     const double mean = param().RECRUITMENT_COEF * weight(year);
-    const double prob = param().NEGATIVE_BINOM_K / (mean + param().NEGATIVE_BINOM_K);
-    if (prob < 1.0) {
+    if (param().NEGATIVE_BINOM_K > 0.0) {
+        const double prob = param().NEGATIVE_BINOM_K / (mean + param().NEGATIVE_BINOM_K);
         return wtl::negative_binomial_distribution<uint_fast32_t>(param().NEGATIVE_BINOM_K, prob)(engine);
     } else {
         return std::poisson_distribution<uint_fast32_t>(mean)(engine);
