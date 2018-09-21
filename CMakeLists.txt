@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.1)
 project(blackthunnus
-  VERSION 0.1.10
+  VERSION 0.2.0
   LANGUAGES CXX)
 
 include(GNUInstallDirs)
