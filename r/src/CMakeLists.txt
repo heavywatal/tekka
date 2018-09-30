@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.1)
 project(tekkamaki
-  VERSION 0.2.0
+  VERSION 0.3.0
   LANGUAGES CXX)
 
 message(STATUS "CMAKE_CURRENT_SOURCE_DIR: ${CMAKE_CURRENT_SOURCE_DIR}")
