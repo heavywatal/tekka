@@ -6,6 +6,7 @@
 #include "population.hpp"
 #include "individual.hpp"
 #include "segment.hpp"
+#include "random.hpp"
 #include "config.hpp"
 
 #include <wtl/exception.hpp>
@@ -14,7 +15,6 @@
 #include <wtl/chrono.hpp>
 #include <wtl/zlib.hpp>
 #include <wtl/filesystem.hpp>
-#include <sfmt.hpp>
 #include <clippson/clippson.hpp>
 
 namespace pbt {

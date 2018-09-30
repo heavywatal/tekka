@@ -5,6 +5,8 @@
 #ifndef PBT_INDIVIDUAL_HPP_
 #define PBT_INDIVIDUAL_HPP_
 
+#include "random_fwd.hpp"
+
 #include <cstdint>
 #include <iosfwd>
 #include <memory>
@@ -12,14 +14,9 @@
 #include <map>
 #include <limits>
 
-namespace wtl {class sfmt19937_64;}
-
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////
 
 namespace pbt {
-
-//! alias of uniform random bit generator
-using URBG = wtl::sfmt19937_64;
 
 //! @brief Parameters for Individual class
 /*! @ingroup params

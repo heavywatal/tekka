@@ -5,6 +5,8 @@
 #ifndef PBT_POPULATION_HPP_
 #define PBT_POPULATION_HPP_
 
+#include "random_fwd.hpp"
+
 #include <cstdint>
 #include <iosfwd>
 #include <vector>
@@ -12,13 +14,10 @@
 #include <map>
 #include <memory>
 
-namespace wtl {class sfmt19937_64;}
-
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////
 
 namespace pbt {
 
-using URBG = wtl::sfmt19937_64;
 class Individual;
 class Segment;
 

@@ -39,7 +39,11 @@ target_include_directories(${PROJECT_NAME} INTERFACE
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
-target_link_libraries(${PROJECT_NAME} PRIVATE wtl::wtl wtl::sfmt clippson::clippson ZLIB::ZLIB)
+target_link_libraries(${PROJECT_NAME} PRIVATE wtl::wtl clippson::clippson ZLIB::ZLIB)
+if(sfmt_FOUND)
+  target_compile_definitions(${PROJECT_NAME} PRIVATE SFMT_FOUND)
+  target_link_libraries(${PROJECT_NAME} PRIVATE wtl::sfmt)
+endif()
 
 add_executable(${PROJECT_NAME}-exe main.cpp)
 target_link_libraries(${PROJECT_NAME}-exe PRIVATE ${PROJECT_NAME})

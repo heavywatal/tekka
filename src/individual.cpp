@@ -2,12 +2,11 @@
     @brief Implementation of Individual class
 */
 #include "individual.hpp"
+#include "random.hpp"
 #include "config.hpp"
 
 #include <wtl/debug.hpp>
 #include <wtl/iostr.hpp>
-#include <wtl/random.hpp>
-#include <sfmt.hpp>
 #include <clippson/json.hpp>
 
 #include <type_traits>

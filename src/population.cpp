@@ -4,12 +4,11 @@
 #include "population.hpp"
 #include "individual.hpp"
 #include "segment.hpp"
+#include "random.hpp"
 
 #include <wtl/debug.hpp>
 #include <wtl/iostr.hpp>
-#include <wtl/random.hpp>
 #include <wtl/exception.hpp>
-#include <sfmt.hpp>
 
 namespace pbt {
 
