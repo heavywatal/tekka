@@ -1,2 +1,7 @@
-rm build/CMakeCache.txt
-cmake -Hsrc -Bbuild
+which cmake
+rm -r build
+mkdir -p build
+echo "R_PACKAGE_DIR: $R_PACKAGE_DIR"
+cmake -Hsrc -Bbuild -DCMAKE_INSTALL_PREFIX=$R_PACKAGE_DIR
+cmake --build build -- -j2
+cmake --build build --target install

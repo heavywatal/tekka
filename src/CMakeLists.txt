@@ -9,7 +9,7 @@ if(GIT_DESCRIBE)
 endif()
 message(STATUS "PROJECT_VERSION: ${PROJECT_VERSION}")
 
-file(READ "${CMAKE_SOURCE_DIR}/util/parameters.json" PARAMETERS_JSON)
+file(READ "${PROJECT_SOURCE_DIR}/util/parameters.json" PARAMETERS_JSON)
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/config.hpp.in
   ${CMAKE_CURRENT_SOURCE_DIR}/config.hpp @ONLY
