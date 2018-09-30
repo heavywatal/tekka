@@ -6,10 +6,27 @@ project(blackthunnus
 include(GNUInstallDirs)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
+function(find_package_or_git package version repo)
+  find_package(Git)
+  find_package(${package} ${version} QUIET)
+  if(${package}_FOUND)
+    return()
+  endif()
+  set(subdir external/${package}-v${version})
+  if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${subdir}/.git)
+    execute_process(COMMAND
+      ${GIT_EXECUTABLE} clone --recursive --depth=1 --branch=v${version} https://github.com/${repo}.git ${subdir}
+      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    )
+  endif()
+  message(STATUS "add_subdirectory(${subdir})")
+  add_subdirectory(${subdir} EXCLUDE_FROM_ALL)
+endfunction()
+
 find_package(ZLIB REQUIRED)
 find_package(sfmt 0.7.0)
-find_package(wtl 0.7.1)
-find_package(clippson 0.7.3)
+find_package_or_git(wtl 0.7.1 heavywatal/cxxwtl)
+find_package_or_git(clippson 0.7.3 heavywatal/clippson)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
