@@ -16,8 +16,12 @@ Individual-based simulator of pacific bluefin tuna
 - [cxxwtl](https://github.com/heavywatal/cxxwtl)
 - [sfmt-class](https://github.com/heavywatal/sfmt-class) (optional)
 
+## R interface
 
-## Installation
+You can use this program via [R package "tekkamaki"](https://github.com/heavywatal/blackthunnus/tree/master/r).
+
+
+## Installation of command-line version
 
 The easiest way is to use [Homebrew](https://brew.sh/)/[Linuxbrew](http://linuxbrew.sh/).
 The following command installs blackthunnus and all the dependencies:
@@ -36,10 +40,3 @@ cmake -DCMAKE_INSTALL_PREFIX=$YOUR_PREFIX ..
 make -j2
 make install
 ```
-
-If needed, set `CMAKE_PREFIX_PATH` variable so that CMake can find your libraries,
-e.g., `cmake -DCMAKE_INSTALL_PREFIX=$(brew --prefix) ..`
-
-## R interface
-
-You can use this program via [R package "tekkamaki"](https://github.com/heavywatal/blackthunnus/tree/master/r).
