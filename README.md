@@ -18,7 +18,7 @@ Individual-based simulator of pacific bluefin tuna
 
 ## R interface
 
-You can use this program via [R package "tekkamaki"](https://github.com/heavywatal/blackthunnus/tree/master/r).
+You can install and use this program via [R package "tekkamaki"](https://github.com/heavywatal/tekkamaki).
 
 
 ## Installation of command-line version
