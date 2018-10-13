@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.4)
 project(blackthunnus
   VERSION 0.3.1
   LANGUAGES CXX)
@@ -24,7 +24,7 @@ function(find_package_or_git package version repo)
 endfunction()
 
 find_package(ZLIB REQUIRED)
-find_package(sfmt 0.7.0)
+find_package(sfmt 0.7.1)
 find_package_or_git(wtl 0.7.1 heavywatal/cxxwtl)
 find_package_or_git(clippson 0.7.3 heavywatal/clippson)
 
@@ -52,6 +52,10 @@ add_library(${PROJECT_NAME} SHARED)
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 add_subdirectory(src)
 
+set_target_properties(${PROJECT_NAME} PROPERTIES
+  POSITION_INDEPENDENT_CODE ON
+  WINDOWS_EXPORT_ALL_SYMBOLS ON
+)
 target_include_directories(${PROJECT_NAME} INTERFACE
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>

@@ -7,14 +7,15 @@ Individual-based simulator of pacific bluefin tuna
 [Project page on GitHub](https://github.com/heavywatal/blackthunnus)
 
 
-## Dependencies
+## Requirements
 
-- Unix-like OS (macOS, Linux, etc.)
+- Unix-like environment (macOS, Linux, WSL, MinGW on MSYS2, etc.)
 - C++14 compiler (clang++ >= Apple LLVM 8.1, g++ >= 5.3)
-- [CMake](https://cmake.org/)
-- [clippson](https://github.com/heavywatal/clippson)
-- [cxxwtl](https://github.com/heavywatal/cxxwtl)
+- [CMake](https://cmake.org/) (>= 3.4.0)
+- [clippson](https://github.com/heavywatal/clippson) (optional)
+- [cxxwtl](https://github.com/heavywatal/cxxwtl) (optional)
 - [sfmt-class](https://github.com/heavywatal/sfmt-class) (optional)
+
 
 ## R interface
 
