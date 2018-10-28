@@ -39,6 +39,12 @@ class Program {
     std::unique_ptr<Population> population_;
 };
 
+//! @name Workaround for R/Rcpp
+//@{
+std::streambuf* std_cout_rdbuf(std::streambuf*);
+std::streambuf* std_cerr_rdbuf(std::streambuf*);
+//@}
+
 } // namespace pbt
 
 #endif /* PBT_PROGRAM_HPP_ */

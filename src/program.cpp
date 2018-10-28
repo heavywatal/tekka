@@ -172,4 +172,11 @@ std::string Program::demography() const {
     return oss.str();
 }
 
+std::streambuf* std_cout_rdbuf(std::streambuf* buf) {
+    return std::cout.rdbuf(buf);
+}
+std::streambuf* std_cerr_rdbuf(std::streambuf* buf) {
+    return std::cerr.rdbuf(buf);
+}
+
 } // namespace pbt
