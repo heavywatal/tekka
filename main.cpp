@@ -4,27 +4,36 @@
 #include "src/program.hpp"
 #include "src/population.hpp"
 
-#include <wtl/zlib.hpp>
 #include <wtl/filesystem.hpp>
+#ifdef ZLIB_FOUND
+  #include <wtl/zlib.hpp>
+#endif
 
 #include <iostream>
 #include <stdexcept>
 
 void write(const pbt::Program& program) {
+  #ifdef ZLIB_FOUND
+    using ofstream = wtl::zlib::ofstream;
+    const std::string ext = ".tsv.gz";
+  #else
+    using ofstream = std::ofstream;
+    const std::string ext = ".tsv";
+  #endif
     const auto& population = program.population();
     const auto outdir = program.outdir();
     if (!outdir.empty()) {
         wtl::ChDir cd(outdir, true);
         std::ofstream{"config.json"} << program.config();
         {
-            wtl::zlib::ofstream ost{"sample_family.tsv.gz"};
+            ofstream ost{"sample_family" + ext};
             population.write_sample_family(ost);
         }
         {
-            wtl::zlib::ofstream ost{"demography.tsv.gz"};
+            ofstream ost{"demography" + ext};
             population.write_demography(ost);
         }
-        wtl::zlib::ofstream ost{"msout.txt.gz"};
+        ofstream ost{"msout" + ext};
         program.write_ms(ost);
     } else {
         program.write_ms(std::cout);
