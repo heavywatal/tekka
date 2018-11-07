@@ -13,8 +13,6 @@
 #include <wtl/debug.hpp>
 #include <wtl/iostr.hpp>
 #include <wtl/chrono.hpp>
-#include <wtl/zlib.hpp>
-#include <wtl/filesystem.hpp>
 #include <clippson/clippson.hpp>
 
 namespace pbt {
@@ -52,8 +50,6 @@ inline clipp::group program_options(nlohmann::json* vm) {HERE;
       wtl::option(vm, {"u", "mutation"}, 0.1, "per generation per haploid"),
       wtl::option(vm, {"i", "infile"}, std::string(""), "config file in json format"),
       wtl::option(vm, {"o", "outdir"}, OUT_DIR),
-      wtl::option(vm, {"q", "quiet"}, false, "suppress output"),
-      wtl::option(vm, {"t", "tree"}, false, "Output family tree"),
       wtl::option(vm, {"seed"}, seed)
     ).doc("Program:");
 }
@@ -122,37 +118,13 @@ Program::Program(const std::vector<std::string>& arguments)
 Program::~Program() = default;
 
 void Program::run() {HERE;
-    const bool quiet = VM.at("quiet");
-    const bool writing_tree = VM.at("tree");
-    const size_t popsize = VM.at("popsize");
-    const uint_fast32_t years = VM.at("years");
-    const uint_fast32_t last_years = VM.at("last");
-    const double sampling_rate = VM.at("sample");
-    const std::string outdir = VM.at("outdir");
-    const int seed = VM.at("seed");
-    population_ = std::make_unique<Population>(popsize, static_cast<uint32_t>(seed));
+    const auto popsize = VM.at("popsize").get<size_t>();
+    const auto seed = VM.at("seed").get<uint32_t>();
+    const auto years = VM.at("years").get<uint_fast32_t>();
+    const auto sampling_rate = VM.at("sample").get<double>();
+    const auto last_years = VM.at("last").get<uint_fast32_t>();
+    population_ = std::make_unique<Population>(popsize, seed);
     population_->run(years, sampling_rate, last_years);
-    if (quiet) return;
-    if (!outdir.empty()) {
-        wtl::ChDir cd(outdir, true);
-        wtl::make_ofs("config.json") << config_;
-        if (writing_tree) {
-            wtl::zlib::ofstream ost{"sample_family.tsv.gz"};
-            population_->write_sample_family(ost);
-        }
-        {
-            wtl::zlib::ofstream ost{"demography.tsv.gz"};
-            population_->write_demography(ost);
-        }
-        wtl::zlib::ofstream ost{"msout.txt.gz"};
-        write_ms(ost);
-    } else {
-        if (writing_tree) {
-            population_->write_sample_family(std::cout);
-        } else {
-            write_ms(std::cout);
-        }
-    }
 }
 
 std::string Program::sample_family() const {
@@ -173,6 +145,10 @@ void Program::write_ms(std::ostream& ost) const {
     ost << VM.at("seed").get<int>() << "\n";
     auto tree = population_->coalesce();
     population_->write_ms(tree, mutation_rate, ost);
+}
+
+std::string Program::outdir() const {
+    return VM.at("outdir");
 }
 
 std::streambuf* std_cout_rdbuf(std::streambuf* buf) {

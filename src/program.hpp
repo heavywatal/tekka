@@ -26,6 +26,13 @@ class Program {
     //! Write ms-like output
     void write_ms(std::ostream& ost) const;
 
+    //! @name Getter for main()
+    //@{
+    const Population& population() const noexcept {return *population_;}
+    const std::string& config() const noexcept {return config_;}
+    std::string outdir() const;
+    //@}
+
     //! @name Output for Rcpp
     //@{
     std::string sample_family() const;
