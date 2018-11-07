@@ -7,26 +7,25 @@ include(GNUInstallDirs)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
 function(find_package_or_git package version repo)
-  find_package(Git)
   find_package(${package} ${version} QUIET)
   if(${package}_FOUND)
     return()
   endif()
-  set(subdir external/${package}-v${version})
-  if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${subdir}/.git)
+  set(subdir ${PROJECT_BINARY_DIR}/${package}-v${version})
+  if(NOT EXISTS ${subdir})
+    find_package(Git)
     execute_process(COMMAND
       ${GIT_EXECUTABLE} clone --recursive --depth=1 --branch=v${version} https://github.com/${repo}.git ${subdir}
-      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     )
   endif()
   message(STATUS "add_subdirectory(${subdir})")
   add_subdirectory(${subdir} EXCLUDE_FROM_ALL)
 endfunction()
 
-find_package(ZLIB REQUIRED)
+find_package(ZLIB)
 find_package(sfmt 0.7.1)
-find_package_or_git(wtl 0.7.1 heavywatal/cxxwtl)
-find_package_or_git(clippson 0.7.3 heavywatal/clippson)
+find_package_or_git(wtl 0.7.6 heavywatal/cxxwtl)
+find_package_or_git(clippson 0.7.6 heavywatal/clippson)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -48,7 +47,8 @@ set(CMAKE_INSTALL_NAME_DIR ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR})
 set(CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR})
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH ON)
 
-add_library(${PROJECT_NAME} SHARED)
+option(BUILD_SHARED_LIBS "Build shared libraries" ON)
+add_library(${PROJECT_NAME})
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 add_subdirectory(src)
 
@@ -82,6 +82,7 @@ install(TARGETS ${PROJECT_NAME}-exe ${PROJECT_NAME}
   EXPORT ${PROJECT_NAME}-config
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )
 install(DIRECTORY src/
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
