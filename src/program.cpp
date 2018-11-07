@@ -128,7 +128,6 @@ void Program::run() {HERE;
     const uint_fast32_t years = VM.at("years");
     const uint_fast32_t last_years = VM.at("last");
     const double sampling_rate = VM.at("sample");
-    const double mutation_rate = VM.at("mutation");
     const std::string outdir = VM.at("outdir");
     const int seed = VM.at("seed");
     population_ = std::make_unique<Population>(popsize, static_cast<uint32_t>(seed));
@@ -146,16 +145,12 @@ void Program::run() {HERE;
             population_->write_demography(ost);
         }
         wtl::zlib::ofstream ost{"msout.txt.gz"};
-        auto tree = population_->coalesce();
-        population_->write_ms(tree, mutation_rate, ost);
+        write_ms(ost);
     } else {
         if (writing_tree) {
             population_->write_sample_family(std::cout);
         } else {
-            wtl::join(command_args_, std::cout, " ") << "\n";
-            std::cout << seed << "\n";
-            auto tree = population_->coalesce();
-            population_->write_ms(tree, mutation_rate, std::cout);
+            write_ms(std::cout);
         }
     }
 }
@@ -170,6 +165,14 @@ std::string Program::demography() const {
     std::ostringstream oss;
     population_->write_demography(oss);
     return oss.str();
+}
+
+void Program::write_ms(std::ostream& ost) const {
+    const auto mutation_rate = VM.at("mutation").get<double>();
+    wtl::join(command_args_, ost << PROJECT_NAME << " ", " ") << "\n";
+    ost << VM.at("seed").get<int>() << "\n";
+    auto tree = population_->coalesce();
+    population_->write_ms(tree, mutation_rate, ost);
 }
 
 std::streambuf* std_cout_rdbuf(std::streambuf* buf) {
