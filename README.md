@@ -12,9 +12,13 @@ Individual-based simulator of pacific bluefin tuna
 - Unix-like environment (macOS, Linux, WSL, MinGW on MSYS2, etc.)
 - C++14 compiler (clang++ >= Apple LLVM 8.1, g++ >= 5.3)
 - [CMake](https://cmake.org/) (>= 3.4.0)
-- [clippson](https://github.com/heavywatal/clippson) (optional)
-- [cxxwtl](https://github.com/heavywatal/cxxwtl) (optional)
-- [sfmt-class](https://github.com/heavywatal/sfmt-class) (optional)
+
+The following libraries are optional or automatically installed:
+
+- [clippson](https://github.com/heavywatal/clippson)
+- [cxxwtl](https://github.com/heavywatal/cxxwtl)
+- [sfmt-class](https://github.com/heavywatal/sfmt-class)
+- [zlib](https://zlib.net)
 
 
 ## R interface
