@@ -10,6 +10,7 @@
 #endif
 
 #include <iostream>
+#include <fstream>
 #include <stdexcept>
 
 void write(const pbt::Program& program) {
