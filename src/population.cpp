@@ -14,7 +14,6 @@ namespace pbt {
 
 Population::Population(const size_t initial_size, std::random_device::result_type seed)
 : engine_(std::make_unique<URBG>(seed)) {HERE;
-    Individual::set_default_values();
     const size_t half = initial_size / 2UL;
     const size_t rest = initial_size - half;
     males_.reserve(half);

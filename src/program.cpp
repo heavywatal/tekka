@@ -20,11 +20,11 @@ namespace pbt {
 nlohmann::json VM;
 
 //! Options description for general purpose
-inline clipp::group general_options(nlohmann::json* vm) {HERE;
+inline clipp::group general_options(nlohmann::json* vm) {
     return (
-      wtl::option(vm, {"h", "help"}, false, "print this help"),
-      wtl::option(vm, {"version"}, false, "print version"),
-      wtl::option(vm, {"v", "verbose"}, false, "verbose output"),
+      wtl::option(vm, {"h", "help"}, false, "Print this help"),
+      wtl::option(vm, {"version"}, false, "Print version"),
+      wtl::option(vm, {"v", "verbose"}, false, "Verbose output"),
       wtl::option(vm, {"default"}, false, "Print default parameters in json")
     ).doc("General:");
 }
@@ -39,9 +39,9 @@ inline clipp::group general_options(nlohmann::json* vm) {HERE;
     `-s,--sample`       | -
     `-u,--mutation`     | -
 */
-inline clipp::group program_options(nlohmann::json* vm) {HERE;
+inline clipp::group program_options(nlohmann::json* vm) {
     const std::string OUT_DIR = wtl::strftime("thunnus_%Y%m%d_%H%M%S");
-    const int seed = std::random_device{}(); // 32-bit signed integer for R
+    const int seed = static_cast<int>(std::random_device{}()); // 32-bit signed integer for R
     return (
       wtl::option(vm, {"n", "popsize"}, 1000u, "Initial population size"),
       wtl::option(vm, {"y", "years"}, 40u, "Duration of simulation"),
@@ -56,18 +56,17 @@ inline clipp::group program_options(nlohmann::json* vm) {HERE;
 
 //! Program options
 /*! @ingroup params
-    @return Program options description
 
     Command line option  | Symbol         | Variable
     -------------------- | -------------- | -------------------------------
     `-r,--recruitment`   | -              | Individual::RECRUITMENT_COEF_
     `-k,--overdispersion`| -              | Individual::NEGATIVE_BINOM_K_
 */
-inline clipp::group individual_options(nlohmann::json* vm, IndividualParams* p) {HERE;
+inline clipp::group individual_options(nlohmann::json* vm, IndividualParams* p) {
     return (
       wtl::option(vm, {"r", "recruitment"}, &p->RECRUITMENT_COEF),
       wtl::option(vm, {"k", "overdispersion"}, &p->NEGATIVE_BINOM_K)
-    ).doc("Individual");
+    ).doc("Individual:");
 }
 
 Program::Program(const std::vector<std::string>& arguments)
@@ -85,8 +84,8 @@ Program::Program(const std::vector<std::string>& arguments)
       individual_options(&VM, &individual_params)
     );
     wtl::parse(cli, arguments);
-    auto fmt = wtl::doc_format();
     if (vm_local.at("help")) {
+        auto fmt = wtl::doc_format();
         std::cout << "Usage: " << PROJECT_NAME << " [options]\n\n";
         std::cout << clipp::documentation(cli, fmt) << "\n";
         throw wtl::ExitSuccess();
@@ -101,7 +100,7 @@ Program::Program(const std::vector<std::string>& arguments)
         Individual::write_json(std::cout);
         throw wtl::ExitSuccess();
     }
-    const std::string infile = VM.at("infile").get<std::string>();
+    const std::string infile = VM.at("infile");
     if (!infile.empty()) {
         auto ifs = wtl::make_ifs(infile);
         Individual::read_json(ifs);
@@ -112,17 +111,16 @@ Program::Program(const std::vector<std::string>& arguments)
         std::cerr << config_ << std::endl;
         Individual::write_json(std::cerr);
     }
-    HERE;
 }
 
 Program::~Program() = default;
 
 void Program::run() {HERE;
-    const auto popsize = VM.at("popsize").get<size_t>();
-    const auto seed = VM.at("seed").get<uint32_t>();
-    const auto years = VM.at("years").get<uint_fast32_t>();
-    const auto sampling_rate = VM.at("sample").get<double>();
-    const auto last_years = VM.at("last").get<uint_fast32_t>();
+    const size_t popsize = VM.at("popsize");
+    const uint32_t seed = VM.at("seed");
+    const uint_fast32_t years = VM.at("years");
+    const double sampling_rate = VM.at("sample");
+    const uint_fast32_t last_years = VM.at("last");
     population_ = std::make_unique<Population>(popsize, seed);
     population_->run(years, sampling_rate, last_years);
 }
@@ -140,7 +138,7 @@ std::string Program::demography() const {
 }
 
 void Program::write_ms(std::ostream& ost) const {
-    const auto mutation_rate = VM.at("mutation").get<double>();
+    const double mutation_rate = VM.at("mutation");
     wtl::join(command_args_, ost << PROJECT_NAME << " ", " ") << "\n";
     ost << VM.at("seed").get<int>() << "\n";
     auto tree = population_->coalesce();
