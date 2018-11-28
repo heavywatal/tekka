@@ -13,11 +13,11 @@
 
 namespace pbt {
 
-Individual::param_type Individual::PARAM_;
-IndividualJson Individual::JSON_;
-
 //! discrete distributions for migration
 static std::vector<std::vector<std::discrete_distribution<uint_fast32_t>>> MIGRATION_DISTRIBUTIONS;
+
+Individual::param_type Individual::PARAM_;
+IndividualJson Individual::JSON_;
 
 static_assert(std::is_nothrow_default_constructible<Individual>{}, "");
 static_assert(std::is_nothrow_copy_constructible<Individual>{}, "");
