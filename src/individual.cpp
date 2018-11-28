@@ -13,9 +13,6 @@
 
 namespace pbt {
 
-//! discrete distributions for migration
-static std::vector<std::vector<std::discrete_distribution<uint_fast32_t>>> MIGRATION_DISTRIBUTIONS;
-
 Individual::param_type Individual::PARAM_;
 IndividualJson Individual::JSON_;
 
@@ -39,7 +36,7 @@ uint_fast32_t Individual::recruitment(const uint_fast32_t year, URBG& engine) co
 }
 
 void Individual::migrate(const uint_fast32_t year, URBG& engine) {
-    location_ = MIGRATION_DISTRIBUTIONS.at(year - birth_year_)[location_](engine);
+    location_ = JSON_.MIGRATION_DISTRIBUTIONS.at(year - birth_year_)[location_](engine);
 }
 
 void Individual::trace_back(std::ostream& ost, std::map<const Individual*, size_t>* ids, uint_fast32_t year) const {
