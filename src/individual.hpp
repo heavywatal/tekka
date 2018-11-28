@@ -18,16 +18,44 @@
 
 namespace pbt {
 
-//! @brief Parameters for Individual class
+//! @brief Parameters for Individual class (command-line)
 /*! @ingroup params
 */
 struct IndividualParams {
-    //! parameter for recruitment()
     //! @ingroup params
+    //@{
+    //! parameter for recruitment()
     double RECRUITMENT_COEF = 0.73;
     //! \f$k\f$ for overdispersion in recruitment()
-    //! @ingroup params
     double NEGATIVE_BINOM_K = -1.0;
+    //@}
+};
+
+//! @brief Parameters for Individual class (JSON file)
+/*! @ingroup params
+*/
+struct IndividualJson {
+    //! @cond
+    IndividualJson();
+    void set_dependent_static();
+    void read(std::istream&);
+    void write(std::ostream&) const;
+    //! @endcond
+
+    //! @ingroup params
+    //@{
+    //! mortality due to natural causes
+    std::vector<double> NATURAL_MORTALITY;
+    //! mortality due to fishing activities
+    std::vector<double> FISHING_MORTALITY;
+    //! precalculated values
+    std::vector<double> WEIGHT_FOR_AGE;
+    //! transition matrix for migration
+    std::vector<std::vector<std::vector<double>>> MIGRATION_MATRICES;
+    //@}
+
+    //! survival rate per quater year
+    std::vector<double> SURVIVAL_RATE;
 };
 
 /*! @brief Individual class
@@ -67,20 +95,18 @@ class Individual {
     friend std::ostream& operator<<(std::ostream&, const Individual&);
     //! column names for write()
     static std::vector<std::string> names();
-    //! set static variables from config.hpp
-    static void set_default_values();
     //! Read class variables from stream in json
-    static void read_json(std::istream&);
+    static void read_json(std::istream& ist) {JSON_.read(ist);}
     //! Write class variables to stream in json
-    static void write_json(std::ostream&);
+    static void write_json(std::ostream& ost) {JSON_.write(ost);}
     //! Set #PARAM_
-    static void param(const param_type& p);
+    static void param(const param_type& p) {PARAM_ = p;}
     //! Get #PARAM_
     static const param_type& param() {return PARAM_;}
 
     //! number of locations
     static size_t num_locations() noexcept {
-        return MIGRATION_MATRICES_[0u].size();
+        return JSON_.MIGRATION_MATRICES[0u].size();
     }
     //! number of breeding places
     static constexpr size_t num_breeding_places() noexcept {return 2u;}
@@ -88,7 +114,7 @@ class Individual {
     //! @name Getter functions
     //@{
     double weight(const uint_fast32_t year) const noexcept {
-        return WEIGHT_FOR_AGE_[4u * (year - birth_year_)];
+        return JSON_.WEIGHT_FOR_AGE[4u * (year - birth_year_)];
     }
     bool is_first_gen() const noexcept {return !father_;}
     const Individual* father_get() const noexcept {return father_.get();}
@@ -98,21 +124,10 @@ class Individual {
     //@}
 
   private:
-    //! Parameters shared among instances
+    //! Parameters shared among instances (command-line)
     static param_type PARAM_;
-
-    //! set static variables that depend on other variables
-    static void set_dependent_static();
-    //! mortality due to natural causes
-    static std::vector<double> NATURAL_MORTALITY_;
-    //! mortality due to fishing activities
-    static std::vector<double> FISHING_MORTALITY_;
-    //! survival rate per quater year
-    static std::vector<double> SURVIVAL_RATE_;
-    //! precalculated values
-    static std::vector<double> WEIGHT_FOR_AGE_;
-    //! transition matrix for migration
-    static std::vector<std::vector<std::vector<double>>> MIGRATION_MATRICES_;
+    //! Parameters shared among instances (JSON file)
+    static IndividualJson JSON_;
 
     //! father
     const std::shared_ptr<Individual> father_ = nullptr;

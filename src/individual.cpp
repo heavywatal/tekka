@@ -14,11 +14,7 @@
 namespace pbt {
 
 Individual::param_type Individual::PARAM_;
-std::vector<double> Individual::NATURAL_MORTALITY_;
-std::vector<double> Individual::FISHING_MORTALITY_;
-std::vector<double> Individual::SURVIVAL_RATE_;
-std::vector<double> Individual::WEIGHT_FOR_AGE_;
-std::vector<std::vector<std::vector<double>>> Individual::MIGRATION_MATRICES_;
+IndividualJson Individual::JSON_;
 
 //! discrete distributions for migration
 static std::vector<std::vector<std::discrete_distribution<uint_fast32_t>>> MIGRATION_DISTRIBUTIONS;
@@ -27,52 +23,9 @@ static_assert(std::is_nothrow_default_constructible<Individual>{}, "");
 static_assert(std::is_nothrow_copy_constructible<Individual>{}, "");
 static_assert(std::is_nothrow_move_constructible<Individual>{}, "");
 
-void Individual::param(const param_type& p) {
-    PARAM_ = p;
-}
-
-void Individual::set_default_values() {HERE;
-    if (!NATURAL_MORTALITY_.empty()) return;
-    std::istringstream iss(default_values);
-    read_json(iss);
-}
-
-//! append the last element until v->size() reaches n
-template <class T> inline
-void elongate(std::vector<T>* v, size_t n) noexcept {
-    for (size_t i=v->size(); i<n; ++i) {
-        v->emplace_back(v->back());
-    }
-}
-
-void Individual::set_dependent_static() {HERE;
-    constexpr uint_fast32_t max_age = 80u;
-    constexpr uint_fast32_t max_qage = 4u * (max_age + 1u);
-    MIGRATION_DISTRIBUTIONS.clear();
-    MIGRATION_DISTRIBUTIONS.reserve(max_age);
-    for (const auto& matrix: MIGRATION_MATRICES_) {
-        decltype(MIGRATION_DISTRIBUTIONS)::value_type dists;
-        dists.reserve(matrix.size());
-        for (const auto& row: matrix) {
-            dists.emplace_back(row.begin(), row.end());
-        }
-        MIGRATION_DISTRIBUTIONS.emplace_back(std::move(dists));
-    }
-    elongate(&MIGRATION_DISTRIBUTIONS, max_age);
-    SURVIVAL_RATE_.reserve(max_qage);
-    SURVIVAL_RATE_.resize(NATURAL_MORTALITY_.size());
-    std::transform(NATURAL_MORTALITY_.begin(), NATURAL_MORTALITY_.end(),
-                   FISHING_MORTALITY_.begin(), SURVIVAL_RATE_.begin(),
-                   [](double n, double f) {
-                       return std::exp(-n - f);
-                   });
-    elongate(&SURVIVAL_RATE_, max_qage);
-    elongate(&WEIGHT_FOR_AGE_, max_qage);
-}
-
 bool Individual::has_survived(const uint_fast32_t year, const uint_fast32_t quarter, URBG& engine) const {
     uint_fast32_t qage = 4u * (year - birth_year_) + quarter;
-    return (wtl::generate_canonical(engine) < SURVIVAL_RATE_.at(qage));
+    return (wtl::generate_canonical(engine) < JSON_.SURVIVAL_RATE.at(qage));
 }
 
 uint_fast32_t Individual::recruitment(const uint_fast32_t year, URBG& engine) const noexcept {
@@ -127,23 +80,62 @@ std::ostream& operator<<(std::ostream& ost, const Individual& x) {
     return x.write(ost);
 }
 
-void Individual::read_json(std::istream& ist) {
+//! @cond
+IndividualJson::IndividualJson() {HERE;
+    std::istringstream iss(default_values);
+    read(iss);
+}
+
+template <class T> inline
+void elongate(std::vector<T>* v, size_t n) noexcept {
+    for (size_t i=v->size(); i<n; ++i) {
+        v->emplace_back(v->back());
+    }
+}
+
+void IndividualJson::set_dependent_static() {HERE;
+    constexpr uint_fast32_t max_age = 80u;
+    constexpr uint_fast32_t max_qage = 4u * (max_age + 1u);
+    MIGRATION_DISTRIBUTIONS.clear();
+    MIGRATION_DISTRIBUTIONS.reserve(max_age);
+    for (const auto& matrix: MIGRATION_MATRICES) {
+        decltype(MIGRATION_DISTRIBUTIONS)::value_type dists;
+        dists.reserve(matrix.size());
+        for (const auto& row: matrix) {
+            dists.emplace_back(row.begin(), row.end());
+        }
+        MIGRATION_DISTRIBUTIONS.emplace_back(std::move(dists));
+    }
+    elongate(&MIGRATION_DISTRIBUTIONS, max_age);
+    SURVIVAL_RATE.reserve(max_qage);
+    SURVIVAL_RATE.resize(NATURAL_MORTALITY.size());
+    std::transform(NATURAL_MORTALITY.begin(), NATURAL_MORTALITY.end(),
+                   FISHING_MORTALITY.begin(), SURVIVAL_RATE.begin(),
+                   [](double n, double f) {
+                       return std::exp(-n - f);
+                   });
+    elongate(&SURVIVAL_RATE, max_qage);
+    elongate(&WEIGHT_FOR_AGE, max_qage);
+}
+
+void IndividualJson::read(std::istream& ist) {
     nlohmann::json obj;
     ist >> obj;
-    NATURAL_MORTALITY_ = obj.at("natural_mortality").get<decltype(NATURAL_MORTALITY_)>();
-    FISHING_MORTALITY_ = obj.at("fishing_mortality").get<decltype(FISHING_MORTALITY_)>();
-    WEIGHT_FOR_AGE_ = obj.at("weight_for_age").get<decltype(WEIGHT_FOR_AGE_)>();
-    MIGRATION_MATRICES_ = obj.at("migration_matrices").get<decltype(MIGRATION_MATRICES_)>();
+    NATURAL_MORTALITY = obj.at("natural_mortality").get<decltype(NATURAL_MORTALITY)>();
+    FISHING_MORTALITY = obj.at("fishing_mortality").get<decltype(FISHING_MORTALITY)>();
+    WEIGHT_FOR_AGE = obj.at("weight_for_age").get<decltype(WEIGHT_FOR_AGE)>();
+    MIGRATION_MATRICES = obj.at("migration_matrices").get<decltype(MIGRATION_MATRICES)>();
     set_dependent_static();
 }
 
-void Individual::write_json(std::ostream& ost) {
+void IndividualJson::write(std::ostream& ost) const {
     nlohmann::json obj;
-    obj["natural_mortality"] = NATURAL_MORTALITY_;
-    obj["fishing_mortality"] = FISHING_MORTALITY_;
-    obj["weight_for_age"] = WEIGHT_FOR_AGE_;
-    obj["migration_matrices"] = MIGRATION_MATRICES_;
+    obj["natural_mortality"] = NATURAL_MORTALITY;
+    obj["fishing_mortality"] = FISHING_MORTALITY;
+    obj["weight_for_age"] = WEIGHT_FOR_AGE;
+    obj["migration_matrices"] = MIGRATION_MATRICES;
     ost << obj;
 }
+//! @endcond
 
 } // namespace pbt

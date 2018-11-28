@@ -17,6 +17,7 @@
 
 namespace pbt {
 
+//! Global variables mapper of commane-line arguments
 nlohmann::json VM;
 
 //! Options description for general purpose
@@ -29,6 +30,7 @@ inline clipp::group general_options(nlohmann::json* vm) {
     ).doc("General:");
 }
 
+//! Program options
 /*! @ingroup params
 
     Command line option | Symbol
@@ -54,7 +56,7 @@ inline clipp::group program_options(nlohmann::json* vm) {
     ).doc("Program:");
 }
 
-//! Program options
+//! Individual options
 /*! @ingroup params
 
     Command line option  | Symbol         | Variable
@@ -95,7 +97,6 @@ Program::Program(const std::vector<std::string>& arguments)
         throw wtl::ExitSuccess();
     }
     Individual::param(individual_params);
-    Individual::set_default_values();
     if (vm_local.at("default")) {
         Individual::write_json(std::cout);
         throw wtl::ExitSuccess();
