@@ -1,0 +1,12 @@
+#include "config.hpp"
+
+namespace pbt {
+
+const char* const PROJECT_NAME = "@PROJECT_NAME@";
+const char* const PROJECT_VERSION = "@PROJECT_VERSION@";
+
+const char* const default_values = R"(
+@PARAMETERS_JSON@
+)";
+
+}

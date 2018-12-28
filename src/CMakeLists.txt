@@ -11,8 +11,8 @@ message(STATUS "PROJECT_VERSION: ${PROJECT_VERSION}")
 
 file(READ "${PROJECT_SOURCE_DIR}/util/parameters.json" PARAMETERS_JSON)
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/config.hpp.in
-  ${CMAKE_CURRENT_SOURCE_DIR}/config.hpp @ONLY
+  ${CMAKE_CURRENT_SOURCE_DIR}/config.cpp.in
+  ${CMAKE_CURRENT_SOURCE_DIR}/config.cpp @ONLY
 )
 
 file(GLOB srcfiles *.cpp)
