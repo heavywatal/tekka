@@ -101,6 +101,8 @@ class Individual {
     static void read_json(std::istream& ist) {JSON_.read(ist);}
     //! Write class variables to stream in json
     static void write_json(std::ostream& ost) {JSON_.write(ost);}
+    //! Export negative_binomial_distribution to Rcpp for testing
+    static std::vector<int> rnbinom(int n, double k, double mu);
     //! Set #PARAM_
     static void param(const param_type& p) {PARAM_ = p;}
     //! Get #PARAM_

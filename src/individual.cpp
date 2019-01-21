@@ -25,11 +25,18 @@ bool Individual::has_survived(const uint_fast32_t year, const uint_fast32_t quar
     return (wtl::generate_canonical(engine) < JSON_.SURVIVAL_RATE.at(qage));
 }
 
+// translate mean to prob
+template <class T> inline wtl::negative_binomial_distribution<T>
+nbinom_distribution(double k, double mu) {
+    const double prob = k / (mu + k);
+    return wtl::negative_binomial_distribution<T>(k, prob);
+}
+
 uint_fast32_t Individual::recruitment(const uint_fast32_t year, URBG& engine) const noexcept {
     const double mean = param().RECRUITMENT_COEF * weight(year);
-    if (param().NEGATIVE_BINOM_K > 0.0) {
-        const double prob = param().NEGATIVE_BINOM_K / (mean + param().NEGATIVE_BINOM_K);
-        return wtl::negative_binomial_distribution<uint_fast32_t>(param().NEGATIVE_BINOM_K, prob)(engine);
+    const double k = param().NEGATIVE_BINOM_K;
+    if (k > 0.0) {
+        return nbinom_distribution<uint_fast32_t>(k, mean)(engine);
     } else {
         return std::poisson_distribution<uint_fast32_t>(mean)(engine);
     }
@@ -134,5 +141,14 @@ void IndividualJson::write(std::ostream& ost) const {
     ost << obj;
 }
 //! @endcond
+
+std::vector<int> Individual::rnbinom(const int n, const double k, const double mu) {
+    auto dist = nbinom_distribution<int>(k, mu);
+    std::vector<int> v(n);
+    for (int& x: v) {
+        x = dist(engine64());
+    }
+    return v;
+}
 
 } // namespace pbt
