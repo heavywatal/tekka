@@ -26,7 +26,8 @@ struct IndividualParams {
     //@{
     //! parameter for recruitment()
     double RECRUITMENT_COEF = 0.73;
-    //! \f$k\f$ for overdispersion in recruitment()
+    //! \f$k \in (0, \infty)\f$ for overdispersion in recruitment().
+    //! Equivalent to Poisson when \f$k \to \infty\f$ (or \f$k<0\f$ for convience).
     double NEGATIVE_BINOM_K = -1.0;
     //@}
 };

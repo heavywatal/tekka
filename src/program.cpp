@@ -67,7 +67,9 @@ inline clipp::group program_options(nlohmann::json* vm) {
 inline clipp::group individual_options(nlohmann::json* vm, IndividualParams* p) {
     return (
       wtl::option(vm, {"r", "recruitment"}, &p->RECRUITMENT_COEF),
-      wtl::option(vm, {"k", "overdispersion"}, &p->NEGATIVE_BINOM_K)
+      wtl::option(vm, {"k", "overdispersion"}, &p->NEGATIVE_BINOM_K,
+        "k ∈ (0, ∞); equivalent to Poisson when k→∞ (or k<0 for convience)"
+      )
     ).doc("Individual:");
 }
 
