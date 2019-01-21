@@ -85,7 +85,7 @@ std::ostream& operator<<(std::ostream& ost, const Individual& x) {
 }
 
 //! @cond
-IndividualJson::IndividualJson() {HERE;
+IndividualJson::IndividualJson() {
     std::istringstream iss(default_values);
     read(iss);
 }
@@ -97,7 +97,7 @@ void elongate(std::vector<T>* v, size_t n) noexcept {
     }
 }
 
-void IndividualJson::set_dependent_static() {HERE;
+void IndividualJson::set_dependent_static() {
     constexpr uint_fast32_t max_age = 80u;
     constexpr uint_fast32_t max_qage = 4u * (max_age + 1u);
     MIGRATION_DISTRIBUTIONS.clear();
