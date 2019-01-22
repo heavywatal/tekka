@@ -20,18 +20,22 @@ class Segment {
   public:
     //! @name Constructors
     //@{
+    //! Constructor
     Segment(const Individual* i, bool b, bool s=false)
     : individual_(i), is_from_father_(b), is_sampled_(s) {}
     Segment() = delete;
     Segment(const Segment&) = delete;
+    //! Move constructor
     Segment(Segment&&) = default;
     //@}
 
     //! @name Setter functions
     //@{
+    //! Set #mutations_
     void set_mutations(std::vector<double>&& v) const noexcept {
         mutations_ = std::move(v);
     }
+    //! Set #ancestral_segment_
     void set_ancestral_segment(Segment* p) const noexcept {
         ancestral_segment_ = p;
     }

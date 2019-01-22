@@ -25,7 +25,7 @@ bool Individual::has_survived(const uint_fast32_t year, const uint_fast32_t quar
     return (wtl::generate_canonical(engine) < JSON_.SURVIVAL_RATE.at(qage));
 }
 
-// translate mean to prob
+//! Translate parameter `mean` to `prob`
 template <class T> inline wtl::negative_binomial_distribution<T>
 nbinom_distribution(double k, double mu) {
     const double prob = k / (mu + k);
@@ -81,7 +81,7 @@ std::ostream& Individual::write(std::ostream& ost, const std::map<const Individu
                << location_;
 }
 
-//! shortcut Individual::write(ost)
+//! Shortcut of Individual::write
 std::ostream& operator<<(std::ostream& ost, const Individual& x) {
     return x.write(ost);
 }

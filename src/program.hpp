@@ -28,14 +28,19 @@ class Program {
 
     //! @name Getter for main()
     //@{
+    //! Get #population_
     const Population& population() const noexcept {return *population_;}
+    //! Get #config_
     const std::string& config() const noexcept {return config_;}
+    //! Get VM["outdir"]
     std::string outdir() const;
     //@}
 
     //! @name Output for Rcpp
     //@{
+    //! Using Population.write_sample_family
     std::string sample_family() const;
+    //! Using Population.write_demography
     std::string demography() const;
     //@}
 

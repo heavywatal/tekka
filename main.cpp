@@ -13,6 +13,7 @@
 #include <fstream>
 #include <stdexcept>
 
+//! Output results to files
 void write(const pbt::Program& program) {
   #ifdef ZLIB_FOUND
     using ofstream = wtl::zlib::ofstream;

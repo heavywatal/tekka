@@ -59,10 +59,11 @@ inline clipp::group program_options(nlohmann::json* vm) {
 //! Individual options
 /*! @ingroup params
 
-    Command line option  | Symbol         | Variable
-    -------------------- | -------------- | -------------------------------
-    `-r,--recruitment`   | -              | Individual::RECRUITMENT_COEF_
-    `-k,--overdispersion`| -              | Individual::NEGATIVE_BINOM_K_
+    Command line option      | Symbol         | Variable
+    ------------------------ | -------------- | -------------------------------
+    `-r,--recruitment`       | \f$r\f$        | IndividualParams::RECRUITMENT_COEF
+    `-K,--carrying_capacity` | \f$K\f$        | IndividualParams::CARRYING_CAPACITY
+    `-k,--overdispersion`    | \f$k\f$        | IndividualParams::NEGATIVE_BINOM_K
 */
 inline clipp::group individual_options(nlohmann::json* vm, IndividualParams* p) {
     return (
@@ -153,9 +154,11 @@ std::string Program::outdir() const {
     return VM.at("outdir");
 }
 
+//! std::cout.rdbuf
 std::streambuf* std_cout_rdbuf(std::streambuf* buf) {
     return std::cout.rdbuf(buf);
 }
+//! std::cerr.rdbuf
 std::streambuf* std_cerr_rdbuf(std::streambuf* buf) {
     return std::cerr.rdbuf(buf);
 }

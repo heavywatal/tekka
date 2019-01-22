@@ -120,14 +120,18 @@ class Individual {
 
     //! @name Getter functions
     //@{
+    //! IndividualJson.WEIGHT_FOR_AGE
     double weight(const uint_fast32_t year) const noexcept {
         return JSON_.WEIGHT_FOR_AGE[4u * (year - birth_year_)];
     }
+    //! !#father_
     bool is_first_gen() const noexcept {return !father_;}
+    //! @cond
     const Individual* father_get() const noexcept {return father_.get();}
     const Individual* mother_get() const noexcept {return mother_.get();}
     uint_fast32_t birth_year() const noexcept {return birth_year_;}
     uint_fast32_t location() const noexcept {return location_;}
+    //! @endcond
     //@}
 
   private:
