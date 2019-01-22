@@ -46,13 +46,18 @@ void Population::run(const uint_fast32_t simulating_duration,
 }
 
 void Population::reproduce() {
+    size_t num_potential_mothers = 0;
+    for (const auto& mother: females_) {
+        if (mother->is_in_breeding_place()) ++num_potential_mothers;
+    }
+    size_t num_potential_fathers = 0;
     std::vector<std::vector<std::shared_ptr<Individual>>> males_located(Individual::num_breeding_places());
     for (const auto& p: males_) {
         if (p->is_in_breeding_place()) {
+            ++num_potential_fathers;
             males_located[p->location()].emplace_back(p);
         }
     }
-    size_t num_potential_fathers = 0;
     std::vector<std::discrete_distribution<unsigned>> mate_distrs;
     mate_distrs.reserve(males_located.size());
     for (size_t i=0; i<males_located.size(); ++i) {
@@ -60,10 +65,10 @@ void Population::reproduce() {
         fitnesses.reserve(males_located[i].size());
         for (const auto& male: males_located[i]) {
             fitnesses.push_back(male->weight(year_));
-            ++num_potential_fathers;
         }
         mate_distrs.emplace_back(fitnesses.begin(), fitnesses.end());
     }
+    const size_t popsize = num_potential_mothers + num_potential_fathers;
     std::vector<std::shared_ptr<Individual>> boys;
     std::vector<std::shared_ptr<Individual>> girls;
     boys.reserve(num_potential_fathers * 60u);
@@ -73,7 +78,7 @@ void Population::reproduce() {
         const auto& potential_fathers = males_located[mother->location()];
         if (potential_fathers.empty()) continue;
         auto& mate_distr = mate_distrs[mother->location()];
-        const uint_fast32_t num_juveniles = mother->recruitment(year_, *engine_);
+        const uint_fast32_t num_juveniles = mother->recruitment(year_, popsize, *engine_);
         for (uint_fast32_t i=0; i<num_juveniles; ++i) {
             const auto father = potential_fathers[mate_distr(*engine_)];
             if (wtl::generate_canonical(*engine_) < 0.5) {

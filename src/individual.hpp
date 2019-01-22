@@ -24,8 +24,10 @@ namespace pbt {
 struct IndividualParams {
     //! @ingroup params
     //@{
-    //! parameter for recruitment()
-    double RECRUITMENT_COEF = 0.73;
+    //! \f$r\f$:  used in Individual::recruitment()
+    double RECRUITMENT_COEF = 1.0;
+    //! \f$K\f$: carrying capacity used in Individual::recruitment()
+    double CARRYING_CAPACITY = 1e+3;
     //! \f$k \in (0, \infty)\f$ for overdispersion in recruitment().
     //! Equivalent to Poisson when \f$k \to \infty\f$ (or \f$k<0\f$ for convience).
     double NEGATIVE_BINOM_K = -1.0;
@@ -84,7 +86,7 @@ class Individual {
     }
 
     //! number of juveniles
-    uint_fast32_t recruitment(const uint_fast32_t year, URBG&) const noexcept;
+    uint_fast32_t recruitment(uint_fast32_t year, size_t popsize, URBG&) const noexcept;
 
     //! change #location_
     void migrate(const uint_fast32_t year, URBG&);
