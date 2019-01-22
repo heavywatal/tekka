@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.4)
 project(blackthunnus
-  VERSION 0.4.1
+  VERSION 0.4.2
   LANGUAGES CXX)
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
