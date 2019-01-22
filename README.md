@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/heavywatal/blackthunnus.svg?branch=master)](https://travis-ci.org/heavywatal/blackthunnus)
 
-Individual-based simulator of pacific bluefin tuna
+Individual-based simulator of pacific bluefin tuna.
 
 [Project page on GitHub](https://github.com/heavywatal/blackthunnus)
 
@@ -23,7 +23,7 @@ The following libraries are optional or automatically installed:
 
 ## R interface
 
-You can install and use this program via [R package "tekkamaki"](https://github.com/heavywatal/tekkamaki).
+You can install and use this program via [R package "tekkamaki"](https://heavywatal.github.io/tekkamaki/).
 
 
 ## Installation of command-line version
