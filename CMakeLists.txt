@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.4)
-project(blackthunnus
+project(tekka
   VERSION 0.4.2
   LANGUAGES CXX)
 

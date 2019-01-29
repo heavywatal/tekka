@@ -1,10 +1,10 @@
-# blackthunnus
+# tekka
 
-[![Build Status](https://travis-ci.org/heavywatal/blackthunnus.svg?branch=master)](https://travis-ci.org/heavywatal/blackthunnus)
+[![Build Status](https://travis-ci.org/heavywatal/tekka.svg?branch=master)](https://travis-ci.org/heavywatal/tekka)
 
 Individual-based simulator of pacific bluefin tuna.
 
-[Project page on GitHub](https://github.com/heavywatal/blackthunnus)
+[Project page on GitHub](https://github.com/heavywatal/tekka)
 
 
 ## Requirements
@@ -29,15 +29,15 @@ You can install and use this program via [R package "tekkamaki"](https://heavywa
 ## Installation of command-line version
 
 The easiest way is to use [Homebrew](https://brew.sh/)/[Linuxbrew](http://linuxbrew.sh/).
-The following command installs blackthunnus and all the dependencies:
+The following command installs tekka and all the dependencies:
 ```sh
-brew install heavywatal/tap/blackthunnus
+brew install heavywatal/tap/tekka
 ```
 
 Alternatively, you can get the source code from GitHub manually:
 ```sh
-git clone https://github.com/heavywatal/blackthunnus.git
-cd blackthunnus/
+git clone https://github.com/heavywatal/tekka.git
+cd tekka/
 mkdir build
 cd build/
 YOUR_PREFIX=${HOME}/local  # or /usr/local
