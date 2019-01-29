@@ -6,11 +6,11 @@
 
 #ifdef SFMT_FOUND
 namespace wtl {class sfmt19937_64;}
-namespace pbt {
+namespace pbf {
   using URBG = wtl::sfmt19937_64;
 }
 #else
-namespace pbt {
+namespace pbf {
   using URBG = std::mt19937_64;
 }
 #endif

@@ -16,7 +16,7 @@
 
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////
 
-namespace pbt {
+namespace pbf {
 
 class Individual;
 class Segment;
@@ -78,6 +78,6 @@ class Population {
     std::unique_ptr<URBG> engine_;
 };
 
-} // namespace pbt
+} // namespace pbf
 
 #endif /* PBT_POPULATION_HPP_ */

@@ -10,7 +10,7 @@
 #include <wtl/iostr.hpp>
 #include <wtl/exception.hpp>
 
-namespace pbt {
+namespace pbf {
 
 Population::Population(const size_t initial_size, std::random_device::result_type seed)
 : engine_(std::make_unique<URBG>(seed)) {HERE;
@@ -298,4 +298,4 @@ std::ostream& operator<<(std::ostream& ost, const Population& pop) {
     return pop.write(ost);
 }
 
-} // namespace pbt
+} // namespace pbf

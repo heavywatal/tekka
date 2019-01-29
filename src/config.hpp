@@ -2,7 +2,7 @@
 #ifndef PBT_CONFIG_HPP_
 #define PBT_CONFIG_HPP_
 
-namespace pbt {
+namespace pbf {
 
 extern const char* const PROJECT_NAME;
 extern const char* const PROJECT_VERSION;

@@ -14,7 +14,7 @@
 #include <stdexcept>
 
 //! Output results to files
-void write(const pbt::Program& program) {
+void write(const pbf::Program& program) {
   #ifdef ZLIB_FOUND
     using ofstream = wtl::zlib::ofstream;
     const std::string ext = ".tsv.gz";
@@ -46,7 +46,7 @@ void write(const pbt::Program& program) {
 int main(int argc, char* argv[]) {
     std::vector<std::string> arguments(argv + 1, argv + argc);
     try {
-        pbt::Program program(arguments);
+        pbf::Program program(arguments);
         program.run();
         write(program);
     } catch (const std::runtime_error& e) {

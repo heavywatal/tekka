@@ -15,7 +15,7 @@
 #include <wtl/chrono.hpp>
 #include <clippson/clippson.hpp>
 
-namespace pbt {
+namespace pbf {
 
 //! Global variables mapper of commane-line arguments
 nlohmann::json VM;
@@ -163,4 +163,4 @@ std::streambuf* std_cerr_rdbuf(std::streambuf* buf) {
     return std::cerr.rdbuf(buf);
 }
 
-} // namespace pbt
+} // namespace pbf

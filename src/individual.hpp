@@ -16,7 +16,7 @@
 
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////
 
-namespace pbt {
+namespace pbf {
 
 //! @brief Parameters for Individual class (command-line)
 /*! @ingroup params
@@ -150,6 +150,6 @@ class Individual {
     uint_fast32_t location_ = 0u;
 };
 
-} // namespace pbt
+} // namespace pbf
 
 #endif /* PBT_INDIVIDUAL_HPP_ */

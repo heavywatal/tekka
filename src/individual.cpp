@@ -11,7 +11,7 @@
 
 #include <type_traits>
 
-namespace pbt {
+namespace pbf {
 
 Individual::param_type Individual::PARAM_;
 IndividualJson Individual::JSON_;
@@ -153,4 +153,4 @@ std::vector<int> Individual::rnbinom(const int n, const double k, const double m
     return v;
 }
 
-} // namespace pbt
+} // namespace pbf

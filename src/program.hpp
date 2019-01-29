@@ -9,7 +9,7 @@
 #include <string>
 #include <memory>
 
-namespace pbt {
+namespace pbf {
 
 class Population;
 
@@ -59,6 +59,6 @@ std::streambuf* std_cout_rdbuf(std::streambuf*);
 std::streambuf* std_cerr_rdbuf(std::streambuf*);
 //@}
 
-} // namespace pbt
+} // namespace pbf
 
 #endif /* PBT_PROGRAM_HPP_ */

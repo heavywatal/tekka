@@ -12,7 +12,7 @@
 
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////
 
-namespace pbt {
+namespace pbf {
 
 /*! @brief Segment class
 */
@@ -92,6 +92,6 @@ static_assert(!std::is_default_constructible<Segment>{}, "");
 static_assert(!std::is_copy_constructible<Segment>{}, "");
 static_assert(std::is_nothrow_move_constructible<Segment>{}, "");
 
-} // namespace pbt
+} // namespace pbf
 
 #endif /* PBT_SEGMENT_HPP_ */

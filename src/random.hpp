@@ -8,7 +8,7 @@
 #endif
 #include <wtl/random.hpp>
 
-namespace pbt {
+namespace pbf {
 
 inline URBG& engine64() {
 #ifdef SFMT_FOUND
