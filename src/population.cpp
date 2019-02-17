@@ -123,60 +123,49 @@ void Population::migrate() {
 
 void Population::sample(const std::vector<size_t>& sample_size_adult,
                         const std::vector<size_t>& sample_size_juvenile) {
-    std::vector<size_t> sample_size_ladies(Individual::num_locations());
-    std::vector<size_t> sample_size_men(Individual::num_locations());
-    std::vector<size_t> sample_size_girls(Individual::num_locations());
-    std::vector<size_t> sample_size_boys(Individual::num_locations());
-    size_t total_sampled_adults = 0u;
-    size_t total_sampled_juveniles = 0u;
-    size_t total_sampled_females = 0u;
-    size_t total_sampled_males = 0u;
-    for (size_t i = 0; i < sample_size_adult.size(); ++i) {
-        const size_t n = sample_size_adult[i];
-        total_sampled_adults += n;
-        std::binomial_distribution<size_t> binom(n, 0.5);
-        total_sampled_females += sample_size_ladies[i] = binom(*engine_);
-        total_sampled_males += sample_size_men[i] = n - sample_size_ladies[i];
-    }
+    std::vector<std::vector<size_t>> sample_size_female(2u, std::vector<size_t>(Individual::num_locations()));
+    std::vector<std::vector<size_t>> sample_size_male = sample_size_female;
+    size_t total_sampled_juvenile = 0u;
+    size_t total_sampled_adult = 0u;
+    size_t total_sampled_female = 0u;
+    size_t total_sampled_male = 0u;
     for (size_t i = 0; i < sample_size_juvenile.size(); ++i) {
         const size_t n = sample_size_juvenile[i];
-        total_sampled_juveniles += n;
+        total_sampled_juvenile += n;
         std::binomial_distribution<size_t> binom(n, 0.5);
-        total_sampled_females += sample_size_girls[i] = binom(*engine_);
-        total_sampled_males += sample_size_boys[i] = n - sample_size_girls[i];
+        total_sampled_female += sample_size_female[0u][i] = binom(*engine_);
+        total_sampled_male += sample_size_male[0u][i] = n - sample_size_female[0u][i];
     }
-    WTL_ASSERT(total_sampled_adults + total_sampled_juveniles == total_sampled_females + total_sampled_males);
-    year_samples_[year_].reserve(total_sampled_adults + total_sampled_juveniles);
+    for (size_t i = 0; i < sample_size_adult.size(); ++i) {
+        const size_t n = sample_size_adult[i];
+        total_sampled_adult += n;
+        std::binomial_distribution<size_t> binom(n, 0.5);
+        total_sampled_female += sample_size_female[1u][i] = binom(*engine_);
+        total_sampled_male += sample_size_male[1u][i] = n - sample_size_female[1u][i];
+    }
+    WTL_ASSERT(total_sampled_adult + total_sampled_juvenile == total_sampled_female + total_sampled_male);
+    year_samples_[year_].reserve(total_sampled_adult + total_sampled_juvenile);
     using VecPtrs = std::vector<std::shared_ptr<Individual>>;
     auto impl = [this](VecPtrs* individuals, size_t total,
-                       std::vector<size_t>& n_adult, std::vector<size_t>& n_juvenile) {
+                       std::vector<std::vector<size_t>>& sample_size) {
         VecPtrs& sampled = year_samples_[year_];
         VecPtrs unsampled;
         unsampled.reserve(total);
         std::shuffle(individuals->begin(), individuals->end(), *engine_);
         for (const auto p: *individuals) {
-            if (p->birth_year() == year_) {
-                auto& to_be_sampled = n_juvenile[p->location()];
-                if (to_be_sampled) {
-                    sampled.emplace_back(p);
-                    --to_be_sampled;
-                } else {
-                    unsampled.emplace_back(p);
-                }
+            const size_t idx = (p->birth_year() == year_) ? 0u : 1u;
+            auto& to_be_sampled = sample_size[idx][p->location()];
+            if (to_be_sampled) {
+                sampled.emplace_back(p);
+                --to_be_sampled;
             } else {
-                auto& to_be_sampled = n_adult[p->location()];
-                if (to_be_sampled) {
-                    sampled.emplace_back(p);
-                    --to_be_sampled;
-                } else {
-                    unsampled.emplace_back(p);
-                }
+                unsampled.emplace_back(p);
             }
         }
         individuals->swap(unsampled);
     };
-    impl(&females_, total_sampled_females, sample_size_ladies, sample_size_girls);
-    impl(&males_, total_sampled_males, sample_size_men, sample_size_boys);
+    impl(&females_, total_sampled_female, sample_size_female);
+    impl(&males_, total_sampled_male, sample_size_male);
 }
 
 std::ostream& Population::write_sample_family(std::ostream& ost) const {
