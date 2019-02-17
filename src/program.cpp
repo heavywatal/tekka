@@ -48,8 +48,8 @@ inline clipp::group program_options(nlohmann::json* vm) {
       wtl::option(vm, {"n", "popsize"}, 1000u, "Initial population size"),
       wtl::option(vm, {"y", "years"}, 40u, "Duration of simulation"),
       wtl::option(vm, {"l", "last"}, 2u, "Sample last _ years"),
-      wtl::option(vm, {"sa", "sample_size_adult"}, 1, "per location"),
-      wtl::option(vm, {"sj", "sample_size_juvenile"}, 1, "per location"),
+      wtl::option(vm, {"sa", "sample_size_adult"}, std::vector<size_t>{1u, 1u}, "per location"),
+      wtl::option(vm, {"sj", "sample_size_juvenile"}, std::vector<size_t>{1u, 1u}, "per location"),
       wtl::option(vm, {"u", "mutation"}, 0.1, "per generation per haploid"),
       wtl::option(vm, {"i", "infile"}, std::string(""), "config file in json format"),
       wtl::option(vm, {"o", "outdir"}, OUT_DIR),
@@ -122,14 +122,16 @@ Program::Program(const std::vector<std::string>& arguments)
 Program::~Program() = default;
 
 void Program::run() {HERE;
-    const size_t popsize = VM.at("popsize");
-    const uint32_t seed = VM.at("seed");
-    const uint_fast32_t years = VM.at("years");
-    const size_t sample_size_adult = VM.at("sample_size_adult");
-    const size_t sample_size_juvenile = VM.at("sample_size_juvenile");
-    const uint_fast32_t last_years = VM.at("last");
-    population_ = std::make_unique<Population>(popsize, seed);
-    population_->run(years, sample_size_adult, sample_size_juvenile, last_years);
+    population_ = std::make_unique<Population>(
+        VM.at("popsize"),
+        VM.at("seed")
+    );
+    population_->run(
+        VM.at("years"),
+        VM.at("sample_size_adult"),
+        VM.at("sample_size_juvenile"),
+        VM.at("last")
+    );
 }
 
 std::string Program::sample_family() const {

@@ -25,8 +25,8 @@ Population::Population(const size_t initial_size, std::random_device::result_typ
 Population::~Population() = default;
 
 void Population::run(const uint_fast32_t simulating_duration,
-                     const size_t sample_size_adult,
-                     const size_t sample_size_juvenile,
+                     const std::vector<size_t>& sample_size_adult,
+                     const std::vector<size_t>& sample_size_juvenile,
                      const uint_fast32_t recording_duration) {HERE;
     auto recording_start = simulating_duration - recording_duration;
     for (year_ = 4u; year_ < simulating_duration; ++year_) {
@@ -121,56 +121,62 @@ void Population::migrate() {
     for (auto& p: females_) {p->migrate(year_, *engine_);}
 }
 
-void Population::sample(const size_t sample_size_adult, const size_t sample_size_juvenile) {
-    auto impl_sex = [this](decltype(males_)* individuals, size_t n_adult, size_t n_juvenile) {
-        decltype(males_) survivors;
-        survivors.reserve(individuals->size() - n_adult - n_juvenile);
-        std::vector<std::vector<std::shared_ptr<Individual>>> adults(Individual::num_breeding_places());
-        std::vector<std::vector<std::shared_ptr<Individual>>> juveniles(Individual::num_breeding_places());
-        for (size_t i=0; i<individuals->size(); ++i) {
-            auto& p = individuals->at(i);
-            if (p->is_in_breeding_place()) {
-                if (p->birth_year() == year_) {
-                    juveniles[p->location()].emplace_back(p);
+void Population::sample(const std::vector<size_t>& sample_size_adult,
+                        const std::vector<size_t>& sample_size_juvenile) {
+    std::vector<size_t> sample_size_ladies(Individual::num_locations());
+    std::vector<size_t> sample_size_men(Individual::num_locations());
+    std::vector<size_t> sample_size_girls(Individual::num_locations());
+    std::vector<size_t> sample_size_boys(Individual::num_locations());
+    size_t total_sampled_adults = 0u;
+    size_t total_sampled_juveniles = 0u;
+    size_t total_sampled_females = 0u;
+    size_t total_sampled_males = 0u;
+    for (size_t i = 0; i < sample_size_adult.size(); ++i) {
+        const size_t n = sample_size_adult[i];
+        total_sampled_adults += n;
+        std::binomial_distribution<size_t> binom(n, 0.5);
+        total_sampled_females += sample_size_ladies[i] = binom(*engine_);
+        total_sampled_males += sample_size_men[i] = n - sample_size_ladies[i];
+    }
+    for (size_t i = 0; i < sample_size_juvenile.size(); ++i) {
+        const size_t n = sample_size_juvenile[i];
+        total_sampled_juveniles += n;
+        std::binomial_distribution<size_t> binom(n, 0.5);
+        total_sampled_females += sample_size_girls[i] = binom(*engine_);
+        total_sampled_males += sample_size_boys[i] = n - sample_size_girls[i];
+    }
+    WTL_ASSERT(total_sampled_adults + total_sampled_juveniles == total_sampled_females + total_sampled_males);
+    year_samples_[year_].reserve(total_sampled_adults + total_sampled_juveniles);
+    using VecPtrs = std::vector<std::shared_ptr<Individual>>;
+    auto impl = [this](VecPtrs* individuals, size_t total,
+                       std::vector<size_t>& n_adult, std::vector<size_t>& n_juvenile) {
+        VecPtrs& sampled = year_samples_[year_];
+        VecPtrs unsampled;
+        unsampled.reserve(total);
+        std::shuffle(individuals->begin(), individuals->end(), *engine_);
+        for (const auto p: *individuals) {
+            if (p->birth_year() == year_) {
+                auto& to_be_sampled = n_juvenile[p->location()];
+                if (to_be_sampled) {
+                    sampled.emplace_back(p);
+                    --to_be_sampled;
                 } else {
-                    adults[p->location()].emplace_back(p);
+                    unsampled.emplace_back(p);
                 }
             } else {
-                survivors.emplace_back(p);
-            }
-        }
-        decltype(males_) samples;
-        samples.reserve(n_adult + n_juvenile);
-        auto impl_generation = [this,&survivors,&samples]
-                    (const std::vector<std::shared_ptr<Individual>>& candidates, size_t k) {
-            const size_t n = candidates.size();
-            k = std::min(k, n);
-            const auto chosen = wtl::sample(n, k, *engine_);
-            for (size_t i = 0; i < n; ++i) {
-                if (chosen.find(i) == chosen.end()) {
-                    survivors.emplace_back(candidates[i]);
+                auto& to_be_sampled = n_adult[p->location()];
+                if (to_be_sampled) {
+                    sampled.emplace_back(p);
+                    --to_be_sampled;
                 } else {
-                    samples.emplace_back(candidates[i]);
+                    unsampled.emplace_back(p);
                 }
             }
-        };
-        for (uint_fast32_t loc=0; loc<Individual::num_breeding_places(); ++loc) {
-            impl_generation(adults[loc], n_adult);
-            impl_generation(juveniles[loc], n_juvenile);
         }
-        individuals->swap(survivors);
-        return samples;
+        individuals->swap(unsampled);
     };
-    std::binomial_distribution<size_t> binom_adult(sample_size_adult, 0.5);
-    std::binomial_distribution<size_t> binom_juvenile(sample_size_juvenile, 0.5);
-    const size_t n_ladies = binom_adult(*engine_);
-    const size_t n_girls = binom_juvenile(*engine_);
-    auto f_samples = impl_sex(&females_, n_ladies, n_girls);
-    auto m_samples = impl_sex(&males_, sample_size_adult - n_ladies, sample_size_juvenile - n_girls);
-    auto& samples = year_samples_[year_];
-    samples.reserve(m_samples.size() + f_samples.size());
-    std::copy(m_samples.begin(), m_samples.end(), std::back_inserter(samples));
-    std::copy(f_samples.begin(), f_samples.end(), std::back_inserter(samples));
+    impl(&females_, total_sampled_females, sample_size_ladies, sample_size_girls);
+    impl(&males_, total_sampled_males, sample_size_men, sample_size_boys);
 }
 
 std::ostream& Population::write_sample_family(std::ostream& ost) const {
