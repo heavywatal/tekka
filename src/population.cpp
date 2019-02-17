@@ -25,7 +25,8 @@ Population::Population(const size_t initial_size, std::random_device::result_typ
 Population::~Population() = default;
 
 void Population::run(const uint_fast32_t simulating_duration,
-                     const double sample_rate,
+                     const size_t sample_size_adult,
+                     const size_t sample_size_juvenile,
                      const uint_fast32_t recording_duration) {HERE;
     auto recording_start = simulating_duration - recording_duration;
     for (year_ = 4u; year_ < simulating_duration; ++year_) {
@@ -37,7 +38,7 @@ void Population::run(const uint_fast32_t simulating_duration,
         survive(2u, false);
         survive(3u, true);
         if (year_ >= recording_start) {
-            sample(sample_rate);
+            sample(sample_size_adult, sample_size_juvenile);
         }
         migrate();
     }
@@ -120,51 +121,52 @@ void Population::migrate() {
     for (auto& p: females_) {p->migrate(year_, *engine_);}
 }
 
-void Population::sample(const double rate) {
-    auto impl = [rate,this](decltype(males_)* individuals) {
+void Population::sample(const size_t sample_size_adult, const size_t sample_size_juvenile) {
+    auto impl_sex = [this](decltype(males_)* individuals, size_t n_adult, size_t n_juvenile) {
         decltype(males_) survivors;
-        survivors.reserve(individuals->size());
-        std::vector<std::vector<size_t>> adults(Individual::num_breeding_places());
-        std::vector<std::vector<size_t>> juveniles(Individual::num_breeding_places());
-        size_t num_adults = 0u;
+        survivors.reserve(individuals->size() - n_adult - n_juvenile);
+        std::vector<std::vector<std::shared_ptr<Individual>>> adults(Individual::num_breeding_places());
+        std::vector<std::vector<std::shared_ptr<Individual>>> juveniles(Individual::num_breeding_places());
         for (size_t i=0; i<individuals->size(); ++i) {
             auto& p = individuals->at(i);
             if (p->is_in_breeding_place()) {
                 if (p->birth_year() == year_) {
-                    juveniles[p->location()].emplace_back(i);
+                    juveniles[p->location()].emplace_back(p);
                 } else {
-                    adults[p->location()].emplace_back(i);
-                    ++num_adults;
+                    adults[p->location()].emplace_back(p);
                 }
             } else {
                 survivors.emplace_back(p);
             }
         }
         decltype(males_) samples;
-        samples.reserve(static_cast<size_t>(std::round(3.0 * rate * num_adults)));
-        auto sort = [this,&individuals,&survivors,&samples]
-                    (const std::vector<size_t>& indices, const size_t k) {
-            const auto chosen = wtl::sample(indices.size(), k, *engine_);
-            for (size_t i=0; i<indices.size(); ++i) {
+        samples.reserve(n_adult + n_juvenile);
+        auto impl_generation = [this,&survivors,&samples]
+                    (const std::vector<std::shared_ptr<Individual>>& candidates, size_t k) {
+            const size_t n = candidates.size();
+            k = std::min(k, n);
+            const auto chosen = wtl::sample(n, k, *engine_);
+            for (size_t i = 0; i < n; ++i) {
                 if (chosen.find(i) == chosen.end()) {
-                    survivors.emplace_back(individuals->at(indices[i]));
+                    survivors.emplace_back(candidates[i]);
                 } else {
-                    samples.emplace_back(individuals->at(indices[i]));
+                    samples.emplace_back(candidates[i]);
                 }
             }
         };
         for (uint_fast32_t loc=0; loc<Individual::num_breeding_places(); ++loc) {
-            const size_t n_adults = adults[loc].size();
-            const size_t n_adult_samples = static_cast<size_t>(std::round(rate * n_adults));
-            const size_t n_juvenile_samples = 2u * n_adult_samples;
-            sort(adults[loc], n_adult_samples);
-            sort(juveniles[loc], n_juvenile_samples);
+            impl_generation(adults[loc], n_adult);
+            impl_generation(juveniles[loc], n_juvenile);
         }
         individuals->swap(survivors);
         return samples;
     };
-    auto m_samples = impl(&males_);
-    auto f_samples = impl(&females_);
+    std::binomial_distribution<size_t> binom_adult(sample_size_adult, 0.5);
+    std::binomial_distribution<size_t> binom_juvenile(sample_size_juvenile, 0.5);
+    const size_t n_ladies = binom_adult(*engine_);
+    const size_t n_girls = binom_juvenile(*engine_);
+    auto f_samples = impl_sex(&females_, n_ladies, n_girls);
+    auto m_samples = impl_sex(&males_, sample_size_adult - n_ladies, sample_size_juvenile - n_girls);
     auto& samples = year_samples_[year_];
     samples.reserve(m_samples.size() + f_samples.size());
     std::copy(m_samples.begin(), m_samples.end(), std::back_inserter(samples));

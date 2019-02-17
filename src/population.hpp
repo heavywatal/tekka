@@ -32,7 +32,8 @@ class Population {
 
     //! main iteration
     void run(const uint_fast32_t simulating_duration,
-             const double sample_rate,
+             const size_t sample_size_adult=1u,
+             const size_t sample_size_juvenile=1u,
              const uint_fast32_t recording_duration=1u);
 
     //! make tree from samples
@@ -62,7 +63,7 @@ class Population {
     void migrate();
 
     //! sample individuals
-    void sample(const double rate);
+    void sample(const size_t sample_size_adult, const size_t sample_size_juvenile);
 
     //! Individual array males
     std::vector<std::shared_ptr<Individual>> males_;
