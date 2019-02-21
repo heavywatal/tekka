@@ -120,6 +120,18 @@ class Individual {
 
     //! @name Getter functions
     //@{
+    //! IndividualJson.NATURAL_MORTALITY
+    static const std::vector<double>&
+    natural_mortality() {return JSON_.NATURAL_MORTALITY;}
+    //! IndividualJson.FISHING_MORTALITY
+    static const std::vector<double>&
+    fishing_mortality() {return JSON_.FISHING_MORTALITY;}
+    //! IndividualJson.WEIGHT_FOR_AGE
+    static const std::vector<double>&
+    weight_for_age() {return JSON_.WEIGHT_FOR_AGE;}
+    //! IndividualJson.MIGRATION_MATRICES
+    static const std::vector<std::vector<std::vector<double>>>&
+    migration_matrices() {return JSON_.MIGRATION_MATRICES;}
     //! IndividualJson.WEIGHT_FOR_AGE
     double weight(const uint_fast32_t year) const noexcept {
         return JSON_.WEIGHT_FOR_AGE[4u * (year - birth_year_)];
