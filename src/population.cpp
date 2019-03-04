@@ -261,11 +261,15 @@ std::ostream& Population::write_ms(const std::list<std::shared_ptr<Segment>>& no
     return ost;
 }
 
-void Population::append_demography() {
+std::vector<std::map<uint_fast32_t, size_t>> Population::count() const {
     std::vector<std::map<uint_fast32_t, size_t>> counter(Individual::num_locations());
     for (const auto& p: males_) {++counter[p->location()][year_ - p->birth_year()];}
     for (const auto& p: females_) {++counter[p->location()][year_ - p->birth_year()];}
-    demography_.emplace_hint(demography_.end(), year_, counter);
+    return counter;
+}
+
+void Population::append_demography() {
+    demography_.emplace_hint(demography_.end(), year_, count());
 }
 
 std::ostream& Population::write_demography(std::ostream& ost) const {

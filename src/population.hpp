@@ -65,6 +65,9 @@ class Population {
     //! sample individuals
     void sample(const std::vector<size_t>& adult, const std::vector<size_t>& juvenile);
 
+    //! Count individuals for each location and age
+    std::vector<std::map<uint_fast32_t, size_t>> count() const;
+
     //! Individual array males
     std::vector<std::shared_ptr<Individual>> males_;
     //! Individual array females
