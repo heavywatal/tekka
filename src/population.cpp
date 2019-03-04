@@ -29,9 +29,8 @@ void Population::run(const uint_fast32_t simulating_duration,
                      const std::vector<size_t>& sample_size_juvenile,
                      const uint_fast32_t recording_duration) {HERE;
     auto recording_start = simulating_duration - recording_duration;
+    append_demography(0u);
     for (year_ = 4u; year_ < simulating_duration; ++year_) {
-        append_demography();
-        DCERR(year_ << ": " << demography_.at(year_) << std::endl);
         reproduce();
         survive(0u, false);
         survive(1u, false);
@@ -42,8 +41,7 @@ void Population::run(const uint_fast32_t simulating_duration,
         }
         migrate();
     }
-    append_demography();
-    DCERR(year_ << ": " << demography_.at(year_) << std::endl);
+    append_demography(0u);
 }
 
 void Population::reproduce() {
@@ -93,9 +91,9 @@ void Population::reproduce() {
     std::copy(girls.begin(), girls.end(), std::back_inserter(females_));
 }
 
-void Population::survive(const uint_fast32_t quarter, bool shrink) {
-    auto has_survived = [quarter,this](const auto& p) -> bool {
-        return p && p->has_survived(year_, quarter, *engine_);
+void Population::survive(const uint_fast32_t season, bool shrink) {
+    auto has_survived = [season, this](const auto& p) -> bool {
+        return p && p->has_survived(year_, season, *engine_);
     };
     if (shrink) {
         auto impl = [&has_survived](decltype(males_)* v) {
@@ -114,6 +112,7 @@ void Population::survive(const uint_fast32_t quarter, bool shrink) {
             if (!has_survived(p)) p.reset();
         }
     }
+    append_demography(season);
 }
 
 void Population::migrate() {
@@ -263,23 +262,30 @@ std::ostream& Population::write_ms(const std::list<std::shared_ptr<Segment>>& no
 
 std::vector<std::map<uint_fast32_t, size_t>> Population::count() const {
     std::vector<std::map<uint_fast32_t, size_t>> counter(Individual::num_locations());
-    for (const auto& p: males_) {++counter[p->location()][year_ - p->birth_year()];}
-    for (const auto& p: females_) {++counter[p->location()][year_ - p->birth_year()];}
+    for (const auto& p: males_) {
+        if (p) ++counter[p->location()][year_ - p->birth_year()];
+    }
+    for (const auto& p: females_) {
+        if (p) ++counter[p->location()][year_ - p->birth_year()];
+    }
     return counter;
 }
 
-void Population::append_demography() {
-    demography_.emplace_hint(demography_.end(), year_, count());
+void Population::append_demography(const uint_fast32_t season) {
+    auto cnt = count();
+    DCERR(year_ << "." << season << ": " << cnt << std::endl);
+    demography_.emplace_hint(demography_.end(), std::pair<uint_fast32_t, uint_fast32_t>(year_, season), std::move(cnt));
 }
 
 std::ostream& Population::write_demography(std::ostream& ost) const {
-    ost << "year\tlocation\tage\tcount\n";
-    for (const auto& year_structure: demography_) {
-        const auto year = year_structure.first;
+    ost << "year\tseason\tlocation\tage\tcount\n";
+    for (const auto& time_structure: demography_) {
+        const auto time = time_structure.first;
         for (size_t loc=0; loc<Individual::num_locations(); ++loc) {
-            const auto structure = year_structure.second[loc];
+            const auto structure = time_structure.second[loc];
             for (const auto& age_count: structure) {
-                ost << year << "\t" << loc << "\t"
+                ost << time.first << "\t" << time.second << "\t"
+                    << loc << "\t"
                     << age_count.first << "\t"
                     << age_count.second << "\n";
             }
