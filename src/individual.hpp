@@ -92,7 +92,7 @@ class Individual {
     void migrate(const uint_fast32_t year, URBG&);
 
     //! collect ancestoral IDs
-    void trace_back(std::ostream& ost, std::map<const Individual*, size_t>* ids, uint_fast32_t year=0u) const;
+    void trace_back(std::ostream& ost, std::map<const Individual*, size_t>* ids, uint_fast32_t year) const;
     //! write all the data members in TSV
     std::ostream& write(std::ostream&) const;
     //! write all the data members in TSV with translated IDs

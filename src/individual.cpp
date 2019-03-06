@@ -49,10 +49,10 @@ void Individual::migrate(const uint_fast32_t year, URBG& engine) {
 }
 
 void Individual::trace_back(std::ostream& ost, std::map<const Individual*, size_t>* ids, uint_fast32_t year) const {
-    if (!ids->emplace(this, ids->size()).second) return;
+    if (!ids->emplace(this, ids->size()).second && (year == 0u)) return;
     if (father_) {
-        father_->trace_back(ost, ids);
-        mother_->trace_back(ost, ids);
+        father_->trace_back(ost, ids, 0u);
+        mother_->trace_back(ost, ids, 0u);
     }
     write(ost, *ids) << "\t";
     if (year > 0u) {

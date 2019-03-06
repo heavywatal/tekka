@@ -149,7 +149,7 @@ void Population::sample(const std::vector<size_t>& sample_size_adult,
                        std::vector<std::vector<size_t>>& sample_size) {
         VecPtrs& sampled = year_samples_[year_];
         VecPtrs unsampled;
-        unsampled.reserve(total);
+        unsampled.reserve(individuals->size() - total);
         std::shuffle(individuals->begin(), individuals->end(), *engine_);
         for (const auto p: *individuals) {
             const size_t idx = (p->birth_year() == year_) ? 0u : 1u;
@@ -172,6 +172,11 @@ std::ostream& Population::write_sample_family(std::ostream& ost) const {
     wtl::join(Individual::names(), ost, "\t") << "\tcapture_year\n";
     std::map<const Individual*, size_t> ids;
     ids.emplace(nullptr, 0u);
+    for (const auto& ys: year_samples_) {
+        for (const auto& p: ys.second) {
+            ids.emplace(p.get(), ids.size());
+        }
+    }
     for (const auto& ys: year_samples_) {
         for (const auto& p: ys.second) {
             p->trace_back(ost, &ids, ys.first);
