@@ -33,13 +33,16 @@ inline clipp::group general_options(nlohmann::json* vm) {
 //! Program options
 /*! @ingroup params
 
-    Command line option | Symbol
-    ------------------- | -------
-    `-n,--popsize`      | \f$N\f$
-    `-y,--years`        | -
-    `-l,--last`         | -
-    `-s,--sample`       | -
-    `-u,--mutation`     | -
+    Command line option           | Symbol
+    ----------------------------- | -------
+    `-n,--popsize`                | \f$N\f$
+    `-y,--years`                  | -
+    `-l,--last`                   | -
+    `--sa,--sample_size_adult`    | -
+    `--sj,--sample_size_juvenile` | -
+    `-u,--mutation`               | -
+    `-i,--infile`                 | -
+    `-o,--outdir`                 | -
 */
 inline clipp::group program_options(nlohmann::json* vm) {
     const std::string OUT_DIR = wtl::strftime("thunnus_%Y%m%d_%H%M%S");
@@ -60,11 +63,11 @@ inline clipp::group program_options(nlohmann::json* vm) {
 //! Individual options
 /*! @ingroup params
 
-    Command line option      | Symbol         | Variable
-    ------------------------ | -------------- | -------------------------------
-    `-r,--recruitment`       | \f$r\f$        | IndividualParams::RECRUITMENT_COEF
-    `-K,--carrying_capacity` | \f$K\f$        | IndividualParams::CARRYING_CAPACITY
-    `-k,--overdispersion`    | \f$k\f$        | IndividualParams::NEGATIVE_BINOM_K
+    Command line option      | Symbol   | Variable
+    ------------------------ | -------- | -------------------------------
+    `-r,--recruitment`       | \f$r\f$  | IndividualParams::RECRUITMENT_COEF
+    `-K,--carrying_capacity` | \f$K\f$  | IndividualParams::CARRYING_CAPACITY
+    `-k,--overdispersion`    | \f$k\f$  | IndividualParams::NEGATIVE_BINOM_K
 */
 inline clipp::group individual_options(nlohmann::json* vm, IndividualParams* p) {
     return (
