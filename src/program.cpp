@@ -80,7 +80,7 @@ inline clipp::group individual_options(nlohmann::json* vm, IndividualParams* p) 
 }
 
 Program::Program(const std::vector<std::string>& arguments)
-: command_args_(arguments) {HERE;
+: command_args_(arguments) {
     std::ios::sync_with_stdio(false);
     std::cin.tie(0);
     std::cout.precision(15);
@@ -124,7 +124,7 @@ Program::Program(const std::vector<std::string>& arguments)
 
 Program::~Program() = default;
 
-void Program::run() {HERE;
+void Program::run() {
     population_ = std::make_unique<Population>(
         VM.at("popsize"),
         VM.at("seed")

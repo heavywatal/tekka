@@ -13,7 +13,7 @@
 namespace pbf {
 
 Population::Population(const size_t initial_size, std::random_device::result_type seed)
-: engine_(std::make_unique<URBG>(seed)) {HERE;
+: engine_(std::make_unique<URBG>(seed)) {
     const size_t half = initial_size / 2UL;
     const size_t rest = initial_size - half;
     males_.reserve(half);
@@ -27,7 +27,7 @@ Population::~Population() = default;
 void Population::run(const uint_fast32_t simulating_duration,
                      const std::vector<size_t>& sample_size_adult,
                      const std::vector<size_t>& sample_size_juvenile,
-                     const uint_fast32_t recording_duration) {HERE;
+                     const uint_fast32_t recording_duration) {
     auto recording_start = simulating_duration - recording_duration;
     append_demography(0u);
     for (year_ = 4u; year_ < simulating_duration; ++year_) {
@@ -277,9 +277,11 @@ std::vector<std::map<uint_fast32_t, size_t>> Population::count() const {
 }
 
 void Population::append_demography(const uint_fast32_t season) {
-    auto cnt = count();
-    DCERR(year_ << "." << season << ": " << cnt << std::endl);
-    demography_.emplace_hint(demography_.end(), std::pair<uint_fast32_t, uint_fast32_t>(year_, season), std::move(cnt));
+    demography_.emplace_hint(
+      demography_.end(),
+      std::pair<uint_fast32_t, uint_fast32_t>(year_, season),
+      count()
+    );
 }
 
 std::ostream& Population::write_demography(std::ostream& ost) const {
