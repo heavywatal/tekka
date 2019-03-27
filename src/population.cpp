@@ -149,7 +149,7 @@ void Population::sample(const std::vector<size_t>& sample_size_adult,
                        std::vector<std::vector<size_t>>& sample_size) {
         VecPtrs& sampled = year_samples_[year_];
         VecPtrs unsampled;
-        unsampled.reserve(individuals->size() - total);
+        unsampled.reserve(std::min(individuals->size() - total, 0ul));
         std::shuffle(individuals->begin(), individuals->end(), *engine_);
         for (const auto p: *individuals) {
             const size_t idx = (p->birth_year() == year_) ? 0u : 1u;
@@ -163,6 +163,7 @@ void Population::sample(const std::vector<size_t>& sample_size_adult,
         }
         individuals->swap(unsampled);
     };
+    year_samples_[year_].reserve(total_sampled_female + total_sampled_male);
     impl(&females_, total_sampled_female, sample_size_female);
     impl(&males_, total_sampled_male, sample_size_male);
 }
