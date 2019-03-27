@@ -57,11 +57,6 @@ target_include_directories(${PROJECT_NAME} INTERFACE
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 target_link_libraries(${PROJECT_NAME} PRIVATE wtl::wtl clippson::clippson)
-find_package(sfmt 0.7.1)
-if(sfmt_FOUND)
-  target_compile_definitions(${PROJECT_NAME} PRIVATE SFMT_FOUND)
-  target_link_libraries(${PROJECT_NAME} PRIVATE wtl::sfmt)
-endif()
 
 option(BUILD_EXECUTABLE "Build executable file" ON)
 if(BUILD_EXECUTABLE)

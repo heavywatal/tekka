@@ -2,9 +2,9 @@
     @brief Implementation of Individual class
 */
 #include "individual.hpp"
-#include "random.hpp"
 #include "config.hpp"
 
+#include <wtl/random.hpp>
 #include <wtl/debug.hpp>
 #include <wtl/iostr.hpp>
 #include <clippson/json.hpp>
@@ -145,10 +145,11 @@ void IndividualJson::write(std::ostream& ost) const {
 //! @endcond
 
 std::vector<int> Individual::rnbinom(const int n, const double k, const double mu) {
+    URBG engine(std::random_device{}());
     auto dist = nbinom_distribution<int>(k, mu);
     std::vector<int> v(n);
     for (int& x: v) {
-        x = dist(engine64());
+        x = dist(engine);
     }
     return v;
 }
