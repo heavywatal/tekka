@@ -60,7 +60,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE wtl::wtl clippson::clippson)
 
 option(BUILD_EXECUTABLE "Build executable file" ON)
 if(BUILD_EXECUTABLE)
-  add_executable(${PROJECT_NAME}-exe main.cpp)
+  add_executable(${PROJECT_NAME}-exe src/main.cpp)
   target_link_libraries(${PROJECT_NAME}-exe PRIVATE ${PROJECT_NAME} wtl::wtl)
   find_package(ZLIB)
   if(ZLIB_FOUND)

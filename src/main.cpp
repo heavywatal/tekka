@@ -1,8 +1,8 @@
 /*! @file main.cpp
     @brief Only defines tiny main()
 */
-#include "src/program.hpp"
-#include "src/population.hpp"
+#include "program.hpp"
+#include "population.hpp"
 
 #include <wtl/filesystem.hpp>
 #ifdef ZLIB_FOUND

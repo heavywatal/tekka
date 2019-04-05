@@ -15,5 +15,10 @@ configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/config.cpp @ONLY
 )
 
-file(GLOB srcfiles *.cpp)
-target_sources(${PROJECT_NAME} PRIVATE ${srcfiles})
+# Be patient until 3.13 is popularized
+target_sources(${PROJECT_NAME} PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR}/config.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/individual.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/population.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/program.cpp
+)
