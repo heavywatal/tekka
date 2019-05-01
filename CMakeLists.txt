@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.4)
+cmake_minimum_required(VERSION 3.8)
 project(tekka
   VERSION 0.5.5
   LANGUAGES CXX)
