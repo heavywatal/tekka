@@ -23,8 +23,6 @@ class Program {
     ~Program();
     //! top level function that should be called once from global main
     void run();
-    //! Write ms-like output
-    void write_ms(std::ostream& ost) const;
 
     //! @name Getter for main()
     //@{

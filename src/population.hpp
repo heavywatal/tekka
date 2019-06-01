@@ -36,13 +36,8 @@ class Population {
              const std::vector<size_t>& sample_size_juvenile={1u,1u},
              const uint_fast32_t recording_duration=1u);
 
-    //! make tree from samples
-    std::list<std::shared_ptr<Segment>> coalesce() const;
-
     //! Construct and write tree from samples
     std::ostream& write_sample_family(std::ostream& ost) const;
-    //! write sampled segments in ms format
-    std::ostream& write_ms(const std::list<std::shared_ptr<Segment>>&, double, std::ostream&) const;
     //! write #demography_
     std::ostream& write_demography(std::ostream&) const;
     //! write

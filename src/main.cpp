@@ -35,10 +35,8 @@ void write(const pbf::Program& program) {
             ofstream ost{"demography" + ext};
             population.write_demography(ost);
         }
-        ofstream ost{"msout" + ext};
-        program.write_ms(ost);
     } else {
-        program.write_ms(std::cout);
+        population.write_demography(std::cout);
     }
 }
 

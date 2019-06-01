@@ -5,7 +5,6 @@
 #include "program.hpp"
 #include "population.hpp"
 #include "individual.hpp"
-#include "segment.hpp"
 #include "config.hpp"
 
 #include <wtl/exception.hpp>
@@ -144,14 +143,6 @@ std::string Program::demography() const {
     std::ostringstream oss;
     population_->write_demography(oss);
     return oss.str();
-}
-
-void Program::write_ms(std::ostream& ost) const {
-    const double mutation_rate = VM.at("mutation");
-    wtl::join(command_args_, ost << PROJECT_NAME << " ", " ") << "\n";
-    ost << VM.at("seed").get<int>() << "\n";
-    auto tree = population_->coalesce();
-    population_->write_ms(tree, mutation_rate, ost);
 }
 
 std::string Program::outdir() const {

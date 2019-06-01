@@ -3,7 +3,6 @@
 */
 #include "population.hpp"
 #include "individual.hpp"
-#include "segment.hpp"
 
 #include <wtl/random.hpp>
 #include <wtl/debug.hpp>
@@ -181,86 +180,6 @@ std::ostream& Population::write_sample_family(std::ostream& ost) const {
     for (const auto& ys: year_samples_) {
         for (const auto& p: ys.second) {
             p->trace_back(ost, &ids, ys.first);
-        }
-    }
-    return ost;
-}
-
-//! Generate [0,1) doubles; size ~ Poisson(lambda)
-//! @cond
-class RunifPoisson {
-  public:
-    RunifPoisson(double lambda): poisson_(lambda) {}
-    std::vector<double> operator()(URBG& engine) {
-        uint_fast32_t n = poisson_(engine);
-        std::vector<double> v(n);
-        for (uint_fast32_t i=0; i<n; ++i) {
-            v[i] = wtl::generate_canonical(engine);
-        }
-        return v;
-    }
-  private:
-    std::poisson_distribution<uint_fast32_t> poisson_;
-};
-
-struct less_shptr_Segment {
-    bool operator()(const std::shared_ptr<Segment>& lhs, const std::shared_ptr<Segment>& rhs) const noexcept {
-        return *lhs < *rhs;
-    }
-};
-//! @endcond
-
-std::list<std::shared_ptr<Segment>> Population::coalesce() const {
-    std::set<std::shared_ptr<Segment>, less_shptr_Segment> nodeset;
-    std::list<std::shared_ptr<Segment>> nodes;
-    for (const auto& ys: year_samples_) {
-        for (const auto& p: ys.second) {
-            for (bool b: {true, false}) {
-                auto it = nodeset.emplace(std::make_shared<Segment>(p.get(), b, true)).first;
-                nodes.push_back(*it);
-            }
-        }
-    }
-    const size_t sample_size = nodes.size();
-    uint_fast32_t num_coalesced = 0u;
-    uint_fast32_t num_uncoalesced = 0u;
-    for (auto it = nodes.begin(); it != nodes.end(); ++it) {
-        auto& p = *it;
-        if (p->individual_->is_first_gen()) {
-            ++num_uncoalesced;
-            continue;
-        }
-        auto res = nodeset.emplace(std::make_shared<Segment>(p->ancestor(), wtl::generate_canonical(*engine_) < 0.5, false));
-        auto ancp = const_cast<Segment*>(res.first->get());
-        p->set_ancestral_segment(ancp);
-        if (res.second) {
-            nodes.push_back(*res.first);
-        } else {
-            ++num_coalesced;
-        }
-    }
-    DCERR("uncoalesced: " << num_uncoalesced << " / " << sample_size << "\n");
-    WTL_ASSERT(num_coalesced + num_uncoalesced == sample_size);
-    return nodes;
-}
-
-std::ostream& Population::write_ms(const std::list<std::shared_ptr<Segment>>& nodes, double lambda, std::ostream& ost) const {
-    RunifPoisson runif(lambda);
-    std::set<double> collector;
-    for (const auto& x: nodes) {
-        auto sites = runif(*engine_);
-        collector.insert(sites.begin(), sites.end());
-        x->set_mutations(std::move(sites));
-    }
-    std::vector<double> positions(collector.begin(), collector.end());
-
-    ost << "\n//\n"
-        << "segsites: " << positions.size() << "\n"
-        << "positions: ";
-    wtl::join(positions, ost, " ") << "\n";
-    for (const auto& x: nodes) {
-        if (x->is_sampled_) {
-            wtl::join(x->binary_genotype(positions), ost, "") << "\n";
         }
     }
     return ost;
