@@ -82,17 +82,10 @@ Public Member Functions</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpbf_1_1_population.html#a2480ea3875c0358edc470c961569ca06">run</a> (const uint_fast32_t simulating_duration, const std::vector&lt; size_t &gt; &amp;sample_size_adult={1u, 1u}, const std::vector&lt; size_t &gt; &amp;sample_size_juvenile={1u, 1u}, const uint_fast32_t recording_duration=1u)</td></tr>
 <tr class="memdesc:a2480ea3875c0358edc470c961569ca06"><td class="mdescLeft">&#160;</td><td class="mdescRight">main iteration <br /></td></tr>
 <tr class="separator:a2480ea3875c0358edc470c961569ca06"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a77d2335c5e278862b4a663538d395aad"><td class="memItemLeft" align="right" valign="top">std::list&lt; std::shared_ptr&lt; <a class="el" href="classpbf_1_1_segment.html">Segment</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpbf_1_1_population.html#a77d2335c5e278862b4a663538d395aad">coalesce</a> () const</td></tr>
-<tr class="memdesc:a77d2335c5e278862b4a663538d395aad"><td class="mdescLeft">&#160;</td><td class="mdescRight">make tree from samples  <a href="#a77d2335c5e278862b4a663538d395aad">More...</a><br /></td></tr>
-<tr class="separator:a77d2335c5e278862b4a663538d395aad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab3d038801571367cf27a6cc3741aef5c"><td class="memItemLeft" align="right" valign="top"><a id="ab3d038801571367cf27a6cc3741aef5c"></a>
 std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpbf_1_1_population.html#ab3d038801571367cf27a6cc3741aef5c">write_sample_family</a> (std::ostream &amp;ost) const</td></tr>
 <tr class="memdesc:ab3d038801571367cf27a6cc3741aef5c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct and write tree from samples. <br /></td></tr>
 <tr class="separator:ab3d038801571367cf27a6cc3741aef5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ace1b93b264a565e5bfbad0e3514614b8"><td class="memItemLeft" align="right" valign="top"><a id="ace1b93b264a565e5bfbad0e3514614b8"></a>
-std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpbf_1_1_population.html#ace1b93b264a565e5bfbad0e3514614b8">write_ms</a> (const std::list&lt; std::shared_ptr&lt; <a class="el" href="classpbf_1_1_segment.html">Segment</a> &gt;&gt; &amp;, double, std::ostream &amp;) const</td></tr>
-<tr class="memdesc:ace1b93b264a565e5bfbad0e3514614b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">write sampled segments in ms format <br /></td></tr>
-<tr class="separator:ace1b93b264a565e5bfbad0e3514614b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acd5e2ac92cb2189d2dddeb005e15059e"><td class="memItemLeft" align="right" valign="top"><a id="acd5e2ac92cb2189d2dddeb005e15059e"></a>
 std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpbf_1_1_population.html#acd5e2ac92cb2189d2dddeb005e15059e">write_demography</a> (std::ostream &amp;) const</td></tr>
 <tr class="memdesc:acd5e2ac92cb2189d2dddeb005e15059e"><td class="mdescLeft">&#160;</td><td class="mdescRight">write <a class="el" href="classpbf_1_1_population.html#a18e261b0ab8e6b49c95842b202a02a45" title="(year, season) =&gt; [(age =&gt; count) for each location]">demography_</a> <br /></td></tr>
@@ -165,28 +158,7 @@ std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="classpbf_1_1_population.html" title="Population class.">Population</a> class. </p>
-</div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a77d2335c5e278862b4a663538d395aad"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a77d2335c5e278862b4a663538d395aad">&#9670;&nbsp;</a></span>coalesce()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::list&lt; std::shared_ptr&lt; <a class="el" href="classpbf_1_1_segment.html">Segment</a> &gt; &gt; pbf::Population::coalesce </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>make tree from samples </p>
-<p>Generate [0,1) doubles; size ~ Poisson(lambda) </p>
-
-</div>
-</div>
-<hr/>The documentation for this class was generated from the following files:<ul>
+</div><hr/>The documentation for this class was generated from the following files:<ul>
 <li>src/<a class="el" href="population_8hpp_source.html">population.hpp</a></li>
 <li>src/<a class="el" href="population_8cpp.html">population.cpp</a></li>
 </ul>
