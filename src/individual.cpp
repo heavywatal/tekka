@@ -8,6 +8,7 @@
 #include <wtl/debug.hpp>
 #include <wtl/iostr.hpp>
 #include <clippson/json.hpp>
+#include <sfmt.hpp>
 
 #include <type_traits>
 
