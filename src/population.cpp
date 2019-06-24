@@ -45,16 +45,17 @@ void Population::run(const int_fast32_t simulating_duration,
 }
 
 void Population::reproduce() {
-    double biomass = 0.0;
+    double female_biomass = 0.0;
     for (const auto& mother: females_) {
         if (mother->is_in_breeding_place()) {
-            biomass += mother->weight(year_);
+            female_biomass += mother->weight(year_);
         }
     }
+    double male_biomass = 0.0;
     std::vector<std::vector<std::shared_ptr<Individual>>> males_located(Individual::num_breeding_places());
     for (const auto& p: males_) {
         if (p->is_in_breeding_place()) {
-            biomass += p->weight(year_);
+            male_biomass += p->weight(year_);
             males_located[p->location()].emplace_back(p);
         }
     }
@@ -68,13 +69,14 @@ void Population::reproduce() {
         }
         mate_distrs.emplace_back(fitnesses.begin(), fitnesses.end());
     }
+    const double biomass = female_biomass + male_biomass;
     const double popsize = biomass / Individual::weight_for_age().back();
     const double density_effect = (1.0 - popsize / Individual::param().CARRYING_CAPACITY);
-    const double exp_recruitment = density_effect * Individual::param().RECRUITMENT_COEF * biomass;
+    const double exp_recruitment = density_effect * Individual::param().RECRUITMENT_COEF * female_biomass;
     std::vector<std::shared_ptr<Individual>> boys;
     std::vector<std::shared_ptr<Individual>> girls;
-    boys.reserve(exp_recruitment * 0.6);
-    girls.reserve(exp_recruitment * 0.6);
+    boys.reserve(static_cast<size_t>(exp_recruitment * 0.6));
+    girls.reserve(static_cast<size_t>(exp_recruitment * 0.6));
     for (const auto& mother: females_) {
         if (!mother->is_in_breeding_place()) continue;
         const auto& potential_fathers = males_located[mother->location()];
