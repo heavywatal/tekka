@@ -86,7 +86,7 @@ class Individual {
     }
 
     //! number of juveniles
-    uint_fast32_t recruitment(uint_fast32_t year, size_t popsize, URBG&) const noexcept;
+    uint_fast32_t recruitment(uint_fast32_t year, double density_effect, URBG&) const noexcept;
 
     //! change #location_
     void migrate(const uint_fast32_t year, URBG&);

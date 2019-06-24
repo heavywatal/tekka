@@ -45,15 +45,16 @@ void Population::run(const uint_fast32_t simulating_duration,
 }
 
 void Population::reproduce() {
-    size_t num_potential_mothers = 0;
+    double biomass = 0.0;
     for (const auto& mother: females_) {
-        if (mother->is_in_breeding_place()) ++num_potential_mothers;
+        if (mother->is_in_breeding_place()) {
+            biomass += mother->weight(year_);
+        }
     }
-    size_t num_potential_fathers = 0;
     std::vector<std::vector<std::shared_ptr<Individual>>> males_located(Individual::num_breeding_places());
     for (const auto& p: males_) {
         if (p->is_in_breeding_place()) {
-            ++num_potential_fathers;
+            biomass += p->weight(year_);
             males_located[p->location()].emplace_back(p);
         }
     }
@@ -67,17 +68,19 @@ void Population::reproduce() {
         }
         mate_distrs.emplace_back(fitnesses.begin(), fitnesses.end());
     }
-    const size_t popsize = num_potential_mothers + num_potential_fathers;
+    const double popsize = biomass / Individual::weight_for_age().back();
+    const double density_effect = (1.0 - popsize / Individual::param().CARRYING_CAPACITY);
+    const double exp_recruitment = density_effect * Individual::param().RECRUITMENT_COEF * biomass;
     std::vector<std::shared_ptr<Individual>> boys;
     std::vector<std::shared_ptr<Individual>> girls;
-    boys.reserve(num_potential_fathers * 60u);
-    girls.reserve(num_potential_fathers * 60u);
+    boys.reserve(exp_recruitment * 0.6);
+    girls.reserve(exp_recruitment * 0.6);
     for (const auto& mother: females_) {
         if (!mother->is_in_breeding_place()) continue;
         const auto& potential_fathers = males_located[mother->location()];
         if (potential_fathers.empty()) continue;
         auto& mate_distr = mate_distrs[mother->location()];
-        const uint_fast32_t num_juveniles = mother->recruitment(year_, popsize, *engine_);
+        const uint_fast32_t num_juveniles = mother->recruitment(year_, density_effect, *engine_);
         for (uint_fast32_t i=0; i<num_juveniles; ++i) {
             const auto father = potential_fathers[mate_distr(*engine_)];
             if (wtl::generate_canonical(*engine_) < 0.5) {

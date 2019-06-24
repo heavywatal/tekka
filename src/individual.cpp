@@ -33,10 +33,9 @@ nbinom_distribution(double k, double mu) {
     return wtl::negative_binomial_distribution<T>(k, prob);
 }
 
-uint_fast32_t Individual::recruitment(const uint_fast32_t year, const size_t popsize, URBG& engine) const noexcept {
-    const double coef = (1.0 - popsize / param().CARRYING_CAPACITY);
-    if (coef < 0.0) return 0u;
-    const double mean = coef * param().RECRUITMENT_COEF * weight(year);
+uint_fast32_t Individual::recruitment(const uint_fast32_t year, const double density_effect, URBG& engine) const noexcept {
+    if (density_effect < 0.0) return 0u;
+    const double mean = density_effect * param().RECRUITMENT_COEF * weight(year);
     const double k = param().NEGATIVE_BINOM_K;
     if (k > 0.0) {
         return nbinom_distribution<uint_fast32_t>(k, mean)(engine);
