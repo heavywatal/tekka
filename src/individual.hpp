@@ -73,12 +73,12 @@ class Individual {
     Individual() = default;
     //! for sexual reproduction
     Individual(const std::shared_ptr<Individual>& father,
-               const std::shared_ptr<Individual>& mother, uint_fast32_t year)
+               const std::shared_ptr<Individual>& mother, int_fast32_t year)
     : father_(father), mother_(mother),
       birth_year_(year), location_(mother ? mother->location() : 0u) {}
 
     //! evaluate survival
-    bool has_survived(const uint_fast32_t year, const uint_fast32_t quarter, URBG&) const;
+    bool has_survived(const int_fast32_t year, const int_fast32_t quarter, URBG&) const;
 
     //! evaluate maturity
     bool is_in_breeding_place() const noexcept {
@@ -86,13 +86,13 @@ class Individual {
     }
 
     //! number of juveniles
-    uint_fast32_t recruitment(uint_fast32_t year, double density_effect, URBG&) const noexcept;
+    uint_fast32_t recruitment(int_fast32_t year, double density_effect, URBG&) const noexcept;
 
     //! change #location_
-    void migrate(const uint_fast32_t year, URBG&);
+    void migrate(const int_fast32_t year, URBG&);
 
     //! collect ancestoral IDs
-    void trace_back(std::ostream& ost, std::map<const Individual*, size_t>* ids, uint_fast32_t year) const;
+    void trace_back(std::ostream& ost, std::map<const Individual*, size_t>* ids, int_fast32_t year) const;
     //! write all the data members in TSV
     std::ostream& write(std::ostream&) const;
     //! write all the data members in TSV with translated IDs
@@ -133,15 +133,15 @@ class Individual {
     static const std::vector<std::vector<std::vector<double>>>&
     migration_matrices() {return JSON_.MIGRATION_MATRICES;}
     //! IndividualJson.WEIGHT_FOR_AGE
-    double weight(const uint_fast32_t year) const noexcept {
-        return JSON_.WEIGHT_FOR_AGE[4u * (year - birth_year_)];
+    double weight(const int_fast32_t year) const noexcept {
+        return JSON_.WEIGHT_FOR_AGE[4 * (year - birth_year_)];
     }
     //! !#father_
     bool is_first_gen() const noexcept {return !father_;}
     //! @cond
     const Individual* father_get() const noexcept {return father_.get();}
     const Individual* mother_get() const noexcept {return mother_.get();}
-    uint_fast32_t birth_year() const noexcept {return birth_year_;}
+    int_fast32_t birth_year() const noexcept {return birth_year_;}
     uint_fast32_t location() const noexcept {return location_;}
     //! @endcond
     //@}
@@ -157,7 +157,7 @@ class Individual {
     //! mother
     const std::shared_ptr<Individual> mother_ = nullptr;
     //! year of birth
-    uint_fast32_t birth_year_ = 0u;
+    int_fast32_t birth_year_ = -10;
     //! current location
     uint_fast32_t location_ = 0u;
 };

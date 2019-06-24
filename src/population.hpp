@@ -31,10 +31,10 @@ class Population {
     ~Population();
 
     //! main iteration
-    void run(const uint_fast32_t simulating_duration,
+    void run(const int_fast32_t simulating_duration,
              const std::vector<size_t>& sample_size_adult={1u, 1u},
              const std::vector<size_t>& sample_size_juvenile={1u,1u},
-             const uint_fast32_t recording_duration=1u);
+             const int_fast32_t recording_duration=1);
 
     //! Construct and write tree from samples
     std::ostream& write_sample_family(std::ostream& ost) const;
@@ -49,7 +49,7 @@ class Population {
     void reproduce();
 
     //! evaluate survival
-    void survive(const uint_fast32_t season, bool shrink=true);
+    void survive(int_fast32_t season, bool shrink=true);
 
     //! evaluate migration
     void migrate();
@@ -58,21 +58,21 @@ class Population {
     void sample(const std::vector<size_t>& adult, const std::vector<size_t>& juvenile);
 
     //! append current state to #demography_
-    void append_demography(const uint_fast32_t season);
+    void append_demography(int_fast32_t season);
 
     //! Count individuals for each location and age
-    std::vector<std::map<uint_fast32_t, size_t>> count() const;
+    std::vector<std::map<int_fast32_t, size_t>> count() const;
 
     //! Individual array males
     std::vector<std::shared_ptr<Individual>> males_;
     //! Individual array females
     std::vector<std::shared_ptr<Individual>> females_;
     //! samples: capture_year => individuals
-    std::map<uint_fast32_t, std::vector<std::shared_ptr<Individual>>> year_samples_;
+    std::map<int_fast32_t, std::vector<std::shared_ptr<Individual>>> year_samples_;
     //! (year, season) => [(age => count) for each location]
-    std::map<std::pair<uint_fast32_t, uint_fast32_t>, std::vector<std::map<uint_fast32_t, size_t>>> demography_;
+    std::map<std::pair<int_fast32_t, int_fast32_t>, std::vector<std::map<int_fast32_t, size_t>>> demography_;
     //! year
-    uint_fast32_t year_ = 0;
+    int_fast32_t year_ = 0;
     //! random bit generator
     std::unique_ptr<URBG> engine_;
 };

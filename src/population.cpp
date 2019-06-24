@@ -24,24 +24,24 @@ Population::Population(const size_t initial_size, std::random_device::result_typ
 
 Population::~Population() = default;
 
-void Population::run(const uint_fast32_t simulating_duration,
+void Population::run(const int_fast32_t simulating_duration,
                      const std::vector<size_t>& sample_size_adult,
                      const std::vector<size_t>& sample_size_juvenile,
-                     const uint_fast32_t recording_duration) {
+                     const int_fast32_t recording_duration) {
     auto recording_start = simulating_duration - recording_duration;
-    append_demography(0u);
-    for (year_ = 4u; year_ < simulating_duration; ++year_) {
+    append_demography(0);
+    for (year_ = 0; year_ < simulating_duration; ++year_) {
         reproduce();
-        survive(0u, false);
-        survive(1u, false);
-        survive(2u, false);
-        survive(3u, true);
+        survive(0, false);
+        survive(1, false);
+        survive(2, false);
+        survive(3, true);
         if (year_ >= recording_start) {
             sample(sample_size_adult, sample_size_juvenile);
         }
         migrate();
     }
-    append_demography(0u);
+    append_demography(0);
 }
 
 void Population::reproduce() {
@@ -94,7 +94,7 @@ void Population::reproduce() {
     std::copy(girls.begin(), girls.end(), std::back_inserter(females_));
 }
 
-void Population::survive(const uint_fast32_t season, bool shrink) {
+void Population::survive(const int_fast32_t season, bool shrink) {
     auto has_survived = [season, this](const auto& p) -> bool {
         return p && p->has_survived(year_, season, *engine_);
     };
@@ -189,8 +189,8 @@ std::ostream& Population::write_sample_family(std::ostream& ost) const {
     return ost;
 }
 
-std::vector<std::map<uint_fast32_t, size_t>> Population::count() const {
-    std::vector<std::map<uint_fast32_t, size_t>> counter(Individual::num_locations());
+std::vector<std::map<int_fast32_t, size_t>> Population::count() const {
+    std::vector<std::map<int_fast32_t, size_t>> counter(Individual::num_locations());
     for (const auto& p: males_) {
         if (p) ++counter[p->location()][year_ - p->birth_year()];
     }
@@ -200,10 +200,10 @@ std::vector<std::map<uint_fast32_t, size_t>> Population::count() const {
     return counter;
 }
 
-void Population::append_demography(const uint_fast32_t season) {
+void Population::append_demography(const int_fast32_t season) {
     demography_.emplace_hint(
       demography_.end(),
-      std::pair<uint_fast32_t, uint_fast32_t>(year_, season),
+      std::pair<int_fast32_t, int_fast32_t>(year_, season),
       count()
     );
 }

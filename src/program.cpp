@@ -45,8 +45,8 @@ inline clipp::group program_options(nlohmann::json* vm) {
     const std::string OUT_DIR = wtl::strftime("thunnus_%Y%m%d_%H%M%S");
     const int seed = static_cast<int>(std::random_device{}()); // 32-bit signed integer for R
     return (
-      wtl::option(vm, {"y", "years"}, 40u, "Duration of simulation"),
-      wtl::option(vm, {"l", "last"}, 2u, "Sample last _ years"),
+      wtl::option(vm, {"y", "years"}, 40, "Duration of simulation"),
+      wtl::option(vm, {"l", "last"}, 2, "Sample last _ years"),
       wtl::option(vm, {"sa", "sample_size_adult"}, std::vector<size_t>{10u, 10u}, "per location"),
       wtl::option(vm, {"sj", "sample_size_juvenile"}, std::vector<size_t>{10u, 10u}, "per location"),
       wtl::option(vm, {"u", "mutation"}, 0.1, "per generation per haploid"),

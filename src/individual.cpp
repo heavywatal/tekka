@@ -21,8 +21,8 @@ static_assert(std::is_nothrow_default_constructible<Individual>{}, "");
 static_assert(std::is_nothrow_copy_constructible<Individual>{}, "");
 static_assert(std::is_nothrow_move_constructible<Individual>{}, "");
 
-bool Individual::has_survived(const uint_fast32_t year, const uint_fast32_t quarter, URBG& engine) const {
-    uint_fast32_t qage = 4u * (year - birth_year_) + quarter;
+bool Individual::has_survived(const int_fast32_t year, const int_fast32_t quarter, URBG& engine) const {
+    int_fast32_t qage = 4 * (year - birth_year_) + quarter;
     return (wtl::generate_canonical(engine) < JSON_.SURVIVAL_RATE.at(qage));
 }
 
@@ -33,7 +33,7 @@ nbinom_distribution(double k, double mu) {
     return wtl::negative_binomial_distribution<T>(k, prob);
 }
 
-uint_fast32_t Individual::recruitment(const uint_fast32_t year, const double density_effect, URBG& engine) const noexcept {
+uint_fast32_t Individual::recruitment(const int_fast32_t year, const double density_effect, URBG& engine) const noexcept {
     if (density_effect < 0.0) return 0u;
     const double mean = density_effect * param().RECRUITMENT_COEF * weight(year);
     const double k = param().NEGATIVE_BINOM_K;
@@ -44,18 +44,18 @@ uint_fast32_t Individual::recruitment(const uint_fast32_t year, const double den
     }
 }
 
-void Individual::migrate(const uint_fast32_t year, URBG& engine) {
+void Individual::migrate(const int_fast32_t year, URBG& engine) {
     location_ = JSON_.MIGRATION_DISTRIBUTIONS.at(year - birth_year_)[location_](engine);
 }
 
-void Individual::trace_back(std::ostream& ost, std::map<const Individual*, size_t>* ids, uint_fast32_t year) const {
-    if (!ids->emplace(this, ids->size()).second && (year == 0u)) return;
+void Individual::trace_back(std::ostream& ost, std::map<const Individual*, size_t>* ids, int_fast32_t year) const {
+    if (!ids->emplace(this, ids->size()).second && (year == 0)) return;
     if (father_) {
         father_->trace_back(ost, ids, 0u);
         mother_->trace_back(ost, ids, 0u);
     }
     write(ost, *ids) << "\t";
-    if (year > 0u) {
+    if (year > 0) {
         ost << year;
     }
     ost << "\n";
@@ -100,8 +100,8 @@ void elongate(std::vector<T>* v, size_t n) noexcept {
 }
 
 void IndividualJson::set_dependent_static() {
-    constexpr uint_fast32_t max_age = 80u;
-    constexpr uint_fast32_t max_qage = 4u * (max_age + 1u);
+    constexpr int_fast32_t max_age = 80;
+    constexpr int_fast32_t max_qage = 4 * (max_age + 1);
     MIGRATION_DISTRIBUTIONS.clear();
     MIGRATION_DISTRIBUTIONS.reserve(max_age);
     for (const auto& matrix: MIGRATION_MATRICES) {
