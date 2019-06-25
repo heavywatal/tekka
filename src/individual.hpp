@@ -157,7 +157,7 @@ class Individual {
     //! mother
     const std::shared_ptr<Individual> mother_ = nullptr;
     //! year of birth
-    int_fast32_t birth_year_ = -10;
+    int_fast32_t birth_year_ = -4;
     //! current location
     uint_fast32_t location_ = 0u;
 };
