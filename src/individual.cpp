@@ -86,6 +86,10 @@ std::ostream& operator<<(std::ostream& ost, const Individual& x) {
     return x.write(ost);
 }
 
+std::string Individual::default_json() {
+    return default_values;
+}
+
 //! @cond
 IndividualJson::IndividualJson() {
     std::istringstream iss(default_values);

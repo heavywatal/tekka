@@ -100,6 +100,8 @@ class Individual {
     friend std::ostream& operator<<(std::ostream&, const Individual&);
     //! column names for write()
     static std::vector<std::string> names();
+    //! Get default parameters in json
+    static std::string default_json();
     //! Read class variables from stream in json
     static void read_json(std::istream& ist) {JSON_.read(ist);}
     //! Write class variables to stream in json
