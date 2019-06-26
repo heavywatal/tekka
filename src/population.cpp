@@ -155,7 +155,7 @@ std::ostream& Population::write_sample_family(std::ostream& ost) const {
 std::vector<std::map<int_fast32_t, size_t>> Population::count() const {
     std::vector<std::map<int_fast32_t, size_t>> counter(Individual::num_locations());
     for (const auto& p: individuals_) {
-        if (p) ++counter[p->location()][year_ - p->birth_year()];
+        ++counter[p->location()][year_ - p->birth_year()];
     }
     return counter;
 }

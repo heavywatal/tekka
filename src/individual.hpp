@@ -166,7 +166,7 @@ class Individual {
     //! current location
     uint_fast16_t location_ = 0u;
     //! sex
-    bool is_male_;
+    const bool is_male_;
 };
 
 } // namespace pbf

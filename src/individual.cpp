@@ -23,7 +23,7 @@ static_assert(std::is_nothrow_move_constructible<Individual>{}, "");
 
 bool Individual::has_survived(const int_fast32_t year, const int_fast32_t quarter, URBG& engine) const {
     int_fast32_t qage = 4 * (year - birth_year_) + quarter;
-    return (wtl::generate_canonical(engine) < JSON_.SURVIVAL_RATE.at(qage));
+    return (wtl::generate_canonical(engine) < JSON_.SURVIVAL_RATE[qage]);
 }
 
 //! Translate parameter `mean` to `prob`
