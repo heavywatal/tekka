@@ -71,9 +71,10 @@ void Population::reproduce() {
     const double popsize = biomass / Individual::weight_for_age().back();
     const double density_effect = (1.0 - popsize / Individual::param().CARRYING_CAPACITY);
     const double exp_recruitment = density_effect * Individual::param().RECRUITMENT_COEF * female_biomass;
-    std::vector<std::shared_ptr<Individual>> juveniles;
-    juveniles.reserve(static_cast<size_t>(exp_recruitment * 1.1));
-    for (const auto& mother: individuals_) {
+    const size_t n = individuals_.size();
+    individuals_.reserve(n + static_cast<size_t>(exp_recruitment * 1.1));
+    for (size_t i=0; i<n; ++i) {
+        const auto& mother = individuals_[i];
         if (mother->is_male() || !mother->is_in_breeding_place()) continue;
         const auto& potential_fathers = males_located[mother->location()];
         if (potential_fathers.empty()) continue;
@@ -81,10 +82,9 @@ void Population::reproduce() {
         const uint_fast32_t num_juveniles = mother->recruitment(year_, density_effect, *engine_);
         for (uint_fast32_t i=0; i<num_juveniles; ++i) {
             const auto father = potential_fathers[mate_distr(*engine_)];
-            juveniles.emplace_back(std::make_shared<Individual>(father, mother, year_, wtl::generate_canonical(*engine_) < 0.5));
+            individuals_.emplace_back(std::make_shared<Individual>(father, mother, year_, wtl::generate_canonical(*engine_) < 0.5));
         }
     }
-    std::copy(juveniles.begin(), juveniles.end(), std::back_inserter(individuals_));
 }
 
 void Population::survive(const int_fast32_t season) {
