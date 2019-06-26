@@ -69,13 +69,15 @@ class Individual {
   public:
     //! Alias
     using param_type = IndividualParams;
+    Individual() = delete;
     //! for initial population
-    Individual() = default;
+    explicit Individual(bool is_male): is_male_(is_male) {}
     //! for sexual reproduction
     Individual(const std::shared_ptr<Individual>& father,
-               const std::shared_ptr<Individual>& mother, int_fast32_t year)
+               const std::shared_ptr<Individual>& mother, int_fast32_t year, bool is_male)
     : father_(father), mother_(mother),
-      birth_year_(year), location_(mother ? mother->location() : 0u) {}
+      birth_year_(year), location_(mother ? mother->location() : 0u),
+      is_male_(is_male) {}
 
     //! evaluate survival
     bool has_survived(const int_fast32_t year, const int_fast32_t quarter, URBG&) const;
@@ -144,7 +146,8 @@ class Individual {
     const Individual* father_get() const noexcept {return father_.get();}
     const Individual* mother_get() const noexcept {return mother_.get();}
     int_fast32_t birth_year() const noexcept {return birth_year_;}
-    uint_fast32_t location() const noexcept {return location_;}
+    uint_fast16_t location() const noexcept {return location_;}
+    bool is_male() const noexcept {return is_male_;}
     //! @endcond
     //@}
 
@@ -161,7 +164,9 @@ class Individual {
     //! year of birth
     int_fast32_t birth_year_ = -4;
     //! current location
-    uint_fast32_t location_ = 0u;
+    uint_fast16_t location_ = 0u;
+    //! sex
+    bool is_male_;
 };
 
 } // namespace pbf

@@ -55,7 +55,7 @@ class Population {
     void migrate();
 
     //! sample individuals
-    void sample(const std::vector<size_t>& adult, const std::vector<size_t>& juvenile);
+    void sample(std::vector<size_t> adult, std::vector<size_t> juvenile);
 
     //! append current state to #demography_
     void append_demography(int_fast32_t season);
@@ -63,10 +63,8 @@ class Population {
     //! Count individuals for each location and age
     std::vector<std::map<int_fast32_t, size_t>> count() const;
 
-    //! Individual array males
-    std::vector<std::shared_ptr<Individual>> males_;
-    //! Individual array females
-    std::vector<std::shared_ptr<Individual>> females_;
+    // //! Individual array
+    std::vector<std::shared_ptr<Individual>> individuals_;
     //! samples: capture_year => individuals
     std::map<int_fast32_t, std::vector<std::shared_ptr<Individual>>> year_samples_;
     //! (year, season) => [(age => count) for each location]
