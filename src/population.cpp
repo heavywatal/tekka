@@ -114,21 +114,24 @@ void Population::sample(std::vector<size_t> sample_size_adult,
     sample_size_juvenile.resize(Individual::num_locations());
     sample_size_adult.resize(Individual::num_locations());
     std::vector<std::shared_ptr<Individual>>& sampled = year_samples_[year_];
-    std::vector<std::shared_ptr<Individual>> unsampled;
     sampled.reserve(total_sampled);
-    unsampled.reserve(std::min(individuals_.size() - total_sampled, 0ul));
     std::shuffle(individuals_.begin(), individuals_.end(), *engine_);
-    for (const auto& p: individuals_) {
+    size_t n = individuals_.size();
+    for (size_t i=0; i<n; ++i) {
+        auto& p = individuals_[i];
         auto& sample_size = (p->birth_year() == year_) ? sample_size_juvenile : sample_size_adult;
         auto& to_be_sampled = sample_size[p->location()];
         if (to_be_sampled) {
             sampled.emplace_back(p);
             --to_be_sampled;
-        } else {
-            unsampled.emplace_back(p);
+            if (i < n) {
+                p = std::move(individuals_.back());
+            }
+            individuals_.pop_back();
+            --n;
+            --i;
         }
     }
-    individuals_.swap(unsampled);
 }
 
 std::ostream& Population::write_sample_family(std::ostream& ost) const {
