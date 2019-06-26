@@ -31,10 +31,10 @@ void Population::run(const int_fast32_t simulating_duration,
     append_demography(0);
     for (year_ = 0; year_ < simulating_duration; ++year_) {
         reproduce();
-        survive(0, false);
-        survive(1, false);
-        survive(2, false);
-        survive(3, true);
+        survive(0);
+        survive(1);
+        survive(2);
+        survive(3);
         if (year_ >= recording_start) {
             sample(sample_size_adult, sample_size_juvenile);
         }
@@ -87,18 +87,16 @@ void Population::reproduce() {
     std::copy(juveniles.begin(), juveniles.end(), std::back_inserter(individuals_));
 }
 
-void Population::survive(const int_fast32_t season, bool shrink) {
-    auto has_survived = [season, this](const auto& p) -> bool {
-        return p && p->has_survived(year_, season, *engine_);
-    };
-    if (shrink) {
-        decltype(individuals_) survivors;
-        survivors.reserve(individuals_.size() / 4u);
-        std::copy_if(individuals_.begin(), individuals_.end(), std::back_inserter(survivors), has_survived);
-        survivors.swap(individuals_);
-    } else {
-        for (auto& p: individuals_) {
-            if (!has_survived(p)) p.reset();
+void Population::survive(const int_fast32_t season) {
+    size_t n = individuals_.size();
+    for (size_t i=0; i<n; ++i) {
+        auto& p = individuals_[i];
+        while (!p->has_survived(year_, season, *engine_)) {
+            if (i < n) {
+                p = std::move(individuals_.back());
+            }
+            individuals_.pop_back();
+            --n;
         }
     }
     append_demography(season);

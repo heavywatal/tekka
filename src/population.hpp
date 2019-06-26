@@ -49,7 +49,7 @@ class Population {
     void reproduce();
 
     //! evaluate survival
-    void survive(int_fast32_t season, bool shrink=true);
+    void survive(int_fast32_t season);
 
     //! evaluate migration
     void migrate();
