@@ -35,6 +35,7 @@ void Population::run(const int_fast32_t simulating_duration,
         survive(1);
         survive(2);
         survive(3);
+        merge_juveniles();
         if (year_ >= recording_start) {
             sample(sample_size_adult, sample_size_juvenile);
         }
@@ -72,17 +73,24 @@ void Population::reproduce() {
     const double density_effect = (1.0 - popsize / Individual::param().CARRYING_CAPACITY);
     const double exp_recruitment = density_effect * Individual::param().RECRUITMENT_COEF * female_biomass;
     const size_t n = individuals_.size();
-    individuals_.reserve(n + static_cast<size_t>(exp_recruitment * 1.1));
+    juveniles_.reserve(static_cast<size_t>(exp_recruitment * 1.1));
+    juveniles_demography_.assign(4u, std::vector<uint_fast32_t>(Individual::num_breeding_places()));
     for (size_t i=0; i<n; ++i) {
         const auto& mother = individuals_[i];
         if (mother->is_male() || !mother->is_in_breeding_place()) continue;
         const auto& potential_fathers = males_located[mother->location()];
         if (potential_fathers.empty()) continue;
         auto& mate_distr = mate_distrs[mother->location()];
-        const uint_fast32_t num_juveniles = mother->recruitment(year_, density_effect, *engine_);
+        uint_fast32_t num_juveniles = mother->recruitment(year_, density_effect, *engine_);
+        for (unsigned season: {0u, 1u, 2u, 3u}) {
+            std::binomial_distribution<uint_fast32_t> binom(num_juveniles, Individual::survival_rate()[season]);
+            num_juveniles = binom(*engine_);
+            juveniles_demography_[season][mother->location()] += num_juveniles;
+        }
         for (uint_fast32_t i=0; i<num_juveniles; ++i) {
-            const auto father = potential_fathers[mate_distr(*engine_)];
-            individuals_.emplace_back(std::make_shared<Individual>(father, mother, year_, wtl::generate_canonical(*engine_) < 0.5));
+            const auto& father = potential_fathers[mate_distr(*engine_)];
+            const bool is_male = (wtl::generate_canonical(*engine_) < 0.5);
+            juveniles_.emplace_back(std::make_shared<Individual>(father, mother, year_, is_male));
         }
     }
 }
@@ -100,6 +108,14 @@ void Population::survive(const int_fast32_t season) {
         }
     }
     append_demography(season);
+}
+
+void Population::merge_juveniles() {
+    individuals_.reserve(individuals_.size() + juveniles_.size());
+    for (auto& p: juveniles_) {
+        individuals_.emplace_back(std::move(p));
+    }
+    juveniles_.clear();
 }
 
 void Population::migrate() {
@@ -152,8 +168,14 @@ std::ostream& Population::write_sample_family(std::ostream& ost) const {
     return ost;
 }
 
-std::vector<std::map<int_fast32_t, size_t>> Population::count() const {
+std::vector<std::map<int_fast32_t, size_t>> Population::count(const int_fast32_t season) const {
     std::vector<std::map<int_fast32_t, size_t>> counter(Individual::num_locations());
+    if (!juveniles_demography_.empty()) {
+        const auto& jd_season = juveniles_demography_.at(season);
+        for (unsigned loc=0; loc<jd_season.size(); ++loc) {
+            counter[loc][0u] += jd_season[loc];
+        }
+    }
     for (const auto& p: individuals_) {
         ++counter[p->location()][year_ - p->birth_year()];
     }
@@ -164,7 +186,7 @@ void Population::append_demography(const int_fast32_t season) {
     demography_.emplace_hint(
       demography_.end(),
       std::pair<int_fast32_t, int_fast32_t>(year_, season),
-      count()
+      count(season)
     );
 }
 

@@ -130,6 +130,9 @@ class Individual {
     //! IndividualJson.FISHING_MORTALITY
     static const std::vector<double>&
     fishing_mortality() {return JSON_.FISHING_MORTALITY;}
+    //! IndividualJson.SURVIVAL_RATE
+    static const std::vector<double>&
+    survival_rate() {return JSON_.SURVIVAL_RATE;}
     //! IndividualJson.WEIGHT_FOR_AGE
     static const std::vector<double>&
     weight_for_age() {return JSON_.WEIGHT_FOR_AGE;}

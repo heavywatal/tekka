@@ -51,6 +51,9 @@ class Population {
     //! evaluate survival
     void survive(int_fast32_t season);
 
+    //! move #juveniles_ elements to #individuals_
+    void merge_juveniles();
+
     //! evaluate migration
     void migrate();
 
@@ -61,10 +64,14 @@ class Population {
     void append_demography(int_fast32_t season);
 
     //! Count individuals for each location and age
-    std::vector<std::map<int_fast32_t, size_t>> count() const;
+    std::vector<std::map<int_fast32_t, size_t>> count(int_fast32_t season) const;
 
-    // //! Individual array
+    //! Individual array
     std::vector<std::shared_ptr<Individual>> individuals_;
+    //! Genotypes of juveniles
+    std::vector<std::shared_ptr<Individual>> juveniles_;
+    //! Counts of juveniles; [[number for each location] for each season]
+    std::vector<std::vector<uint_fast32_t>> juveniles_demography_;
     //! samples: capture_year => individuals
     std::map<int_fast32_t, std::vector<std::shared_ptr<Individual>>> year_samples_;
     //! (year, season) => [(age => count) for each location]
