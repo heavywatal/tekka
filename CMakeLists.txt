@@ -17,6 +17,9 @@ message(STATUS "CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
 set(CMAKE_CXX_FLAGS_DEV "-O2 -g")
 add_compile_options(-march=native -Wall -Wextra -pedantic)
 
+set(CMAKE_MODULE_PATH "$ENV{HOME}/.cmake/packages")
+include(WarningFlagsCXX OPTIONAL)
+
 set(CMAKE_INSTALL_NAME_DIR ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR})
 set(CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR})
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH ON)
@@ -39,7 +42,6 @@ endfunction()
 
 find_package_or_git(wtl 0.8.4 heavywatal/cxxwtl)
 find_package_or_git(clippson 0.8.1 heavywatal/clippson)
-find_package_or_git(sfmt 0.7.2 heavywatal/sfmt-class)
 
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 add_library(${PROJECT_NAME})
@@ -62,7 +64,6 @@ target_include_directories(${PROJECT_NAME} INTERFACE
 )
 target_link_libraries(${PROJECT_NAME}
   PRIVATE wtl::wtl clippson::clippson
-  PUBLIC wtl::sfmt
 )
 
 option(BUILD_EXECUTABLE "Build executable file" ON)

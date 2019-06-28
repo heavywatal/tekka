@@ -8,7 +8,6 @@
 #include <wtl/debug.hpp>
 #include <wtl/iostr.hpp>
 #include <wtl/exception.hpp>
-#include <sfmt.hpp>
 
 namespace pbf {
 
