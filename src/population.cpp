@@ -70,7 +70,7 @@ void Population::reproduce() {
     }
     const double biomass = female_biomass + male_biomass;
     const double popsize = biomass / Individual::weight_for_age().back();
-    const double density_effect = (1.0 - popsize / Individual::param().CARRYING_CAPACITY);
+    const double density_effect = std::max(0.0, 1.0 - popsize / Individual::param().CARRYING_CAPACITY);
     const double exp_recruitment = density_effect * Individual::param().RECRUITMENT_COEF * female_biomass;
     const size_t n = individuals_.size();
     juveniles_.reserve(static_cast<size_t>(exp_recruitment * 1.1));
