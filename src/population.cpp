@@ -86,7 +86,7 @@ void Population::reproduce() {
             num_juveniles = binom(*engine_);
             juveniles_demography_[season][mother->location()] += num_juveniles;
         }
-        for (uint_fast32_t i=0; i<num_juveniles; ++i) {
+        for (uint_fast32_t j=0; j<num_juveniles; ++j) {
             const auto& father = potential_fathers[mate_distr(*engine_)];
             const bool is_male = (wtl::generate_canonical(*engine_) < 0.5);
             juveniles_.emplace_back(std::make_shared<Individual>(father, mother, year_, is_male));

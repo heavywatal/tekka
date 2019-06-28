@@ -60,7 +60,7 @@ struct IndividualJson {
     //! survival rate per quater year
     std::vector<double> SURVIVAL_RATE;
     //! discrete distributions for migration
-    std::vector<std::vector<std::discrete_distribution<uint_fast32_t>>> MIGRATION_DISTRIBUTIONS;
+    std::vector<std::vector<std::discrete_distribution<uint_fast16_t>>> MIGRATION_DISTRIBUTIONS;
 };
 
 /*! @brief Individual class
