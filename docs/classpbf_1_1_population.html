@@ -78,17 +78,17 @@ Public Member Functions</h2></td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpbf_1_1_population.html#ae44ac2c6787b9757a1a3da187c74a6e5">~Population</a> ()</td></tr>
 <tr class="memdesc:ae44ac2c6787b9757a1a3da187c74a6e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">destructor <br /></td></tr>
 <tr class="separator:ae44ac2c6787b9757a1a3da187c74a6e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2480ea3875c0358edc470c961569ca06"><td class="memItemLeft" align="right" valign="top"><a id="a2480ea3875c0358edc470c961569ca06"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpbf_1_1_population.html#a2480ea3875c0358edc470c961569ca06">run</a> (const uint_fast32_t simulating_duration, const std::vector&lt; size_t &gt; &amp;sample_size_adult={1u, 1u}, const std::vector&lt; size_t &gt; &amp;sample_size_juvenile={1u, 1u}, const uint_fast32_t recording_duration=1u)</td></tr>
-<tr class="memdesc:a2480ea3875c0358edc470c961569ca06"><td class="mdescLeft">&#160;</td><td class="mdescRight">main iteration <br /></td></tr>
-<tr class="separator:a2480ea3875c0358edc470c961569ca06"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac11d0e1ff8862e502dad97255396756e"><td class="memItemLeft" align="right" valign="top"><a id="ac11d0e1ff8862e502dad97255396756e"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpbf_1_1_population.html#ac11d0e1ff8862e502dad97255396756e">run</a> (const int_fast32_t simulating_duration, const std::vector&lt; size_t &gt; &amp;sample_size_adult={1u, 1u}, const std::vector&lt; size_t &gt; &amp;sample_size_juvenile={1u, 1u}, const int_fast32_t recording_duration=1)</td></tr>
+<tr class="memdesc:ac11d0e1ff8862e502dad97255396756e"><td class="mdescLeft">&#160;</td><td class="mdescRight">main iteration <br /></td></tr>
+<tr class="separator:ac11d0e1ff8862e502dad97255396756e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab3d038801571367cf27a6cc3741aef5c"><td class="memItemLeft" align="right" valign="top"><a id="ab3d038801571367cf27a6cc3741aef5c"></a>
 std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpbf_1_1_population.html#ab3d038801571367cf27a6cc3741aef5c">write_sample_family</a> (std::ostream &amp;ost) const</td></tr>
 <tr class="memdesc:ab3d038801571367cf27a6cc3741aef5c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct and write tree from samples. <br /></td></tr>
 <tr class="separator:ab3d038801571367cf27a6cc3741aef5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acd5e2ac92cb2189d2dddeb005e15059e"><td class="memItemLeft" align="right" valign="top"><a id="acd5e2ac92cb2189d2dddeb005e15059e"></a>
 std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpbf_1_1_population.html#acd5e2ac92cb2189d2dddeb005e15059e">write_demography</a> (std::ostream &amp;) const</td></tr>
-<tr class="memdesc:acd5e2ac92cb2189d2dddeb005e15059e"><td class="mdescLeft">&#160;</td><td class="mdescRight">write <a class="el" href="classpbf_1_1_population.html#a18e261b0ab8e6b49c95842b202a02a45" title="(year, season) =&gt; [(age =&gt; count) for each location]">demography_</a> <br /></td></tr>
+<tr class="memdesc:acd5e2ac92cb2189d2dddeb005e15059e"><td class="mdescLeft">&#160;</td><td class="mdescRight">write <a class="el" href="classpbf_1_1_population.html#af0f041e6aef087c5ffb46932345260bb" title="(year, season) =&gt; [(age =&gt; count) for each location]">demography_</a> <br /></td></tr>
 <tr class="separator:acd5e2ac92cb2189d2dddeb005e15059e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aac38fcf7bbe3427f8debdd6cf0ddcee9"><td class="memItemLeft" align="right" valign="top"><a id="aac38fcf7bbe3427f8debdd6cf0ddcee9"></a>
 std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpbf_1_1_population.html#aac38fcf7bbe3427f8debdd6cf0ddcee9">write</a> (std::ostream &amp;) const</td></tr>
@@ -101,49 +101,57 @@ Private Member Functions</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpbf_1_1_population.html#a06875166f8643742c374805c13375f93">reproduce</a> ()</td></tr>
 <tr class="memdesc:a06875166f8643742c374805c13375f93"><td class="mdescLeft">&#160;</td><td class="mdescRight">give birth to children <br /></td></tr>
 <tr class="separator:a06875166f8643742c374805c13375f93"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad4726284b41d5727acbfb4b6a63f6a6d"><td class="memItemLeft" align="right" valign="top"><a id="ad4726284b41d5727acbfb4b6a63f6a6d"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpbf_1_1_population.html#ad4726284b41d5727acbfb4b6a63f6a6d">survive</a> (const uint_fast32_t season, bool shrink=true)</td></tr>
-<tr class="memdesc:ad4726284b41d5727acbfb4b6a63f6a6d"><td class="mdescLeft">&#160;</td><td class="mdescRight">evaluate survival <br /></td></tr>
-<tr class="separator:ad4726284b41d5727acbfb4b6a63f6a6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aae584286d99523e7df6d1f610e331918"><td class="memItemLeft" align="right" valign="top"><a id="aae584286d99523e7df6d1f610e331918"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpbf_1_1_population.html#aae584286d99523e7df6d1f610e331918">survive</a> (int_fast32_t season)</td></tr>
+<tr class="memdesc:aae584286d99523e7df6d1f610e331918"><td class="mdescLeft">&#160;</td><td class="mdescRight">evaluate survival <br /></td></tr>
+<tr class="separator:aae584286d99523e7df6d1f610e331918"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7f0a6aa02378a63fe73faa11036ea46a"><td class="memItemLeft" align="right" valign="top"><a id="a7f0a6aa02378a63fe73faa11036ea46a"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpbf_1_1_population.html#a7f0a6aa02378a63fe73faa11036ea46a">merge_juveniles</a> ()</td></tr>
+<tr class="memdesc:a7f0a6aa02378a63fe73faa11036ea46a"><td class="mdescLeft">&#160;</td><td class="mdescRight">move <a class="el" href="classpbf_1_1_population.html#a48f7c94b982660b8dfe22895537284d5" title="Genotypes of juveniles.">juveniles_</a> elements to <a class="el" href="classpbf_1_1_population.html#a4be45c7d6b6937554cecf3dff4f6e624" title="Individual array.">individuals_</a> <br /></td></tr>
+<tr class="separator:a7f0a6aa02378a63fe73faa11036ea46a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9488ca17eefb54af69ebfd43c2103d6f"><td class="memItemLeft" align="right" valign="top"><a id="a9488ca17eefb54af69ebfd43c2103d6f"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpbf_1_1_population.html#a9488ca17eefb54af69ebfd43c2103d6f">migrate</a> ()</td></tr>
 <tr class="memdesc:a9488ca17eefb54af69ebfd43c2103d6f"><td class="mdescLeft">&#160;</td><td class="mdescRight">evaluate migration <br /></td></tr>
 <tr class="separator:a9488ca17eefb54af69ebfd43c2103d6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a14d8dd3175fcf01d0f0361fa7bb68a45"><td class="memItemLeft" align="right" valign="top"><a id="a14d8dd3175fcf01d0f0361fa7bb68a45"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpbf_1_1_population.html#a14d8dd3175fcf01d0f0361fa7bb68a45">sample</a> (const std::vector&lt; size_t &gt; &amp;adult, const std::vector&lt; size_t &gt; &amp;juvenile)</td></tr>
-<tr class="memdesc:a14d8dd3175fcf01d0f0361fa7bb68a45"><td class="mdescLeft">&#160;</td><td class="mdescRight">sample individuals <br /></td></tr>
-<tr class="separator:a14d8dd3175fcf01d0f0361fa7bb68a45"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad29c4813843d8ed7ca9f986387e1a342"><td class="memItemLeft" align="right" valign="top"><a id="ad29c4813843d8ed7ca9f986387e1a342"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpbf_1_1_population.html#ad29c4813843d8ed7ca9f986387e1a342">append_demography</a> (const uint_fast32_t season)</td></tr>
-<tr class="memdesc:ad29c4813843d8ed7ca9f986387e1a342"><td class="mdescLeft">&#160;</td><td class="mdescRight">append current state to <a class="el" href="classpbf_1_1_population.html#a18e261b0ab8e6b49c95842b202a02a45" title="(year, season) =&gt; [(age =&gt; count) for each location]">demography_</a> <br /></td></tr>
-<tr class="separator:ad29c4813843d8ed7ca9f986387e1a342"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9582e4eca0392c90257127ffe64ffa74"><td class="memItemLeft" align="right" valign="top"><a id="a9582e4eca0392c90257127ffe64ffa74"></a>
-std::vector&lt; std::map&lt; uint_fast32_t, size_t &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpbf_1_1_population.html#a9582e4eca0392c90257127ffe64ffa74">count</a> () const</td></tr>
-<tr class="memdesc:a9582e4eca0392c90257127ffe64ffa74"><td class="mdescLeft">&#160;</td><td class="mdescRight">Count individuals for each location and age. <br /></td></tr>
-<tr class="separator:a9582e4eca0392c90257127ffe64ffa74"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a98ea8f8f6241e397ee34f3d4e747b8c0"><td class="memItemLeft" align="right" valign="top"><a id="a98ea8f8f6241e397ee34f3d4e747b8c0"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpbf_1_1_population.html#a98ea8f8f6241e397ee34f3d4e747b8c0">sample</a> (std::vector&lt; size_t &gt; adult, std::vector&lt; size_t &gt; juvenile)</td></tr>
+<tr class="memdesc:a98ea8f8f6241e397ee34f3d4e747b8c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">sample individuals <br /></td></tr>
+<tr class="separator:a98ea8f8f6241e397ee34f3d4e747b8c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab0fb9523fecc57053d9ea81b64f62cdf"><td class="memItemLeft" align="right" valign="top"><a id="ab0fb9523fecc57053d9ea81b64f62cdf"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpbf_1_1_population.html#ab0fb9523fecc57053d9ea81b64f62cdf">append_demography</a> (int_fast32_t season)</td></tr>
+<tr class="memdesc:ab0fb9523fecc57053d9ea81b64f62cdf"><td class="mdescLeft">&#160;</td><td class="mdescRight">append current state to <a class="el" href="classpbf_1_1_population.html#af0f041e6aef087c5ffb46932345260bb" title="(year, season) =&gt; [(age =&gt; count) for each location]">demography_</a> <br /></td></tr>
+<tr class="separator:ab0fb9523fecc57053d9ea81b64f62cdf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2602a6d118b7001c081d38bc594374cb"><td class="memItemLeft" align="right" valign="top"><a id="a2602a6d118b7001c081d38bc594374cb"></a>
+std::vector&lt; std::map&lt; int_fast32_t, size_t &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpbf_1_1_population.html#a2602a6d118b7001c081d38bc594374cb">count</a> (int_fast32_t season) const</td></tr>
+<tr class="memdesc:a2602a6d118b7001c081d38bc594374cb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Count individuals for each location and age. <br /></td></tr>
+<tr class="separator:a2602a6d118b7001c081d38bc594374cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:a154a7ef521d54b333e535616ab43767a"><td class="memItemLeft" align="right" valign="top"><a id="a154a7ef521d54b333e535616ab43767a"></a>
-std::vector&lt; std::shared_ptr&lt; <a class="el" href="classpbf_1_1_individual.html">Individual</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpbf_1_1_population.html#a154a7ef521d54b333e535616ab43767a">males_</a></td></tr>
-<tr class="memdesc:a154a7ef521d54b333e535616ab43767a"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classpbf_1_1_individual.html" title="Individual class.">Individual</a> array males. <br /></td></tr>
-<tr class="separator:a154a7ef521d54b333e535616ab43767a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae21f114b96396dd3746a0c942d411bd8"><td class="memItemLeft" align="right" valign="top"><a id="ae21f114b96396dd3746a0c942d411bd8"></a>
-std::vector&lt; std::shared_ptr&lt; <a class="el" href="classpbf_1_1_individual.html">Individual</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpbf_1_1_population.html#ae21f114b96396dd3746a0c942d411bd8">females_</a></td></tr>
-<tr class="memdesc:ae21f114b96396dd3746a0c942d411bd8"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classpbf_1_1_individual.html" title="Individual class.">Individual</a> array females. <br /></td></tr>
-<tr class="separator:ae21f114b96396dd3746a0c942d411bd8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abe2889c66464f575a4ae42f15e076bc4"><td class="memItemLeft" align="right" valign="top"><a id="abe2889c66464f575a4ae42f15e076bc4"></a>
-std::map&lt; uint_fast32_t, std::vector&lt; std::shared_ptr&lt; <a class="el" href="classpbf_1_1_individual.html">Individual</a> &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpbf_1_1_population.html#abe2889c66464f575a4ae42f15e076bc4">year_samples_</a></td></tr>
-<tr class="memdesc:abe2889c66464f575a4ae42f15e076bc4"><td class="mdescLeft">&#160;</td><td class="mdescRight">samples: capture_year =&gt; individuals <br /></td></tr>
-<tr class="separator:abe2889c66464f575a4ae42f15e076bc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a18e261b0ab8e6b49c95842b202a02a45"><td class="memItemLeft" align="right" valign="top"><a id="a18e261b0ab8e6b49c95842b202a02a45"></a>
-std::map&lt; std::pair&lt; uint_fast32_t, uint_fast32_t &gt;, std::vector&lt; std::map&lt; uint_fast32_t, size_t &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpbf_1_1_population.html#a18e261b0ab8e6b49c95842b202a02a45">demography_</a></td></tr>
-<tr class="memdesc:a18e261b0ab8e6b49c95842b202a02a45"><td class="mdescLeft">&#160;</td><td class="mdescRight">(year, season) =&gt; [(age =&gt; count) for each location] <br /></td></tr>
-<tr class="separator:a18e261b0ab8e6b49c95842b202a02a45"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a30c80b9e98059af68d3883a5f9e9dd06"><td class="memItemLeft" align="right" valign="top"><a id="a30c80b9e98059af68d3883a5f9e9dd06"></a>
-uint_fast32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpbf_1_1_population.html#a30c80b9e98059af68d3883a5f9e9dd06">year_</a> = 0</td></tr>
-<tr class="memdesc:a30c80b9e98059af68d3883a5f9e9dd06"><td class="mdescLeft">&#160;</td><td class="mdescRight">year <br /></td></tr>
-<tr class="separator:a30c80b9e98059af68d3883a5f9e9dd06"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4be45c7d6b6937554cecf3dff4f6e624"><td class="memItemLeft" align="right" valign="top"><a id="a4be45c7d6b6937554cecf3dff4f6e624"></a>
+std::vector&lt; std::shared_ptr&lt; <a class="el" href="classpbf_1_1_individual.html">Individual</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpbf_1_1_population.html#a4be45c7d6b6937554cecf3dff4f6e624">individuals_</a></td></tr>
+<tr class="memdesc:a4be45c7d6b6937554cecf3dff4f6e624"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classpbf_1_1_individual.html" title="Individual class.">Individual</a> array. <br /></td></tr>
+<tr class="separator:a4be45c7d6b6937554cecf3dff4f6e624"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a48f7c94b982660b8dfe22895537284d5"><td class="memItemLeft" align="right" valign="top"><a id="a48f7c94b982660b8dfe22895537284d5"></a>
+std::vector&lt; std::shared_ptr&lt; <a class="el" href="classpbf_1_1_individual.html">Individual</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpbf_1_1_population.html#a48f7c94b982660b8dfe22895537284d5">juveniles_</a></td></tr>
+<tr class="memdesc:a48f7c94b982660b8dfe22895537284d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Genotypes of juveniles. <br /></td></tr>
+<tr class="separator:a48f7c94b982660b8dfe22895537284d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a50686d2d2f59e8685c87cdf74ad1b704"><td class="memItemLeft" align="right" valign="top"><a id="a50686d2d2f59e8685c87cdf74ad1b704"></a>
+std::vector&lt; std::vector&lt; uint_fast32_t &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpbf_1_1_population.html#a50686d2d2f59e8685c87cdf74ad1b704">juveniles_demography_</a></td></tr>
+<tr class="memdesc:a50686d2d2f59e8685c87cdf74ad1b704"><td class="mdescLeft">&#160;</td><td class="mdescRight">Counts of juveniles; [[number for each location] for each season]. <br /></td></tr>
+<tr class="separator:a50686d2d2f59e8685c87cdf74ad1b704"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a13bf9f6b814e4cead13ac70fc3c9041e"><td class="memItemLeft" align="right" valign="top"><a id="a13bf9f6b814e4cead13ac70fc3c9041e"></a>
+std::map&lt; int_fast32_t, std::vector&lt; std::shared_ptr&lt; <a class="el" href="classpbf_1_1_individual.html">Individual</a> &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpbf_1_1_population.html#a13bf9f6b814e4cead13ac70fc3c9041e">year_samples_</a></td></tr>
+<tr class="memdesc:a13bf9f6b814e4cead13ac70fc3c9041e"><td class="mdescLeft">&#160;</td><td class="mdescRight">samples: capture_year =&gt; individuals <br /></td></tr>
+<tr class="separator:a13bf9f6b814e4cead13ac70fc3c9041e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af0f041e6aef087c5ffb46932345260bb"><td class="memItemLeft" align="right" valign="top"><a id="af0f041e6aef087c5ffb46932345260bb"></a>
+std::map&lt; std::pair&lt; int_fast32_t, int_fast32_t &gt;, std::vector&lt; std::map&lt; int_fast32_t, size_t &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpbf_1_1_population.html#af0f041e6aef087c5ffb46932345260bb">demography_</a></td></tr>
+<tr class="memdesc:af0f041e6aef087c5ffb46932345260bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">(year, season) =&gt; [(age =&gt; count) for each location] <br /></td></tr>
+<tr class="separator:af0f041e6aef087c5ffb46932345260bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa2c5067e2d4860504e1c1f87c5b4908f"><td class="memItemLeft" align="right" valign="top"><a id="aa2c5067e2d4860504e1c1f87c5b4908f"></a>
+int_fast32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpbf_1_1_population.html#aa2c5067e2d4860504e1c1f87c5b4908f">year_</a> = 0</td></tr>
+<tr class="memdesc:aa2c5067e2d4860504e1c1f87c5b4908f"><td class="mdescLeft">&#160;</td><td class="mdescRight">year <br /></td></tr>
+<tr class="separator:aa2c5067e2d4860504e1c1f87c5b4908f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3eeccb575c5fe9115dc3ec03cb970ccb"><td class="memItemLeft" align="right" valign="top"><a id="a3eeccb575c5fe9115dc3ec03cb970ccb"></a>
 std::unique_ptr&lt; URBG &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpbf_1_1_population.html#a3eeccb575c5fe9115dc3ec03cb970ccb">engine_</a></td></tr>
 <tr class="memdesc:a3eeccb575c5fe9115dc3ec03cb970ccb"><td class="mdescLeft">&#160;</td><td class="mdescRight">random bit generator <br /></td></tr>
