@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.8)
 project(tekka
-  VERSION 0.6.0
+  VERSION 0.6.1
   LANGUAGES CXX)
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
@@ -60,7 +60,10 @@ target_include_directories(${PROJECT_NAME} INTERFACE
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
-target_link_libraries(${PROJECT_NAME} PRIVATE wtl::wtl clippson::clippson wtl::sfmt)
+target_link_libraries(${PROJECT_NAME}
+  PRIVATE wtl::wtl clippson::clippson
+  PUBLIC wtl::sfmt
+)
 
 option(BUILD_EXECUTABLE "Build executable file" ON)
 if(BUILD_EXECUTABLE)
