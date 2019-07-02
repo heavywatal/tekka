@@ -27,9 +27,10 @@ void Population::run(const int_fast32_t simulating_duration,
                      const std::vector<size_t>& sample_size_juvenile,
                      const int_fast32_t recording_duration) {
     auto recording_start = simulating_duration - recording_duration;
-    append_demography(0);
-    for (year_ = 0; year_ < simulating_duration; ++year_) {
+    append_demography(3);
+    for (year_ = 1; year_ <= simulating_duration; ++year_) {
         reproduce();
+        append_demography(0);
         survive(0);
         survive(1);
         survive(2);
@@ -39,8 +40,8 @@ void Population::run(const int_fast32_t simulating_duration,
             sample(sample_size_adult, sample_size_juvenile);
         }
         migrate();
+        append_demography(3);
     }
-    append_demography(0);
 }
 
 void Population::reproduce() {
@@ -106,7 +107,6 @@ void Population::survive(const int_fast32_t season) {
             --n;
         }
     }
-    append_demography(season);
 }
 
 void Population::merge_juveniles() {
@@ -167,8 +167,8 @@ std::ostream& Population::write_sample_family(std::ostream& ost) const {
     return ost;
 }
 
-std::vector<std::map<int_fast32_t, size_t>> Population::count(const int_fast32_t season) const {
-    std::vector<std::map<int_fast32_t, size_t>> counter(Individual::num_locations());
+std::vector<std::vector<size_t>> Population::count(const int_fast32_t season) const {
+    std::vector<std::vector<size_t>> counter(Individual::num_locations(), std::vector<size_t>(80u));
     if (!juveniles_demography_.empty()) {
         const auto& jd_season = juveniles_demography_.at(season);
         for (unsigned loc=0; loc<jd_season.size(); ++loc) {
@@ -195,11 +195,12 @@ std::ostream& Population::write_demography(std::ostream& ost) const {
         const auto time = time_structure.first;
         for (size_t loc=0; loc<Individual::num_locations(); ++loc) {
             const auto structure = time_structure.second[loc];
-            for (const auto& age_count: structure) {
+            for (size_t age=0u; age<structure.size(); ++age) {
+                if (structure[age] == 0u) continue;
                 ost << time.first << "\t" << time.second << "\t"
                     << loc << "\t"
-                    << age_count.first << "\t"
-                    << age_count.second << "\n";
+                    << age << "\t"
+                    << structure[age] << "\n";
             }
         }
     }
