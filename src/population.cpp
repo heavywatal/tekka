@@ -45,13 +45,13 @@ void Population::run(const int_fast32_t simulating_duration,
 }
 
 void Population::reproduce() {
+    size_t popsize = 0u;
     double female_biomass = 0.0;
-    double male_biomass = 0.0;
     std::vector<std::vector<std::shared_ptr<Individual>>> males_located(Individual::num_breeding_places());
     for (const auto& p: individuals_) {
         if (p->is_in_breeding_place()) {
+            ++popsize;
             if (p->is_male()) {
-                male_biomass += p->weight(year_);
                 males_located[p->location()].emplace_back(p);
             } else {
                 female_biomass += p->weight(year_);
@@ -68,8 +68,6 @@ void Population::reproduce() {
         }
         mate_distrs.emplace_back(fitnesses.begin(), fitnesses.end());
     }
-    const double biomass = female_biomass + male_biomass;
-    const double popsize = biomass / Individual::weight_for_age().back();
     const double density_effect = std::max(0.0, 1.0 - popsize / Individual::param().CARRYING_CAPACITY);
     const double exp_recruitment = density_effect * Individual::param().RECRUITMENT_COEF * female_biomass;
     const size_t n = individuals_.size();
