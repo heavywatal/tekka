@@ -25,7 +25,7 @@ struct IndividualParams {
     //! @ingroup params
     //@{
     //! \f$r\f$:  used in Individual::recruitment()
-    double RECRUITMENT_COEF = 1.0;
+    double RECRUITMENT_COEF = 2.0;
     //! \f$K\f$: carrying capacity used in Individual::recruitment()
     double CARRYING_CAPACITY = 1e+3;
     //! \f$k \in (0, \infty)\f$ for overdispersion in recruitment().

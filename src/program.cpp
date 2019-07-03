@@ -38,7 +38,6 @@ inline clipp::group general_options(nlohmann::json* vm) {
     `-l,--last`                   | -
     `--sa,--sample_size_adult`    | -
     `--sj,--sample_size_juvenile` | -
-    `-u,--mutation`               | -
     `-i,--infile`                 | -
     `-o,--outdir`                 | -
 */
@@ -47,11 +46,10 @@ inline clipp::group program_options(nlohmann::json* vm) {
     const int seed = static_cast<int>(std::random_device{}()); // 32-bit signed integer for R
     return (
       wtl::option(vm, {"O", "origin"}, 0.2, "Initial population size relative to K"),
-      wtl::option(vm, {"y", "years"}, 40, "Duration of simulation"),
-      wtl::option(vm, {"l", "last"}, 2, "Sample last _ years"),
+      wtl::option(vm, {"y", "years"}, 100, "Duration of simulation"),
+      wtl::option(vm, {"l", "last"}, 3, "Sample last _ years"),
       wtl::option(vm, {"sa", "sample_size_adult"}, std::vector<size_t>{10u, 10u}, "per location"),
       wtl::option(vm, {"sj", "sample_size_juvenile"}, std::vector<size_t>{10u, 10u}, "per location"),
-      wtl::option(vm, {"u", "mutation"}, 0.1, "per generation per haploid"),
       wtl::option(vm, {"i", "infile"}, std::string(""), "config file in json format"),
       wtl::option(vm, {"o", "outdir"}, OUT_DIR),
       wtl::option(vm, {"seed"}, seed)
