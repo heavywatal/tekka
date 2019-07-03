@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.8)
 project(tekka
-  VERSION 0.6.4
+  VERSION 0.7.0
   LANGUAGES CXX)
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
