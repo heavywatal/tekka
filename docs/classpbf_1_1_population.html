@@ -88,7 +88,7 @@ std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="
 <tr class="separator:ab3d038801571367cf27a6cc3741aef5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acd5e2ac92cb2189d2dddeb005e15059e"><td class="memItemLeft" align="right" valign="top"><a id="acd5e2ac92cb2189d2dddeb005e15059e"></a>
 std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpbf_1_1_population.html#acd5e2ac92cb2189d2dddeb005e15059e">write_demography</a> (std::ostream &amp;) const</td></tr>
-<tr class="memdesc:acd5e2ac92cb2189d2dddeb005e15059e"><td class="mdescLeft">&#160;</td><td class="mdescRight">write <a class="el" href="classpbf_1_1_population.html#af0f041e6aef087c5ffb46932345260bb" title="(year, season) =&gt; [(age =&gt; count) for each location]">demography_</a> <br /></td></tr>
+<tr class="memdesc:acd5e2ac92cb2189d2dddeb005e15059e"><td class="mdescLeft">&#160;</td><td class="mdescRight">write <a class="el" href="classpbf_1_1_population.html#aedfe16b56b333e8082d580d5652dc6ce" title="(year, season) =&gt; [[count for each age] for each location]">demography_</a> <br /></td></tr>
 <tr class="separator:acd5e2ac92cb2189d2dddeb005e15059e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aac38fcf7bbe3427f8debdd6cf0ddcee9"><td class="memItemLeft" align="right" valign="top"><a id="aac38fcf7bbe3427f8debdd6cf0ddcee9"></a>
 std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpbf_1_1_population.html#aac38fcf7bbe3427f8debdd6cf0ddcee9">write</a> (std::ostream &amp;) const</td></tr>
@@ -119,12 +119,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="separator:a98ea8f8f6241e397ee34f3d4e747b8c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab0fb9523fecc57053d9ea81b64f62cdf"><td class="memItemLeft" align="right" valign="top"><a id="ab0fb9523fecc57053d9ea81b64f62cdf"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpbf_1_1_population.html#ab0fb9523fecc57053d9ea81b64f62cdf">append_demography</a> (int_fast32_t season)</td></tr>
-<tr class="memdesc:ab0fb9523fecc57053d9ea81b64f62cdf"><td class="mdescLeft">&#160;</td><td class="mdescRight">append current state to <a class="el" href="classpbf_1_1_population.html#af0f041e6aef087c5ffb46932345260bb" title="(year, season) =&gt; [(age =&gt; count) for each location]">demography_</a> <br /></td></tr>
+<tr class="memdesc:ab0fb9523fecc57053d9ea81b64f62cdf"><td class="mdescLeft">&#160;</td><td class="mdescRight">append current state to <a class="el" href="classpbf_1_1_population.html#aedfe16b56b333e8082d580d5652dc6ce" title="(year, season) =&gt; [[count for each age] for each location]">demography_</a> <br /></td></tr>
 <tr class="separator:ab0fb9523fecc57053d9ea81b64f62cdf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2602a6d118b7001c081d38bc594374cb"><td class="memItemLeft" align="right" valign="top"><a id="a2602a6d118b7001c081d38bc594374cb"></a>
-std::vector&lt; std::map&lt; int_fast32_t, size_t &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpbf_1_1_population.html#a2602a6d118b7001c081d38bc594374cb">count</a> (int_fast32_t season) const</td></tr>
-<tr class="memdesc:a2602a6d118b7001c081d38bc594374cb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Count individuals for each location and age. <br /></td></tr>
-<tr class="separator:a2602a6d118b7001c081d38bc594374cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab76f8ffd0d6291ace54df7529cc1ee1b"><td class="memItemLeft" align="right" valign="top"><a id="ab76f8ffd0d6291ace54df7529cc1ee1b"></a>
+std::vector&lt; std::vector&lt; size_t &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpbf_1_1_population.html#ab76f8ffd0d6291ace54df7529cc1ee1b">count</a> (int_fast32_t season) const</td></tr>
+<tr class="memdesc:ab76f8ffd0d6291ace54df7529cc1ee1b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Count individuals for each location and age. <br /></td></tr>
+<tr class="separator:ab76f8ffd0d6291ace54df7529cc1ee1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
@@ -144,10 +144,10 @@ std::vector&lt; std::vector&lt; uint_fast32_t &gt; &gt;&#160;</td><td class="mem
 std::map&lt; int_fast32_t, std::vector&lt; std::shared_ptr&lt; <a class="el" href="classpbf_1_1_individual.html">Individual</a> &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpbf_1_1_population.html#a13bf9f6b814e4cead13ac70fc3c9041e">year_samples_</a></td></tr>
 <tr class="memdesc:a13bf9f6b814e4cead13ac70fc3c9041e"><td class="mdescLeft">&#160;</td><td class="mdescRight">samples: capture_year =&gt; individuals <br /></td></tr>
 <tr class="separator:a13bf9f6b814e4cead13ac70fc3c9041e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af0f041e6aef087c5ffb46932345260bb"><td class="memItemLeft" align="right" valign="top"><a id="af0f041e6aef087c5ffb46932345260bb"></a>
-std::map&lt; std::pair&lt; int_fast32_t, int_fast32_t &gt;, std::vector&lt; std::map&lt; int_fast32_t, size_t &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpbf_1_1_population.html#af0f041e6aef087c5ffb46932345260bb">demography_</a></td></tr>
-<tr class="memdesc:af0f041e6aef087c5ffb46932345260bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">(year, season) =&gt; [(age =&gt; count) for each location] <br /></td></tr>
-<tr class="separator:af0f041e6aef087c5ffb46932345260bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aedfe16b56b333e8082d580d5652dc6ce"><td class="memItemLeft" align="right" valign="top"><a id="aedfe16b56b333e8082d580d5652dc6ce"></a>
+std::map&lt; std::pair&lt; int_fast32_t, int_fast32_t &gt;, std::vector&lt; std::vector&lt; size_t &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpbf_1_1_population.html#aedfe16b56b333e8082d580d5652dc6ce">demography_</a></td></tr>
+<tr class="memdesc:aedfe16b56b333e8082d580d5652dc6ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">(year, season) =&gt; [[count for each age] for each location] <br /></td></tr>
+<tr class="separator:aedfe16b56b333e8082d580d5652dc6ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa2c5067e2d4860504e1c1f87c5b4908f"><td class="memItemLeft" align="right" valign="top"><a id="aa2c5067e2d4860504e1c1f87c5b4908f"></a>
 int_fast32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpbf_1_1_population.html#aa2c5067e2d4860504e1c1f87c5b4908f">year_</a> = 0</td></tr>
 <tr class="memdesc:aa2c5067e2d4860504e1c1f87c5b4908f"><td class="mdescLeft">&#160;</td><td class="mdescRight">year <br /></td></tr>
