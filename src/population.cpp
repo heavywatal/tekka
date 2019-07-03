@@ -36,7 +36,7 @@ void Population::run(const int_fast32_t simulating_duration,
         survive(2);
         survive(3);
         merge_juveniles();
-        if (year_ >= recording_start) {
+        if (year_ > recording_start) {
             sample(sample_size_adult, sample_size_juvenile);
         }
         migrate();
