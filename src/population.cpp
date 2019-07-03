@@ -30,6 +30,7 @@ void Population::run(const int_fast32_t simulating_duration,
     append_demography(3);
     for (year_ = 1; year_ <= simulating_duration; ++year_) {
         reproduce();
+        if (year_ == 1) individuals_.clear();
         append_demography(0);
         survive(0);
         survive(1);
