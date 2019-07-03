@@ -49,7 +49,7 @@ class Population {
     void reproduce();
 
     //! evaluate survival
-    void survive(int_fast32_t season);
+    void survive();
 
     //! move #juveniles_ elements to #individuals_
     void merge_juveniles();

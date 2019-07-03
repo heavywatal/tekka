@@ -20,9 +20,8 @@ static_assert(!std::is_default_constructible<Individual>{}, "");
 static_assert(std::is_nothrow_copy_constructible<Individual>{}, "");
 static_assert(std::is_nothrow_move_constructible<Individual>{}, "");
 
-bool Individual::has_survived(const int_fast32_t year, const int_fast32_t quarter, URBG& engine) const {
-    int_fast32_t qage = 4 * (year - birth_year_) + quarter;
-    return (wtl::generate_canonical(engine) < JSON_.SURVIVAL_RATE[qage]);
+bool Individual::is_dead(const int_fast32_t year, URBG& engine) const {
+    return (wtl::generate_canonical(engine) < JSON_.DEATH_RATE[year - birth_year_]);
 }
 
 //! Translate parameter `mean` to `prob`
@@ -116,14 +115,17 @@ void IndividualJson::set_dependent_static() {
         MIGRATION_DISTRIBUTIONS.emplace_back(std::move(dists));
     }
     elongate(&MIGRATION_DISTRIBUTIONS, max_age);
-    SURVIVAL_RATE.reserve(max_qage);
-    SURVIVAL_RATE.resize(NATURAL_MORTALITY.size());
-    std::transform(NATURAL_MORTALITY.begin(), NATURAL_MORTALITY.end(),
-                   FISHING_MORTALITY.begin(), SURVIVAL_RATE.begin(),
-                   [](double n, double f) {
-                       return std::exp(-n - f);
-                   });
-    elongate(&SURVIVAL_RATE, max_qage);
+    DEATH_RATE.reserve(max_age);
+    DEATH_RATE.resize(NATURAL_MORTALITY.size() / 4u);
+    for (size_t year=0; year<DEATH_RATE.size(); ++year) {
+        double z = 0.0;
+        for (size_t q = 4u * year, q_end = q + 4u; q<q_end; ++q) {
+            z += NATURAL_MORTALITY[q];
+            z += FISHING_MORTALITY[q];
+        }
+        DEATH_RATE[year] = 1.0 - std::exp(-z);
+    }
+    elongate(&DEATH_RATE, max_age);
     elongate(&WEIGHT_FOR_AGE, max_qage);
 }
 

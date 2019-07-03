@@ -32,10 +32,7 @@ void Population::run(const int_fast32_t simulating_duration,
         reproduce();
         if (year_ == 1) individuals_.clear();
         append_demography(0);
-        survive(0);
-        survive(1);
-        survive(2);
-        survive(3);
+        survive();
         merge_juveniles();
         if (year_ > recording_start) {
             sample(sample_size_adult, sample_size_juvenile);
@@ -74,18 +71,18 @@ void Population::reproduce() {
     const size_t n = individuals_.size();
     juveniles_.reserve(static_cast<size_t>(exp_recruitment * 1.1));
     juveniles_demography_.assign(4u, std::vector<uint_fast32_t>(Individual::num_breeding_places()));
+    const double survival_rate = 1.0 - Individual::death_rate()[0u];
     for (size_t i=0; i<n; ++i) {
         const auto& mother = individuals_[i];
         if (mother->is_male() || !mother->is_in_breeding_place()) continue;
         const auto& potential_fathers = males_located[mother->location()];
         if (potential_fathers.empty()) continue;
-        auto& mate_distr = mate_distrs[mother->location()];
         uint_fast32_t num_juveniles = mother->recruitment(year_, density_effect, *engine_);
-        for (unsigned season: {0u, 1u, 2u, 3u}) {
-            std::binomial_distribution<uint_fast32_t> binom(num_juveniles, Individual::survival_rate()[season]);
-            num_juveniles = binom(*engine_);
-            juveniles_demography_[season][mother->location()] += num_juveniles;
-        }
+        juveniles_demography_[0u][mother->location()] += num_juveniles;
+        std::binomial_distribution<uint_fast32_t> binom(num_juveniles, survival_rate);
+        num_juveniles = binom(*engine_);
+        juveniles_demography_[3u][mother->location()] += num_juveniles;
+        auto& mate_distr = mate_distrs[mother->location()];
         for (uint_fast32_t j=0; j<num_juveniles; ++j) {
             const auto& father = potential_fathers[mate_distr(*engine_)];
             const bool is_male = (wtl::generate_canonical(*engine_) < 0.5);
@@ -94,16 +91,15 @@ void Population::reproduce() {
     }
 }
 
-void Population::survive(const int_fast32_t season) {
+void Population::survive() {
     size_t n = individuals_.size();
     for (size_t i=0; i<n; ++i) {
         auto& p = individuals_[i];
-        while (!p->has_survived(year_, season, *engine_)) {
-            if (i < n) {
-                p = std::move(individuals_.back());
-            }
+        if (p->is_dead(year_, *engine_)) {
+            p = std::move(individuals_.back());
             individuals_.pop_back();
             --n;
+            --i;
         }
     }
 }
@@ -138,9 +134,7 @@ void Population::sample(std::vector<size_t> sample_size_adult,
         if (to_be_sampled) {
             sampled.emplace_back(p);
             --to_be_sampled;
-            if (i < n) {
-                p = std::move(individuals_.back());
-            }
+            p = std::move(individuals_.back());
             individuals_.pop_back();
             --n;
             --i;

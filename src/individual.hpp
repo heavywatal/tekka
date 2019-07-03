@@ -57,8 +57,8 @@ struct IndividualJson {
     std::vector<std::vector<std::vector<double>>> MIGRATION_MATRICES;
     //@}
 
-    //! survival rate per quater year
-    std::vector<double> SURVIVAL_RATE;
+    //! finite death rate per year
+    std::vector<double> DEATH_RATE;
     //! discrete distributions for migration
     std::vector<std::vector<std::discrete_distribution<uint_fast16_t>>> MIGRATION_DISTRIBUTIONS;
 };
@@ -80,7 +80,7 @@ class Individual {
       is_male_(is_male) {}
 
     //! evaluate survival
-    bool has_survived(const int_fast32_t year, const int_fast32_t quarter, URBG&) const;
+    bool is_dead(const int_fast32_t year, URBG&) const;
 
     //! evaluate maturity
     bool is_in_breeding_place() const noexcept {
@@ -130,9 +130,9 @@ class Individual {
     //! IndividualJson.FISHING_MORTALITY
     static const std::vector<double>&
     fishing_mortality() {return JSON_.FISHING_MORTALITY;}
-    //! IndividualJson.SURVIVAL_RATE
+    //! IndividualJson.DEATH_RATE
     static const std::vector<double>&
-    survival_rate() {return JSON_.SURVIVAL_RATE;}
+    death_rate() {return JSON_.DEATH_RATE;}
     //! IndividualJson.WEIGHT_FOR_AGE
     static const std::vector<double>&
     weight_for_age() {return JSON_.WEIGHT_FOR_AGE;}
