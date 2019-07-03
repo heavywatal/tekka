@@ -33,6 +33,7 @@ inline clipp::group general_options(nlohmann::json* vm) {
 
     Command line option           | Symbol
     ----------------------------- | -------
+    `-O,--origin`                 | -
     `-y,--years`                  | -
     `-l,--last`                   | -
     `--sa,--sample_size_adult`    | -
@@ -45,6 +46,7 @@ inline clipp::group program_options(nlohmann::json* vm) {
     const std::string OUT_DIR = wtl::strftime("thunnus_%Y%m%d_%H%M%S");
     const int seed = static_cast<int>(std::random_device{}()); // 32-bit signed integer for R
     return (
+      wtl::option(vm, {"O", "origin"}, 0.2, "Initial population size relative to K"),
       wtl::option(vm, {"y", "years"}, 40, "Duration of simulation"),
       wtl::option(vm, {"l", "last"}, 2, "Sample last _ years"),
       wtl::option(vm, {"sa", "sample_size_adult"}, std::vector<size_t>{10u, 10u}, "per location"),
@@ -121,8 +123,10 @@ Program::Program(const std::vector<std::string>& arguments)
 Program::~Program() = default;
 
 void Program::run() {
+    const double K = VM.at("carrying_capacity");
+    const double O = VM.at("origin");
     population_ = std::make_unique<Population>(
-        VM.at("carrying_capacity"),
+        static_cast<size_t>(K * O),
         VM.at("seed")
     );
     population_->run(
