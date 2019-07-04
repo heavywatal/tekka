@@ -51,7 +51,7 @@ struct IndividualJson {
     std::vector<double> NATURAL_MORTALITY;
     //! mortality due to fishing activities
     std::vector<double> FISHING_MORTALITY;
-    //! precalculated values
+    //! precalculated values (quater age)
     std::vector<double> WEIGHT_FOR_AGE;
     //! transition matrix for migration
     std::vector<std::vector<std::vector<double>>> MIGRATION_MATRICES;
@@ -59,6 +59,8 @@ struct IndividualJson {
 
     //! finite death rate per year
     std::vector<double> DEATH_RATE;
+    //! precalculated values (age)
+    std::vector<double> WEIGHT_FOR_YEAR_AGE;
     //! discrete distributions for migration
     std::vector<std::vector<std::discrete_distribution<uint_fast32_t>>> MIGRATION_DISTRIBUTIONS;
 };
@@ -126,9 +128,9 @@ class Individual {
     //! IndividualJson.MIGRATION_MATRICES
     static const std::vector<std::vector<std::vector<double>>>&
     migration_matrices() {return JSON_.MIGRATION_MATRICES;}
-    //! IndividualJson.WEIGHT_FOR_AGE
-    double weight(const int_fast32_t year) const noexcept {
-        return JSON_.WEIGHT_FOR_AGE[4 * (year - birth_year_)];
+    //! IndividualJson.WEIGHT_FOR_YEAR_AGE
+    double weight(int_fast32_t year) const noexcept {
+        return JSON_.WEIGHT_FOR_YEAR_AGE[year - birth_year_];
     }
     //! !#father_
     bool is_first_gen() const noexcept {return !father_;}

@@ -100,7 +100,6 @@ void elongate(std::vector<T>* v, size_t n) noexcept {
 
 void IndividualJson::set_dependent_static() {
     constexpr int_fast32_t max_age = 80;
-    constexpr int_fast32_t max_qage = 4 * (max_age + 1);
     MIGRATION_DISTRIBUTIONS.clear();
     MIGRATION_DISTRIBUTIONS.reserve(max_age);
     for (const auto& matrix: MIGRATION_MATRICES) {
@@ -123,7 +122,12 @@ void IndividualJson::set_dependent_static() {
         DEATH_RATE[year] = 1.0 - std::exp(-z);
     }
     elongate(&DEATH_RATE, max_age);
-    elongate(&WEIGHT_FOR_AGE, max_qage);
+    WEIGHT_FOR_YEAR_AGE.reserve(max_age);
+    WEIGHT_FOR_YEAR_AGE.resize(WEIGHT_FOR_AGE.size() / 4u);
+    for (size_t year=0; year<WEIGHT_FOR_YEAR_AGE.size(); ++year) {
+        WEIGHT_FOR_YEAR_AGE[year] = WEIGHT_FOR_AGE[4u * year];
+    }
+    elongate(&WEIGHT_FOR_YEAR_AGE, max_age);
 }
 
 void IndividualJson::read(std::istream& ist) {
