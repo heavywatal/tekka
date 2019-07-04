@@ -64,7 +64,7 @@ class Population {
     void append_demography(int_fast32_t season);
 
     //! Count individuals for each location and age
-    std::vector<std::vector<size_t>> count(int_fast32_t season) const;
+    std::vector<std::vector<uint_fast32_t>> count(int_fast32_t season) const;
 
     size_t num_subpops() const noexcept {return subpopulations_.size();}
 
@@ -77,7 +77,7 @@ class Population {
     //! samples: capture_year => individuals
     std::vector<std::map<int_fast32_t, std::vector<std::shared_ptr<Individual>>>> loc_year_samples_;
     //! (year, season) => [[count for each age] for each location]
-    std::map<std::pair<int_fast32_t, int_fast32_t>, std::vector<std::vector<size_t>>> demography_;
+    std::map<std::pair<int_fast32_t, int_fast32_t>, std::vector<std::vector<uint_fast32_t>>> demography_;
     //! year
     int_fast32_t year_ = 0;
     //! random bit generator

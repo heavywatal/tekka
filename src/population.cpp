@@ -81,19 +81,17 @@ void Population::reproduce(const uint_fast32_t location, const double density_ef
     std::discrete_distribution<uint_fast32_t> mate_distr(fitnesses.begin(), fitnesses.end());
     const double exp_recruitment = density_effect * Individual::param().RECRUITMENT_COEF * female_biomass;
     juveniles.reserve(static_cast<size_t>(exp_recruitment * 1.1));
-    const double survival_rate = 1.0 - Individual::death_rate()[0u];
-    for (size_t i=0; i<n; ++i) {
-        const auto& mother = adults[i];
+    const double d0 = Individual::death_rate()[0u];
+    for (const auto& mother: adults) {
         if (mother->is_male()) continue;
         uint_fast32_t num_juveniles = mother->recruitment(year_, density_effect, *engine_);
         juveniles_demography_[0u][location] += num_juveniles;
-        std::binomial_distribution<uint_fast32_t> binom(num_juveniles, survival_rate);
-        num_juveniles = binom(*engine_);
+        num_juveniles -= std::binomial_distribution<uint_fast32_t>(num_juveniles, d0)(*engine_);
         juveniles_demography_[3u][location] += num_juveniles;
+        const auto num_boys = std::binomial_distribution<uint_fast32_t>(num_juveniles, 0.5)(*engine_);
         for (uint_fast32_t j=0; j<num_juveniles; ++j) {
             const auto& father = adults[male_indices[mate_distr(*engine_)]];
-            const bool is_male = (wtl::generate_canonical(*engine_) < 0.5);
-            juveniles.emplace_back(std::make_shared<Individual>(father, mother, year_, is_male));
+            juveniles.emplace_back(std::make_shared<Individual>(father, mother, year_, j < num_boys));
         }
     }
 }
@@ -166,7 +164,7 @@ void Population::sample(std::vector<std::vector<std::shared_ptr<Individual>>>* s
 std::ostream& Population::write_sample_family(std::ostream& ost) const {
     if (loc_year_samples_.empty() || loc_year_samples_[0u].empty()) return ost;
     wtl::join(Individual::names(), ost, "\t") << "\tlocation\tcapture_year\n";
-    std::map<const Individual*, size_t> ids;
+    std::unordered_map<const Individual*, size_t> ids;
     ids.emplace(nullptr, 0u);
     for (uint_fast32_t loc=0u; loc<loc_year_samples_.size(); ++loc) {
         const auto& year_samples = loc_year_samples_.at(loc);
@@ -184,8 +182,8 @@ std::ostream& Population::write_sample_family(std::ostream& ost) const {
     return ost;
 }
 
-std::vector<std::vector<size_t>> Population::count(const int_fast32_t season) const {
-    std::vector<std::vector<size_t>> counter(num_subpops(), std::vector<size_t>(80u));
+std::vector<std::vector<uint_fast32_t>> Population::count(const int_fast32_t season) const {
+    std::vector<std::vector<uint_fast32_t>> counter(num_subpops(), std::vector<uint_fast32_t>(80u));
     if (!juveniles_demography_.empty()) {
         const auto& jd_season = juveniles_demography_.at(season);
         for (uint_fast32_t loc=0; loc<jd_season.size(); ++loc) {
