@@ -57,7 +57,8 @@ class Population {
     void migrate();
 
     //! sample individuals
-    void sample(const std::vector<size_t>& adult, const std::vector<size_t>& juvenile);
+    void sample(std::vector<std::vector<std::shared_ptr<Individual>>>* subpops,
+                const std::vector<size_t>& sample_sizes);
 
     //! append current state to #demography_
     void append_demography(int_fast32_t season);

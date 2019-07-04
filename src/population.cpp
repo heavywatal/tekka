@@ -38,7 +38,8 @@ void Population::run(const int_fast32_t simulating_duration,
         append_demography(0);
         survive();
         if (year_ > recording_start) {
-            sample(sample_size_adult, sample_size_juvenile);
+            sample(&subpopulations_, sample_size_adult);
+            sample(&juveniles_subpops_, sample_size_juvenile);
         }
         migrate();
         append_demography(3);
@@ -146,30 +147,18 @@ void Population::migrate() {
     }
 }
 
-void Population::sample(const std::vector<size_t>& sample_size_adult,
-                        const std::vector<size_t>& sample_size_juvenile) {
-    const auto max_aloc = std::min(subpopulations_.size(), sample_size_adult.size());
-    for (uint_fast32_t loc=0u; loc<max_aloc; ++loc) {
-        auto& individuals = subpopulations_[loc];
+void Population::sample(std::vector<std::vector<std::shared_ptr<Individual>>>* subpops,
+                        const std::vector<size_t>& sample_sizes) {
+    const auto max_loc = std::min(subpops->size(), sample_sizes.size());
+    for (uint_fast32_t loc=0u; loc<max_loc; ++loc) {
+        auto& individuals = subpops->at(loc);
         std::shuffle(individuals.begin(), individuals.end(), *engine_);
-        const auto n = std::min(individuals.size(), sample_size_adult[loc]);
-        std::vector<std::shared_ptr<Individual>>& sampled = loc_year_samples_[loc][year_];
-        sampled.reserve(n);
-        for (size_t i=0; i<n; ++i) {
-            sampled.emplace_back(std::move(individuals.back()));
-            individuals.pop_back();
-        }
-    }
-    const auto max_jloc = std::min(juveniles_subpops_.size(), sample_size_juvenile.size());
-    for (uint_fast32_t loc=0u; loc<max_jloc; ++loc) {
-        auto& juveniles = juveniles_subpops_[loc];
-        std::shuffle(juveniles.begin(), juveniles.end(), *engine_);
-        const auto n = std::min(juveniles.size(), sample_size_juvenile[loc]);
+        const auto n = std::min(individuals.size(), sample_sizes[loc]);
         std::vector<std::shared_ptr<Individual>>& sampled = loc_year_samples_[loc][year_];
         sampled.reserve(sampled.size() + n);
         for (size_t i=0; i<n; ++i) {
-            sampled.emplace_back(std::move(juveniles.back()));
-            juveniles.pop_back();
+            sampled.emplace_back(std::move(individuals.back()));
+            individuals.pop_back();
         }
     }
 }
