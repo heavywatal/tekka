@@ -43,7 +43,7 @@ uint_fast32_t Individual::recruitment(const int_fast32_t year, const double dens
 }
 
 uint_fast32_t Individual::migrate(const uint_fast32_t loc, const int_fast32_t year, URBG& engine) {
-    return JSON_.MIGRATION_DISTRIBUTIONS.at(year - birth_year_)[loc](engine);
+    return JSON_.MIGRATION_DISTRIBUTIONS[year - birth_year_][loc](engine);
 }
 
 void Individual::trace_back(std::ostream& ost, std::map<const Individual*, size_t>* ids, uint32_t loc, int_fast32_t year) const {
@@ -138,6 +138,7 @@ void IndividualJson::set_dependent_static() {
         DEATH_RATE[year] = 1.0 - std::exp(-z);
     }
     elongate(&DEATH_RATE, max_age);
+    DEATH_RATE.back() = 1.0;
     WEIGHT_FOR_YEAR_AGE.reserve(max_age);
     WEIGHT_FOR_YEAR_AGE.resize(WEIGHT_FOR_AGE.size() / 4u);
     for (size_t year=0; year<WEIGHT_FOR_YEAR_AGE.size(); ++year) {
