@@ -53,14 +53,11 @@ class Population {
     //! evaluate survival
     void survive();
 
-    //! move #juveniles_ elements to #individuals_
-    void merge_juveniles();
-
     //! evaluate migration
     void migrate();
 
     //! sample individuals
-    void sample(std::vector<size_t> adult, std::vector<size_t> juvenile);
+    void sample(const std::vector<size_t>& adult, const std::vector<size_t>& juvenile);
 
     //! append current state to #demography_
     void append_demography(int_fast32_t season);

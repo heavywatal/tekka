@@ -12,7 +12,7 @@
 namespace pbf {
 
 Population::Population(const size_t initial_size, std::random_device::result_type seed)
-: subpopulations_(4u), juveniles_subpops_(2u), loc_year_samples_(4u),
+: subpopulations_(4u), juveniles_subpops_(2u),
   engine_(std::make_unique<URBG>(seed)) {
     subpopulations_[0u].reserve(initial_size);
     const size_t half = initial_size / 2UL;
@@ -27,6 +27,9 @@ void Population::run(const int_fast32_t simulating_duration,
                      const std::vector<size_t>& sample_size_adult,
                      const std::vector<size_t>& sample_size_juvenile,
                      const int_fast32_t recording_duration) {
+    loc_year_samples_.resize(std::min(num_subpops(),
+                                      std::max(sample_size_adult.size(),
+                                               sample_size_juvenile.size())));
     auto recording_start = simulating_duration - recording_duration;
     append_demography(3);
     for (year_ = 1; year_ <= simulating_duration; ++year_) {
@@ -34,7 +37,6 @@ void Population::run(const int_fast32_t simulating_duration,
         if (year_ == 1) subpopulations_[0u].clear();
         append_demography(0);
         survive();
-        merge_juveniles();
         if (year_ > recording_start) {
             sample(sample_size_adult, sample_size_juvenile);
         }
@@ -110,18 +112,6 @@ void Population::survive() {
     }
 }
 
-void Population::merge_juveniles() {
-    for (uint_fast32_t loc=0; loc<juveniles_subpops_.size(); ++loc) {
-        auto& individuals = subpopulations_[loc];
-        auto& juveniles = juveniles_subpops_[loc];
-        individuals.reserve(individuals.size() + juveniles.size());
-        for (auto& p: juveniles) {
-            individuals.emplace_back(std::move(p));
-        }
-        juveniles.clear();
-    }
-}
-
 void Population::migrate() {
     std::vector<size_t> subpopsizes(num_subpops());
     for (uint_fast32_t loc=0u; loc<num_subpops(); ++loc) {
@@ -146,33 +136,40 @@ void Population::migrate() {
             }
         }
     }
+    for (uint_fast32_t loc=0; loc<juveniles_subpops_.size(); ++loc) {
+        auto& juveniles = juveniles_subpops_[loc];
+        for (auto& p: juveniles) {
+            auto newloc = p->migrate(loc, year_, *engine_);
+            subpopulations_[newloc].emplace_back(std::move(p));
+        }
+        juveniles.clear();
+    }
 }
 
-void Population::sample(std::vector<size_t> sample_size_adult,
-                        std::vector<size_t> sample_size_juvenile) {
-    size_t total_sampled = 0u;
-    total_sampled += std::accumulate(sample_size_juvenile.begin(), sample_size_juvenile.end(), 0u);
-    total_sampled += std::accumulate(sample_size_adult.begin(), sample_size_adult.end(), 0u);
-    sample_size_juvenile.resize(num_subpops());
-    sample_size_adult.resize(num_subpops());
-    for (uint_fast32_t loc=0u; loc<num_subpops(); ++loc) {
-        std::vector<std::shared_ptr<Individual>>& sampled = loc_year_samples_[loc][year_];
-        sampled.reserve(total_sampled);
+void Population::sample(const std::vector<size_t>& sample_size_adult,
+                        const std::vector<size_t>& sample_size_juvenile) {
+    const auto max_aloc = std::min(subpopulations_.size(), sample_size_adult.size());
+    for (uint_fast32_t loc=0u; loc<max_aloc; ++loc) {
         auto& individuals = subpopulations_[loc];
         std::shuffle(individuals.begin(), individuals.end(), *engine_);
-        size_t n = individuals.size();
+        const auto n = std::min(individuals.size(), sample_size_adult[loc]);
+        std::vector<std::shared_ptr<Individual>>& sampled = loc_year_samples_[loc][year_];
+        sampled.reserve(n);
         for (size_t i=0; i<n; ++i) {
-            auto& p = individuals[i];
-            auto& sample_size = (p->birth_year() == year_) ? sample_size_juvenile : sample_size_adult;
-            auto& to_be_sampled = sample_size[loc];
-            if (to_be_sampled) {
-                sampled.emplace_back(p);
-                --to_be_sampled;
-                p = std::move(individuals.back());
-                individuals.pop_back();
-                --n;
-                --i;
-            }
+            sampled.emplace_back(std::move(individuals.back()));
+            individuals.pop_back();
+        }
+    }
+    const auto max_jloc = std::min(juveniles_subpops_.size(), sample_size_juvenile.size());
+    for (uint_fast32_t loc=0u; loc<max_jloc; ++loc) {
+        auto& juveniles = juveniles_subpops_[loc];
+        std::shuffle(juveniles.begin(), juveniles.end(), *engine_);
+        const auto n = std::min(juveniles.size(), sample_size_juvenile[loc]);
+        std::vector<std::shared_ptr<Individual>>& sampled = loc_year_samples_[loc][year_];
+        sampled.reserve(sampled.size() + n);
+        for (size_t i=0; i<n; ++i) {
+            sampled.emplace_back(std::move(juveniles.back()));
+            juveniles.pop_back();
         }
     }
 }
@@ -182,8 +179,8 @@ std::ostream& Population::write_sample_family(std::ostream& ost) const {
     wtl::join(Individual::names(), ost, "\t") << "\tlocation\tcapture_year\n";
     std::map<const Individual*, size_t> ids;
     ids.emplace(nullptr, 0u);
-    for (uint_fast32_t loc=0u; loc<num_subpops(); ++loc) {
-        const auto& year_samples = loc_year_samples_[loc];
+    for (uint_fast32_t loc=0u; loc<loc_year_samples_.size(); ++loc) {
+        const auto& year_samples = loc_year_samples_.at(loc);
         for (const auto& ys: year_samples) {
             for (const auto& p: ys.second) {
                 ids.emplace(p.get(), ids.size());
