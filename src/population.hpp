@@ -25,7 +25,7 @@ class Individual;
 class Population {
   public:
     //! constructor
-    Population(const size_t initial_size, uint_fast32_t seed);
+    Population(const size_t initial_size, std::random_device::result_type seed);
     //! destructor
     ~Population();
 

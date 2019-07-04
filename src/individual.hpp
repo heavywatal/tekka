@@ -12,6 +12,7 @@
 #include <memory>
 #include <vector>
 #include <unordered_map>
+#include <functional>
 #include <limits>
 
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////
@@ -90,11 +91,12 @@ class Individual {
     uint_fast32_t migrate(uint_fast32_t loc, int_fast32_t year, URBG&);
 
     //! collect ancestoral IDs
-    void trace_back(std::ostream& ost, std::unordered_map<const Individual*, size_t>* ids, uint_fast32_t loc, int_fast32_t year) const;
+    void trace_back(std::ostream& ost, std::unordered_map<const Individual*, uint_fast32_t>* ids,
+                    uint_fast32_t loc, int_fast32_t year) const;
     //! write all the data members in TSV
     std::ostream& write(std::ostream&) const;
     //! write all the data members in TSV with translated IDs
-    std::ostream& write(std::ostream&, const std::unordered_map<const Individual*, size_t>&) const;
+    std::ostream& write(std::ostream&, const std::unordered_map<const Individual*, uint_fast32_t>&) const;
     friend std::ostream& operator<<(std::ostream&, const Individual&);
     //! column names for write()
     static std::vector<std::string> names();

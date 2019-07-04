@@ -53,7 +53,8 @@ void Population::reproduce() {
     for (uint_fast32_t loc=0u; loc<num_breeding_places; ++loc) {
         popsize += subpopulations_[loc].size();
     }
-    const double density_effect = std::max(0.0, 1.0 - popsize / Individual::param().CARRYING_CAPACITY);
+    const auto N = static_cast<double>(popsize);
+    const double density_effect = std::max(0.0, 1.0 - N / Individual::param().CARRYING_CAPACITY);
     for (uint_fast32_t loc=0u; loc<num_breeding_places; ++loc) {
         reproduce(loc, density_effect);
     }
@@ -66,8 +67,9 @@ void Population::reproduce(const uint_fast32_t location, const double density_ef
     double female_biomass = 0.0;
     std::vector<uint_fast32_t> male_indices;
     std::vector<double> fitnesses;
-    male_indices.reserve(static_cast<size_t>(adults.size() * 0.6));
-    fitnesses.reserve(static_cast<size_t>(adults.size() * 0.6));
+    const size_t num_males = (adults.size() / 5u) + (adults.size() / 10u);
+    male_indices.reserve(num_males);
+    fitnesses.reserve(num_males);
     for (uint_fast32_t i=0u; i<n; ++i) {
         const auto& p = adults[i];
         if (p->is_male()) {
@@ -164,13 +166,13 @@ void Population::sample(std::vector<std::vector<std::shared_ptr<Individual>>>* s
 std::ostream& Population::write_sample_family(std::ostream& ost) const {
     if (loc_year_samples_.empty() || loc_year_samples_[0u].empty()) return ost;
     wtl::join(Individual::names(), ost, "\t") << "\tlocation\tcapture_year\n";
-    std::unordered_map<const Individual*, size_t> ids;
+    std::unordered_map<const Individual*, uint_fast32_t> ids;
     ids.emplace(nullptr, 0u);
     for (uint_fast32_t loc=0u; loc<loc_year_samples_.size(); ++loc) {
         const auto& year_samples = loc_year_samples_.at(loc);
         for (const auto& ys: year_samples) {
             for (const auto& p: ys.second) {
-                ids.emplace(p.get(), ids.size());
+                ids.emplace(p.get(), static_cast<uint_fast32_t>(ids.size()));
             }
         }
         for (const auto& ys: year_samples) {

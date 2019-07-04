@@ -46,9 +46,9 @@ class Program {
     //! command line arguments
     std::vector<std::string> command_args_;
     //! writen to "config.json"
-    std::string config_;
+    std::string config_ = "";
     //! Population instance
-    std::unique_ptr<Population> population_;
+    std::unique_ptr<Population> population_ = nullptr;
 };
 
 //! @name Workaround for R/Rcpp
