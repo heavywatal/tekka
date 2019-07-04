@@ -98,6 +98,22 @@ void elongate(std::vector<T>* v, size_t n) noexcept {
     }
 }
 
+inline std::function<uint_fast32_t(URBG&)> make_dist(const std::vector<double>& v) {
+    uint_fast32_t idx = 0u;
+    unsigned num_positive = 0u;
+    for (uint_fast32_t i=0u; i<v.size(); ++i) {
+        if (v[i] > 0.0) {
+            ++num_positive;
+            idx = i;
+        }
+    }
+    if (num_positive == 1u) {
+        return [idx](URBG&){return idx;};
+    } else {
+        return std::discrete_distribution<uint_fast32_t>(v.begin(), v.end());
+    }
+}
+
 void IndividualJson::set_dependent_static() {
     constexpr int_fast32_t max_age = 80;
     MIGRATION_DISTRIBUTIONS.clear();
@@ -106,7 +122,7 @@ void IndividualJson::set_dependent_static() {
         decltype(MIGRATION_DISTRIBUTIONS)::value_type dists;
         dists.reserve(matrix.size());
         for (const auto& row: matrix) {
-            dists.emplace_back(row.begin(), row.end());
+            dists.emplace_back(make_dist(row));
         }
         MIGRATION_DISTRIBUTIONS.emplace_back(std::move(dists));
     }

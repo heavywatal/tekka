@@ -62,7 +62,7 @@ struct IndividualJson {
     //! precalculated values (age)
     std::vector<double> WEIGHT_FOR_YEAR_AGE;
     //! discrete distributions for migration
-    std::vector<std::vector<std::discrete_distribution<uint_fast32_t>>> MIGRATION_DISTRIBUTIONS;
+    std::vector<std::vector<std::function<uint_fast32_t(URBG&)>>> MIGRATION_DISTRIBUTIONS;
 };
 
 /*! @brief Individual class
