@@ -12,11 +12,12 @@
 namespace pbf {
 
 Population::Population(const size_t initial_size, std::random_device::result_type seed)
-: engine_(std::make_unique<URBG>(seed)) {
-    individuals_.reserve(initial_size);
+: subpopulations_(4u), juveniles_subpops_(2u), loc_year_samples_(4u),
+  engine_(std::make_unique<URBG>(seed)) {
+    subpopulations_[0u].reserve(initial_size);
     const size_t half = initial_size / 2UL;
     for (size_t i=0; i<initial_size; ++i) {
-        individuals_.emplace_back(std::make_shared<Individual>(i < half));
+        subpopulations_[0u].emplace_back(std::make_shared<Individual>(i < half));
     }
 }
 
@@ -30,7 +31,7 @@ void Population::run(const int_fast32_t simulating_duration,
     append_demography(3);
     for (year_ = 1; year_ <= simulating_duration; ++year_) {
         reproduce();
-        if (year_ == 1) individuals_.clear();
+        if (year_ == 1) subpopulations_[0u].clear();
         append_demography(0);
         survive();
         merge_juveniles();
@@ -43,77 +44,108 @@ void Population::run(const int_fast32_t simulating_duration,
 }
 
 void Population::reproduce() {
-    size_t popsize = 0u;
-    double female_biomass = 0.0;
-    std::vector<std::vector<std::shared_ptr<Individual>>> males_located(Individual::num_breeding_places());
-    for (const auto& p: individuals_) {
-        if (p->is_in_breeding_place()) {
-            ++popsize;
-            if (p->is_male()) {
-                males_located[p->location()].emplace_back(p);
-            } else {
-                female_biomass += p->weight(year_);
-            }
-        }
-    }
-    std::vector<std::discrete_distribution<unsigned>> mate_distrs;
-    mate_distrs.reserve(males_located.size());
-    for (size_t i=0; i<males_located.size(); ++i) {
-        std::vector<double> fitnesses;
-        fitnesses.reserve(males_located[i].size());
-        for (const auto& male: males_located[i]) {
-            fitnesses.push_back(male->weight(year_));
-        }
-        mate_distrs.emplace_back(fitnesses.begin(), fitnesses.end());
+    const auto num_breeding_places = static_cast<uint_fast32_t>(juveniles_subpops_.size());
+    juveniles_demography_.assign(4u, std::vector<uint_fast32_t>(num_breeding_places));
+    size_t popsize = 0;
+    for (uint_fast32_t loc=0u; loc<num_breeding_places; ++loc) {
+        popsize += subpopulations_[loc].size();
     }
     const double density_effect = std::max(0.0, 1.0 - popsize / Individual::param().CARRYING_CAPACITY);
+    for (uint_fast32_t loc=0u; loc<num_breeding_places; ++loc) {
+        reproduce(loc, density_effect);
+    }
+}
+
+void Population::reproduce(const uint_fast32_t location, const double density_effect) {
+    const auto& adults = subpopulations_[location];
+    auto& juveniles = juveniles_subpops_[location];
+    const size_t n = adults.size();
+    double female_biomass = 0.0;
+    std::vector<uint_fast32_t> male_indices;
+    std::vector<double> fitnesses;
+    male_indices.reserve(static_cast<size_t>(adults.size() * 0.6));
+    fitnesses.reserve(static_cast<size_t>(adults.size() * 0.6));
+    for (uint_fast32_t i=0u; i<n; ++i) {
+        const auto& p = adults[i];
+        if (p->is_male()) {
+            male_indices.push_back(i);
+            fitnesses.push_back(p->weight(year_));
+        } else {
+            female_biomass += p->weight(year_);
+        }
+    }
+    if (male_indices.size() == 0u) return;
+    std::discrete_distribution<uint_fast32_t> mate_distr(fitnesses.begin(), fitnesses.end());
     const double exp_recruitment = density_effect * Individual::param().RECRUITMENT_COEF * female_biomass;
-    const size_t n = individuals_.size();
-    juveniles_.reserve(static_cast<size_t>(exp_recruitment * 1.1));
-    juveniles_demography_.assign(4u, std::vector<uint_fast32_t>(Individual::num_breeding_places()));
+    juveniles.reserve(static_cast<size_t>(exp_recruitment * 1.1));
     const double survival_rate = 1.0 - Individual::death_rate()[0u];
     for (size_t i=0; i<n; ++i) {
-        const auto& mother = individuals_[i];
-        if (mother->is_male() || !mother->is_in_breeding_place()) continue;
-        const auto& potential_fathers = males_located[mother->location()];
-        if (potential_fathers.empty()) continue;
+        const auto& mother = adults[i];
+        if (mother->is_male()) continue;
         uint_fast32_t num_juveniles = mother->recruitment(year_, density_effect, *engine_);
-        juveniles_demography_[0u][mother->location()] += num_juveniles;
+        juveniles_demography_[0u][location] += num_juveniles;
         std::binomial_distribution<uint_fast32_t> binom(num_juveniles, survival_rate);
         num_juveniles = binom(*engine_);
-        juveniles_demography_[3u][mother->location()] += num_juveniles;
-        auto& mate_distr = mate_distrs[mother->location()];
+        juveniles_demography_[3u][location] += num_juveniles;
         for (uint_fast32_t j=0; j<num_juveniles; ++j) {
-            const auto& father = potential_fathers[mate_distr(*engine_)];
+            const auto& father = adults[male_indices[mate_distr(*engine_)]];
             const bool is_male = (wtl::generate_canonical(*engine_) < 0.5);
-            juveniles_.emplace_back(std::make_shared<Individual>(father, mother, year_, is_male));
+            juveniles.emplace_back(std::make_shared<Individual>(father, mother, year_, is_male));
         }
     }
 }
 
 void Population::survive() {
-    size_t n = individuals_.size();
-    for (size_t i=0; i<n; ++i) {
-        auto& p = individuals_[i];
-        if (p->is_dead(year_, *engine_)) {
-            p = std::move(individuals_.back());
-            individuals_.pop_back();
-            --n;
-            --i;
+    for (auto& individuals: subpopulations_) {
+        size_t n = individuals.size();
+        for (size_t i=0; i<n; ++i) {
+            auto& p = individuals[i];
+            if (p->is_dead(year_, *engine_)) {
+                p = std::move(individuals.back());
+                individuals.pop_back();
+                --n;
+                --i;
+            }
         }
     }
 }
 
 void Population::merge_juveniles() {
-    individuals_.reserve(individuals_.size() + juveniles_.size());
-    for (auto& p: juveniles_) {
-        individuals_.emplace_back(std::move(p));
+    for (uint_fast32_t loc=0; loc<juveniles_subpops_.size(); ++loc) {
+        auto& individuals = subpopulations_[loc];
+        auto& juveniles = juveniles_subpops_[loc];
+        individuals.reserve(individuals.size() + juveniles.size());
+        for (auto& p: juveniles) {
+            individuals.emplace_back(std::move(p));
+        }
+        juveniles.clear();
     }
-    juveniles_.clear();
 }
 
 void Population::migrate() {
-    for (auto& p: individuals_) {p->migrate(year_, *engine_);}
+    std::vector<size_t> subpopsizes(num_subpops());
+    for (uint_fast32_t loc=0u; loc<num_subpops(); ++loc) {
+        subpopsizes[loc] = subpopulations_[loc].size();
+    }
+    for (uint_fast32_t loc=0u; loc<num_subpops(); ++loc) {
+        auto& individuals = subpopulations_[loc];
+        size_t n = subpopsizes[loc];
+        size_t num_immigrants = individuals.size() - n;
+        for (size_t i=0; i<n; ++i) {
+            auto& p = individuals[i];
+            auto newloc = p->migrate(loc, year_, *engine_);
+            if (newloc == loc) continue;
+            subpopulations_[newloc].emplace_back(std::move(p));
+            p = std::move(individuals.back());
+            individuals.pop_back();
+            if (num_immigrants == 0u) {
+                --n;
+                --i;
+            } else {
+                --num_immigrants;
+            }
+        }
+    }
 }
 
 void Population::sample(std::vector<size_t> sample_size_adult,
@@ -121,55 +153,64 @@ void Population::sample(std::vector<size_t> sample_size_adult,
     size_t total_sampled = 0u;
     total_sampled += std::accumulate(sample_size_juvenile.begin(), sample_size_juvenile.end(), 0u);
     total_sampled += std::accumulate(sample_size_adult.begin(), sample_size_adult.end(), 0u);
-    sample_size_juvenile.resize(Individual::num_locations());
-    sample_size_adult.resize(Individual::num_locations());
-    std::vector<std::shared_ptr<Individual>>& sampled = year_samples_[year_];
-    sampled.reserve(total_sampled);
-    std::shuffle(individuals_.begin(), individuals_.end(), *engine_);
-    size_t n = individuals_.size();
-    for (size_t i=0; i<n; ++i) {
-        auto& p = individuals_[i];
-        auto& sample_size = (p->birth_year() == year_) ? sample_size_juvenile : sample_size_adult;
-        auto& to_be_sampled = sample_size[p->location()];
-        if (to_be_sampled) {
-            sampled.emplace_back(p);
-            --to_be_sampled;
-            p = std::move(individuals_.back());
-            individuals_.pop_back();
-            --n;
-            --i;
+    sample_size_juvenile.resize(num_subpops());
+    sample_size_adult.resize(num_subpops());
+    for (uint_fast32_t loc=0u; loc<num_subpops(); ++loc) {
+        std::vector<std::shared_ptr<Individual>>& sampled = loc_year_samples_[loc][year_];
+        sampled.reserve(total_sampled);
+        auto& individuals = subpopulations_[loc];
+        std::shuffle(individuals.begin(), individuals.end(), *engine_);
+        size_t n = individuals.size();
+        for (size_t i=0; i<n; ++i) {
+            auto& p = individuals[i];
+            auto& sample_size = (p->birth_year() == year_) ? sample_size_juvenile : sample_size_adult;
+            auto& to_be_sampled = sample_size[loc];
+            if (to_be_sampled) {
+                sampled.emplace_back(p);
+                --to_be_sampled;
+                p = std::move(individuals.back());
+                individuals.pop_back();
+                --n;
+                --i;
+            }
         }
     }
 }
 
 std::ostream& Population::write_sample_family(std::ostream& ost) const {
-    if (year_samples_.empty()) return ost;
-    wtl::join(Individual::names(), ost, "\t") << "\tcapture_year\n";
+    if (loc_year_samples_.empty() || loc_year_samples_[0u].empty()) return ost;
+    wtl::join(Individual::names(), ost, "\t") << "\tlocation\tcapture_year\n";
     std::map<const Individual*, size_t> ids;
     ids.emplace(nullptr, 0u);
-    for (const auto& ys: year_samples_) {
-        for (const auto& p: ys.second) {
-            ids.emplace(p.get(), ids.size());
+    for (uint_fast32_t loc=0u; loc<num_subpops(); ++loc) {
+        const auto& year_samples = loc_year_samples_[loc];
+        for (const auto& ys: year_samples) {
+            for (const auto& p: ys.second) {
+                ids.emplace(p.get(), ids.size());
+            }
         }
-    }
-    for (const auto& ys: year_samples_) {
-        for (const auto& p: ys.second) {
-            p->trace_back(ost, &ids, ys.first);
+        for (const auto& ys: year_samples) {
+            for (const auto& p: ys.second) {
+                p->trace_back(ost, &ids, loc, ys.first);
+            }
         }
     }
     return ost;
 }
 
 std::vector<std::vector<size_t>> Population::count(const int_fast32_t season) const {
-    std::vector<std::vector<size_t>> counter(Individual::num_locations(), std::vector<size_t>(80u));
+    std::vector<std::vector<size_t>> counter(num_subpops(), std::vector<size_t>(80u));
     if (!juveniles_demography_.empty()) {
         const auto& jd_season = juveniles_demography_.at(season);
-        for (unsigned loc=0; loc<jd_season.size(); ++loc) {
+        for (uint_fast32_t loc=0; loc<jd_season.size(); ++loc) {
             counter[loc][0u] += jd_season[loc];
         }
     }
-    for (const auto& p: individuals_) {
-        ++counter[p->location()][year_ - p->birth_year()];
+    for (uint_fast32_t loc=0u; loc<num_subpops(); ++loc) {
+        auto& counter_loc = counter[loc];
+        for (const auto& p: subpopulations_[loc]) {
+            ++counter_loc[year_ - p->birth_year()];
+        }
     }
     return counter;
 }
@@ -186,9 +227,9 @@ std::ostream& Population::write_demography(std::ostream& ost) const {
     ost << "year\tseason\tlocation\tage\tcount\n";
     for (const auto& time_structure: demography_) {
         const auto time = time_structure.first;
-        for (size_t loc=0; loc<Individual::num_locations(); ++loc) {
+        for (uint_fast32_t loc=0; loc<num_subpops(); ++loc) {
             const auto structure = time_structure.second[loc];
-            for (size_t age=0u; age<structure.size(); ++age) {
+            for (uint_fast32_t age=0u; age<structure.size(); ++age) {
                 if (structure[age] == 0u) continue;
                 ost << time.first << "\t" << time.second << "\t"
                     << loc << "\t"
@@ -201,7 +242,12 @@ std::ostream& Population::write_demography(std::ostream& ost) const {
 }
 
 std::ostream& Population::write(std::ostream& ost) const {
-    for (const auto& p: individuals_) {ost << *p << "\n";}
+    for (const auto& individuals: juveniles_subpops_) {
+        for (const auto& p: individuals) {ost << *p << "\n";}
+    }
+    for (const auto& individuals: subpopulations_) {
+        for (const auto& p: individuals) {ost << *p << "\n";}
+    }
     return ost;
 }
 

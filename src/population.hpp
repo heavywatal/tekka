@@ -19,14 +19,13 @@
 namespace pbf {
 
 class Individual;
-class Segment;
 
 /*! @brief Population class
 */
 class Population {
   public:
     //! constructor
-    Population(const size_t initial_size, unsigned int seed);
+    Population(const size_t initial_size, uint_fast32_t seed);
     //! destructor
     ~Population();
 
@@ -48,6 +47,9 @@ class Population {
     //! give birth to children
     void reproduce();
 
+    //! give birth to children
+    void reproduce(uint_fast32_t location, double density_effect);
+
     //! evaluate survival
     void survive();
 
@@ -66,14 +68,16 @@ class Population {
     //! Count individuals for each location and age
     std::vector<std::vector<size_t>> count(int_fast32_t season) const;
 
-    //! Individual array
-    std::vector<std::shared_ptr<Individual>> individuals_;
-    //! Genotypes of juveniles
-    std::vector<std::shared_ptr<Individual>> juveniles_;
+    size_t num_subpops() const noexcept {return subpopulations_.size();}
+
+    //! Individual array for each subpopulation
+    std::vector<std::vector<std::shared_ptr<Individual>>> subpopulations_;
+    //! first-year individuals
+    std::vector<std::vector<std::shared_ptr<Individual>>> juveniles_subpops_;
     //! Counts of juveniles; [[number for each location] for each season]
     std::vector<std::vector<uint_fast32_t>> juveniles_demography_;
     //! samples: capture_year => individuals
-    std::map<int_fast32_t, std::vector<std::shared_ptr<Individual>>> year_samples_;
+    std::vector<std::map<int_fast32_t, std::vector<std::shared_ptr<Individual>>>> loc_year_samples_;
     //! (year, season) => [[count for each age] for each location]
     std::map<std::pair<int_fast32_t, int_fast32_t>, std::vector<std::vector<size_t>>> demography_;
     //! year

@@ -42,41 +42,38 @@ uint_fast32_t Individual::recruitment(const int_fast32_t year, const double dens
     }
 }
 
-void Individual::migrate(const int_fast32_t year, URBG& engine) {
-    location_ = JSON_.MIGRATION_DISTRIBUTIONS.at(year - birth_year_)[location_](engine);
+uint_fast32_t Individual::migrate(const uint_fast32_t loc, const int_fast32_t year, URBG& engine) {
+    return JSON_.MIGRATION_DISTRIBUTIONS.at(year - birth_year_)[loc](engine);
 }
 
-void Individual::trace_back(std::ostream& ost, std::map<const Individual*, size_t>* ids, int_fast32_t year) const {
+void Individual::trace_back(std::ostream& ost, std::map<const Individual*, size_t>* ids, uint32_t loc, int_fast32_t year) const {
     if (!ids->emplace(this, ids->size()).second && (year == 0)) return;
-    if (father_) {
-        father_->trace_back(ost, ids, 0u);
-        mother_->trace_back(ost, ids, 0u);
-    }
-    write(ost, *ids) << "\t";
+    if (father_) father_->trace_back(ost, ids, loc, 0);
+    if (mother_) mother_->trace_back(ost, ids, loc, 0);
+    write(ost, *ids);
     if (year > 0) {
-        ost << year;
+        ost << "\t" << loc << "\t" << year << "\n";
+    } else {
+        ost << "\t\t\n";
     }
-    ost << "\n";
 }
 
 std::vector<std::string> Individual::names() {
-    return {"id", "father_id", "mother_id", "birth_year", "location"};
+    return {"id", "father_id", "mother_id", "birth_year"};
 }
 
 std::ostream& Individual::write(std::ostream& ost) const {
     return ost << this << "\t"
                << father_ << "\t"
                << mother_ << "\t"
-               << birth_year_ << "\t"
-               << location_;
+               << birth_year_;
 }
 
 std::ostream& Individual::write(std::ostream& ost, const std::map<const Individual*, size_t>& ids) const {
     return ost << ids.at(this) << "\t"
                << ids.at(father_.get()) << "\t"
                << ids.at(mother_.get()) << "\t"
-               << birth_year_ << "\t"
-               << location_;
+               << birth_year_;
 }
 
 //! Shortcut of Individual::write

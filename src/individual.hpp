@@ -60,7 +60,7 @@ struct IndividualJson {
     //! finite death rate per year
     std::vector<double> DEATH_RATE;
     //! discrete distributions for migration
-    std::vector<std::vector<std::discrete_distribution<uint_fast16_t>>> MIGRATION_DISTRIBUTIONS;
+    std::vector<std::vector<std::discrete_distribution<uint_fast32_t>>> MIGRATION_DISTRIBUTIONS;
 };
 
 /*! @brief Individual class
@@ -76,25 +76,19 @@ class Individual {
     Individual(const std::shared_ptr<Individual>& father,
                const std::shared_ptr<Individual>& mother, int_fast32_t year, bool is_male)
     : father_(father), mother_(mother),
-      birth_year_(year), location_(mother ? mother->location() : 0u),
-      is_male_(is_male) {}
+      birth_year_(year), is_male_(is_male) {}
 
     //! evaluate survival
     bool is_dead(const int_fast32_t year, URBG&) const;
-
-    //! evaluate maturity
-    bool is_in_breeding_place() const noexcept {
-        return location_ < num_breeding_places();
-    }
 
     //! number of juveniles
     uint_fast32_t recruitment(int_fast32_t year, double density_effect, URBG&) const noexcept;
 
     //! change #location_
-    void migrate(const int_fast32_t year, URBG&);
+    uint_fast32_t migrate(uint_fast32_t loc, int_fast32_t year, URBG&);
 
     //! collect ancestoral IDs
-    void trace_back(std::ostream& ost, std::map<const Individual*, size_t>* ids, int_fast32_t year) const;
+    void trace_back(std::ostream& ost, std::map<const Individual*, size_t>* ids, uint_fast32_t loc, int_fast32_t year) const;
     //! write all the data members in TSV
     std::ostream& write(std::ostream&) const;
     //! write all the data members in TSV with translated IDs
@@ -114,13 +108,6 @@ class Individual {
     static void param(const param_type& p) {PARAM_ = p;}
     //! Get #PARAM_
     static const param_type& param() {return PARAM_;}
-
-    //! number of locations
-    static size_t num_locations() noexcept {
-        return JSON_.MIGRATION_MATRICES[0u].size();
-    }
-    //! number of breeding places
-    static constexpr size_t num_breeding_places() noexcept {return 2u;}
 
     //! @name Getter functions
     //@{
@@ -149,7 +136,6 @@ class Individual {
     const Individual* father_get() const noexcept {return father_.get();}
     const Individual* mother_get() const noexcept {return mother_.get();}
     int_fast32_t birth_year() const noexcept {return birth_year_;}
-    uint_fast16_t location() const noexcept {return location_;}
     bool is_male() const noexcept {return is_male_;}
     //! @endcond
     //@}
@@ -166,8 +152,6 @@ class Individual {
     const std::shared_ptr<Individual> mother_ = nullptr;
     //! year of birth
     int_fast32_t birth_year_ = -4;
-    //! current location
-    uint_fast16_t location_ = 0u;
     //! sex
     const bool is_male_;
 };
