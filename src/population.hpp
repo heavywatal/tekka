@@ -66,6 +66,7 @@ class Population {
     //! Count individuals for each location and age
     std::vector<std::vector<uint_fast32_t>> count(int_fast32_t season) const;
 
+    //! Return size of #subpopulations_
     size_t num_subpops() const noexcept {return subpopulations_.size();}
 
     //! Individual array for each subpopulation

@@ -87,7 +87,7 @@ class Individual {
     //! number of juveniles
     uint_fast32_t recruitment(int_fast32_t year, double density_effect, URBG&) const noexcept;
 
-    //! change #location_
+    //! return new location
     uint_fast32_t migrate(uint_fast32_t loc, int_fast32_t year, URBG&);
 
     //! collect ancestoral IDs
