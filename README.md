@@ -27,7 +27,7 @@ You can install and use this program via [R package "tekkamaki"](https://heavywa
 
 ## Installation of command-line version
 
-The easiest way is to use [Homebrew](https://brew.sh/)/[Linuxbrew](http://linuxbrew.sh/).
+The easiest way is to use [Homebrew](https://brew.sh/).
 The following command installs tekka and all the dependencies:
 ```sh
 brew install heavywatal/tap/tekka
