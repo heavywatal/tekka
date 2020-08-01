@@ -1,6 +1,6 @@
 # tekka
 
-[![Build Status](https://travis-ci.org/heavywatal/tekka.svg?branch=master)](https://travis-ci.org/heavywatal/tekka)
+[![Build status](https://github.com/heavywatal/tekka/workflows/build/badge.svg)](https://github.com/heavywatal/tekka/actions)
 
 Individual-based simulator of pacific bluefin tuna.
 
