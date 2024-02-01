@@ -10,8 +10,8 @@ Individual-based simulator of pacific bluefin tuna.
 ## Requirements
 
 - Unix-like environment (macOS, Linux, WSL, MinGW on MSYS2, etc.)
-- C++14 compiler (clang++ >= Apple LLVM 8.1, g++ >= 5.3)
-- [CMake](https://cmake.org/) (>= 3.8.0)
+- C++17 compiler (clang++ >= Apple LLVM 12, g++ >= 8)
+- [CMake](https://cmake.org/) (>= 3.15.0)
 
 The following libraries are optional or automatically installed:
 
@@ -37,10 +37,9 @@ Alternatively, you can get the source code from GitHub manually:
 ```sh
 git clone https://github.com/heavywatal/tekka.git
 cd tekka/
-mkdir build
-cd build/
-YOUR_PREFIX=${HOME}/local  # or /usr/local
-cmake -DCMAKE_INSTALL_PREFIX=$YOUR_PREFIX ..
-make -j2
-make install
+DESTINATION=${HOME}/local
+cmake -S . -B build -DCMAKE_INSTALL_PREFIX=$DESTINATION
+cmake --build build -j 2
+cmake --install build
+PATH=${DESTINATION}/bin:$PATH
 ```
