@@ -62,7 +62,7 @@ function(find_package_or_fetch package version repo)
   cmake_print_variables(${package}_SOURCE_DIR ${package}_BINARY_DIR)
 endfunction()
 
-find_package_or_fetch(wtl 0.8.9 heavywatal/cxxwtl)
+find_package_or_fetch(wtl 0.9.0 heavywatal/cxxwtl)
 find_package_or_fetch(clippson 0.8.6 heavywatal/clippson)
 
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
@@ -82,7 +82,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
   POSITION_INDEPENDENT_CODE ON
   WINDOWS_EXPORT_ALL_SYMBOLS ON
 )
-target_include_directories(${PROJECT_NAME} INTERFACE
+target_include_directories(${PROJECT_NAME} PUBLIC
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )

@@ -11,14 +11,13 @@ cmake_print_variables(PROJECT_VERSION)
 
 file(READ "${PROJECT_SOURCE_DIR}/util/parameters.json" PARAMETERS_JSON)
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/config.cpp.in
-  ${CMAKE_CURRENT_SOURCE_DIR}/config.cpp @ONLY
+  config.cpp.in
+  config.cpp @ONLY
 )
 
-# Be patient until 3.13 is popularized
 target_sources(${PROJECT_NAME} PRIVATE
-  ${CMAKE_CURRENT_SOURCE_DIR}/config.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/individual.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/population.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/program.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/config.cpp
+  individual.cpp
+  population.cpp
+  program.cpp
 )
