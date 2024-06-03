@@ -135,29 +135,8 @@ void Program::run() {
     );
 }
 
-std::string Program::sample_family() const {
-    std::ostringstream oss;
-    population_->write_sample_family(oss);
-    return oss.str();
-}
-
-std::string Program::demography() const {
-    std::ostringstream oss;
-    population_->write_demography(oss);
-    return oss.str();
-}
-
 std::string Program::outdir() const {
     return VM.at("outdir");
-}
-
-//! std::cout.rdbuf
-std::streambuf* std_cout_rdbuf(std::streambuf* buf) {
-    return std::cout.rdbuf(buf);
-}
-//! std::cerr.rdbuf
-std::streambuf* std_cerr_rdbuf(std::streambuf* buf) {
-    return std::cerr.rdbuf(buf);
 }
 
 } // namespace pbf

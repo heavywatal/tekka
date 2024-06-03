@@ -34,14 +34,6 @@ class Program {
     std::string outdir() const;
     //@}
 
-    //! @name Output for Rcpp
-    //@{
-    //! Using Population.write_sample_family
-    std::string sample_family() const;
-    //! Using Population.write_demography
-    std::string demography() const;
-    //@}
-
   private:
     //! command line arguments
     std::vector<std::string> command_args_;
@@ -50,12 +42,6 @@ class Program {
     //! Population instance
     std::unique_ptr<Population> population_;
 };
-
-//! @name Workaround for R/Rcpp
-//@{
-std::streambuf* std_cout_rdbuf(std::streambuf*);
-std::streambuf* std_cerr_rdbuf(std::streambuf*);
-//@}
 
 } // namespace pbf
 
