@@ -13,7 +13,7 @@ if(${CMAKE_INSTALL_PREFIX} MATCHES linuxbrew)
   set(CMAKE_INSTALL_LIBDIR lib)
 endif()
 
-if (NOT CMAKE_BUILD_TYPE)
+if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
 endif()
 cmake_print_variables(CMAKE_BUILD_TYPE)
@@ -32,7 +32,8 @@ function(import_env variable)
   endif()
 endfunction()
 
-function(find_package_or_fetch package version repo)
+function(find_package_or_fetch package tag repo)
+  string(REGEX REPLACE "^v" "" version ${tag})
   find_package(${package} ${version} QUIET)  # 3.24
   if(${package}_FOUND)
     cmake_print_variables(${package}_DIR)
@@ -42,8 +43,6 @@ function(find_package_or_fetch package version repo)
   import_env("FETCHCONTENT_SOURCE_DIR_${upackage}")
   if(IS_DIRECTORY "${FETCHCONTENT_SOURCE_DIR_${upackage}}")
     set(tag "HEAD")
-  else()
-    set(tag "v${version}")
   endif()
   cmake_print_variables(FETCHCONTENT_SOURCE_DIR_${upackage} tag)
   set(FETCHCONTENT_QUIET OFF)
@@ -62,18 +61,20 @@ function(find_package_or_fetch package version repo)
   cmake_print_variables(${package}_SOURCE_DIR ${package}_BINARY_DIR)
 endfunction()
 
-find_package_or_fetch(wtl 0.9.0 heavywatal/cxxwtl)
-find_package_or_fetch(clippson 0.8.6 heavywatal/clippson)
+find_package_or_fetch(wtl v0.9.0 heavywatal/cxxwtl)
+find_package_or_fetch(clippson v0.8.7 heavywatal/clippson)
+cmake_print_variables(pcg_FOUND)
 
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 add_library(${PROJECT_NAME})
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 add_subdirectory(src)
 
-
 add_library(common INTERFACE)
 target_compile_options(common INTERFACE
-  -march=native -Wall -Wextra -pedantic
+  -Wall -Wextra -pedantic
+  $<$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},x86_64>:-march=native>
+  $<$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},arm64>:-march=armv8.3-a+sha3>
 )
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 set_target_properties(${PROJECT_NAME} PROPERTIES
@@ -107,10 +108,10 @@ if(BUILD_EXECUTABLE)
   )
 endif()
 
-set(CONFIG_VERSION_FILE ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake)
+set(VERSION_CONFIG ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake)
 include(CMakePackageConfigHelpers)
 write_basic_package_version_file(
-  ${CONFIG_VERSION_FILE} COMPATIBILITY AnyNewerVersion
+  ${VERSION_CONFIG} COMPATIBILITY AnyNewerVersion
 )
 
 install(TARGETS ${PROJECT_NAME}
@@ -125,7 +126,7 @@ install(EXPORT ${PROJECT_NAME}-config
   DESTINATION ${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}
   NAMESPACE ${PROJECT_NAME}::
 )
-install(FILES ${CONFIG_VERSION_FILE}
+install(FILES ${VERSION_CONFIG}
   DESTINATION ${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}
 )
 
