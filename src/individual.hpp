@@ -100,8 +100,6 @@ class Individual {
     friend std::ostream& operator<<(std::ostream&, const Individual&);
     //! column names for write()
     static std::vector<std::string> names();
-    //! Get default parameters in json
-    static std::string default_json();
     //! Read class variables from stream in json
     static void read_json(std::istream& ist) {JSON_.read(ist);}
     //! Write class variables to stream in json
@@ -115,21 +113,9 @@ class Individual {
 
     //! @name Getter functions
     //@{
-    //! IndividualJson.NATURAL_MORTALITY
-    static const std::vector<double>&
-    natural_mortality() {return JSON_.NATURAL_MORTALITY;}
-    //! IndividualJson.FISHING_MORTALITY
-    static const std::vector<double>&
-    fishing_mortality() {return JSON_.FISHING_MORTALITY;}
     //! IndividualJson.DEATH_RATE
     static const std::vector<double>&
     death_rate() {return JSON_.DEATH_RATE;}
-    //! IndividualJson.WEIGHT_FOR_AGE
-    static const std::vector<double>&
-    weight_for_age() {return JSON_.WEIGHT_FOR_AGE;}
-    //! IndividualJson.MIGRATION_MATRICES
-    static const std::vector<std::vector<std::vector<double>>>&
-    migration_matrices() {return JSON_.MIGRATION_MATRICES;}
     //! IndividualJson.WEIGHT_FOR_YEAR_AGE
     double weight(int_fast32_t year) const noexcept {
         return JSON_.WEIGHT_FOR_YEAR_AGE[year - birth_year_];
