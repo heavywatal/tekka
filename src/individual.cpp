@@ -164,14 +164,4 @@ void IndividualJson::write(std::ostream& ost) const {
 }
 //! @endcond
 
-std::vector<int> Individual::rnbinom(const int n, const double k, const double mu) {
-    URBG engine(std::random_device{}());
-    auto dist = nbinom_distribution<int>(k, mu);
-    std::vector<int> v(n);
-    for (int& x: v) {
-        x = dist(engine);
-    }
-    return v;
-}
-
 } // namespace pbf
