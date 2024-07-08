@@ -116,12 +116,12 @@ void IndividualJson::set_dependent_static() {
     MIGRATION_DISTRIBUTIONS.clear();
     MIGRATION_DISTRIBUTIONS.reserve(max_age);
     for (const auto& matrix: MIGRATION_MATRICES) {
-        decltype(MIGRATION_DISTRIBUTIONS)::value_type dists;
-        dists.reserve(matrix.size());
+        decltype(MIGRATION_DISTRIBUTIONS)::value_type distributions;
+        distributions.reserve(matrix.size());
         for (const auto& row: matrix) {
-            dists.emplace_back(make_dist(row));
+            distributions.emplace_back(make_dist(row));
         }
-        MIGRATION_DISTRIBUTIONS.emplace_back(std::move(dists));
+        MIGRATION_DISTRIBUTIONS.emplace_back(std::move(distributions));
     }
     elongate(&MIGRATION_DISTRIBUTIONS, max_age);
     DEATH_RATE.reserve(max_age);

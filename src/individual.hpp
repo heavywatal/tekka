@@ -52,7 +52,7 @@ struct IndividualJson {
     std::vector<double> NATURAL_MORTALITY;
     //! mortality due to fishing activities
     std::vector<double> FISHING_MORTALITY;
-    //! precalculated values (quater age)
+    //! precalculated values (quarter age)
     std::vector<double> WEIGHT_FOR_AGE;
     //! transition matrix for migration
     std::vector<std::vector<std::vector<double>>> MIGRATION_MATRICES;
@@ -90,7 +90,7 @@ class Individual {
     //! return new location
     uint_fast32_t migrate(uint_fast32_t loc, int_fast32_t year, URBG&);
 
-    //! collect ancestoral IDs
+    //! collect ancestral IDs
     void trace_back(std::ostream& ost, std::unordered_map<const Individual*, uint_fast32_t>* ids,
                     uint_fast32_t loc, int_fast32_t year) const;
     //! write all the data members in TSV

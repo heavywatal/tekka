@@ -114,19 +114,19 @@ void Population::survive() {
 }
 
 void Population::migrate() {
-    std::vector<size_t> subpopsizes(num_subpops());
+    std::vector<size_t> subpop_sizes(num_subpops());
     for (uint_fast32_t loc=0u; loc<num_subpops(); ++loc) {
-        subpopsizes[loc] = subpopulations_[loc].size();
+        subpop_sizes[loc] = subpopulations_[loc].size();
     }
     for (uint_fast32_t loc=0u; loc<num_subpops(); ++loc) {
         auto& individuals = subpopulations_[loc];
-        size_t n = subpopsizes[loc];
+        size_t n = subpop_sizes[loc];
         size_t num_immigrants = individuals.size() - n;
         for (size_t i=0; i<n; ++i) {
             auto& p = individuals[i];
-            auto newloc = p->migrate(loc, year_, *engine_);
-            if (newloc == loc) continue;
-            subpopulations_[newloc].emplace_back(std::move(p));
+            auto new_loc = p->migrate(loc, year_, *engine_);
+            if (new_loc == loc) continue;
+            subpopulations_[new_loc].emplace_back(std::move(p));
             p = std::move(individuals.back());
             individuals.pop_back();
             if (num_immigrants == 0u) {
@@ -140,8 +140,8 @@ void Population::migrate() {
     for (uint_fast32_t loc=0; loc<juveniles_subpops_.size(); ++loc) {
         auto& juveniles = juveniles_subpops_[loc];
         for (auto& p: juveniles) {
-            auto newloc = p->migrate(loc, year_, *engine_);
-            subpopulations_[newloc].emplace_back(std::move(p));
+            auto new_loc = p->migrate(loc, year_, *engine_);
+            subpopulations_[new_loc].emplace_back(std::move(p));
         }
         juveniles.clear();
     }

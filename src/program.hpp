@@ -37,7 +37,7 @@ class Program {
   private:
     //! command line arguments
     std::vector<std::string> command_args_;
-    //! writen to "config.json"
+    //! written to "config.json"
     std::string config_ = "";
     //! Population instance
     std::unique_ptr<Population> population_;

@@ -15,7 +15,7 @@
 
 namespace pbf {
 
-//! Global variables mapper of commane-line arguments
+//! Global variables mapper of command-line arguments
 nlohmann::json VM;
 
 //! Options description for general purpose
