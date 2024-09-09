@@ -169,13 +169,14 @@ std::ostream& Population::write_sample_family(std::ostream& ost) const {
     std::unordered_map<const Individual*, uint_fast32_t> ids;
     ids.emplace(nullptr, 0u);
     for (uint_fast32_t loc=0u; loc<loc_year_samples_.size(); ++loc) {
-        const auto& year_samples = loc_year_samples_.at(loc);
-        for (const auto& ys: year_samples) {
+        for (const auto& ys: loc_year_samples_.at(loc)) {
             for (const auto& p: ys.second) {
                 ids.emplace(p.get(), static_cast<uint_fast32_t>(ids.size()));
             }
         }
-        for (const auto& ys: year_samples) {
+    }
+    for (uint_fast32_t loc=0u; loc<loc_year_samples_.size(); ++loc) {
+        for (const auto& ys: loc_year_samples_.at(loc)) {
             for (const auto& p: ys.second) {
                 p->trace_back(ost, &ids, loc, ys.first);
             }
