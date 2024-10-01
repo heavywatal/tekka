@@ -13,9 +13,6 @@
 
 namespace pbf {
 
-Individual::param_type Individual::PARAM_;
-IndividualJson Individual::JSON_;
-
 static_assert(!std::is_default_constructible<Individual>{}, "");
 static_assert(std::is_nothrow_copy_constructible<Individual>{}, "");
 static_assert(std::is_nothrow_move_constructible<Individual>{}, "");

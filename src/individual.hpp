@@ -130,9 +130,9 @@ class Individual {
 
   private:
     //! Parameters shared among instances (command-line)
-    static param_type PARAM_;
+    static inline param_type PARAM_;
     //! Parameters shared among instances (JSON file)
-    static IndividualJson JSON_;
+    static inline IndividualJson JSON_;
 
     //! father
     const std::shared_ptr<Individual> father_ = nullptr;
