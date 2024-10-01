@@ -2,10 +2,10 @@
 
 namespace pbf {
 
-const char* const PROJECT_NAME = "@PROJECT_NAME@";
-const char* const PROJECT_VERSION = "@PROJECT_VERSION@";
+constexpr const char* const PROJECT_NAME = "@PROJECT_NAME@";
+constexpr const char* const PROJECT_VERSION = "@PROJECT_VERSION@";
 
-const char* const default_values = R"(
+constexpr const char* const default_values = R"(
 @PARAMETERS_JSON@
 )";
 
