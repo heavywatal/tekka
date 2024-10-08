@@ -42,8 +42,9 @@ struct IndividualJson {
     //! @cond
     IndividualJson();
     void set_dependent_static();
+    void set_dependent_static(const uint_fast32_t years);
     void read(std::istream&);
-    void write(std::ostream&) const;
+    std::ostream& write(std::ostream&) const;
     //! @endcond
 
     //! @ingroup params
@@ -52,14 +53,18 @@ struct IndividualJson {
     std::vector<double> NATURAL_MORTALITY;
     //! mortality due to fishing activities
     std::vector<double> FISHING_MORTALITY;
+    //! fluctuation of fishing mortality by year
+    std::vector<double> FISHING_COEF;
     //! precalculated values (quarter age)
     std::vector<double> WEIGHT_FOR_AGE;
     //! transition matrix for migration
     std::vector<std::vector<std::vector<double>>> MIGRATION_MATRICES;
     //@}
 
-    //! finite death rate per year
-    std::vector<double> DEATH_RATE;
+    //! natural mortality per year
+    std::vector<double> NAT_MOR;
+    //! fishing mortality per year
+    std::vector<double> FISH_MOR;
     //! precalculated values (age)
     std::vector<double> WEIGHT_FOR_YEAR_AGE;
     //! discrete distributions for migration
@@ -103,7 +108,17 @@ class Individual {
     //! Read class variables from stream in json
     static void read_json(std::istream& ist) {JSON_.read(ist);}
     //! Write class variables to stream in json
-    static void write_json(std::ostream& ost) {JSON_.write(ost);}
+    static std::ostream& write_json(std::ostream& ost) {return JSON_.write(ost);}
+    //! Set static variables that depend on others
+    static void set_dependent_static(const uint_fast32_t years) {
+        JSON_.set_dependent_static(years);
+    }
+    //! finite death rate per year
+    static double death_rate(const int_fast32_t year, const int_fast32_t age) {
+        const auto f = JSON_.FISH_MOR[age] * JSON_.FISHING_COEF[year];
+        return 1.0 - std::exp(-JSON_.NAT_MOR[age] - f);
+    }
+
     //! Set #PARAM_
     static void param(const param_type& p) {PARAM_ = p;}
     //! Get #PARAM_
@@ -111,9 +126,6 @@ class Individual {
 
     //! @name Getter functions
     //@{
-    //! IndividualJson.DEATH_RATE
-    static const std::vector<double>&
-    death_rate() {return JSON_.DEATH_RATE;}
     //! IndividualJson.WEIGHT_FOR_YEAR_AGE
     double weight(int_fast32_t year) const noexcept {
         return JSON_.WEIGHT_FOR_YEAR_AGE[year - birth_year_];

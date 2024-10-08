@@ -83,7 +83,7 @@ void Population::reproduce(const uint_fast32_t location, const double density_ef
     std::discrete_distribution<uint_fast32_t> mate_distr(fitnesses.begin(), fitnesses.end());
     const double exp_recruitment = density_effect * Individual::param().RECRUITMENT_COEF * female_biomass;
     juveniles.reserve(static_cast<size_t>(exp_recruitment * 1.1));
-    const double d0 = Individual::death_rate()[0u];
+    const double d0 = Individual::death_rate(year_, 0);
     for (const auto& mother: adults) {
         if (mother->is_male()) continue;
         uint_fast32_t num_juveniles = mother->recruitment(year_, density_effect, *engine_);
