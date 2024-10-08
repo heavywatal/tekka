@@ -110,7 +110,7 @@ Program::Program(const std::vector<std::string>& arguments)
         auto ifs = wtl::make_ifs(infile);
         Individual::JSON.read(ifs);
     }
-    Individual::JSON.set_dependent_static(VM.at("years"));
+    Individual::set_dependent_static(VM.at("years"));
     config_ = VM.dump(2) + "\n";
     if (vm_local.at("verbose")) {
         std::cerr << wtl::iso8601datetime() << std::endl;

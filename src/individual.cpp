@@ -17,11 +17,6 @@ static_assert(!std::is_default_constructible<Individual>{}, "");
 static_assert(std::is_nothrow_copy_constructible<Individual>{}, "");
 static_assert(std::is_nothrow_move_constructible<Individual>{}, "");
 
-bool Individual::is_dead(const int_fast32_t year, URBG& engine) const {
-    const auto age = year - birth_year_;
-    return (wtl::generate_canonical(engine) < death_rate(year, age));
-}
-
 //! Translate parameter `mean` to `prob`
 template <class T> inline wtl::negative_binomial_distribution<T>
 nbinom_distribution(double k, double mu) {
@@ -41,7 +36,7 @@ uint_fast32_t Individual::recruitment(const int_fast32_t year, const double dens
 }
 
 uint_fast32_t Individual::migrate(const uint_fast32_t loc, const int_fast32_t year, URBG& engine) {
-    return JSON.MIGRATION_DISTRIBUTIONS[year - birth_year_][loc](engine);
+    return MIGRATION_DISTRIBUTIONS_[year - birth_year_][loc](engine);
 }
 
 void Individual::trace_back(std::ostream& ost, std::unordered_map<const Individual*, uint_fast32_t>* ids,
@@ -80,12 +75,6 @@ std::ostream& operator<<(std::ostream& ost, const Individual& x) {
     return x.write(ost);
 }
 
-//! @cond
-IndividualJson::IndividualJson() {
-    std::istringstream iss(default_values);
-    read(iss);
-}
-
 template <class T> inline
 void elongate(std::vector<T>* v, size_t n) noexcept {
     for (size_t i=v->size(); i<n; ++i) {
@@ -109,71 +98,85 @@ inline std::function<uint_fast32_t(URBG&)> make_dist(const std::vector<double>& 
     }
 }
 
-void IndividualJson::set_dependent_static() {
-    constexpr int_fast32_t max_age = 80;
-    MIGRATION_DISTRIBUTIONS.clear();
-    MIGRATION_DISTRIBUTIONS.reserve(max_age);
-    for (const auto& matrix: MIGRATION_MATRICES) {
-        decltype(MIGRATION_DISTRIBUTIONS)::value_type distributions;
+void Individual::set_static_migration() {
+    MIGRATION_DISTRIBUTIONS_.clear();
+    MIGRATION_DISTRIBUTIONS_.reserve(MAX_AGE);
+    for (const auto& matrix: JSON.migration_matrices) {
+        decltype(MIGRATION_DISTRIBUTIONS_)::value_type distributions;
         distributions.reserve(matrix.size());
         for (const auto& row: matrix) {
             distributions.emplace_back(make_dist(row));
         }
-        MIGRATION_DISTRIBUTIONS.emplace_back(std::move(distributions));
+        MIGRATION_DISTRIBUTIONS_.emplace_back(std::move(distributions));
     }
-    elongate(&MIGRATION_DISTRIBUTIONS, max_age);
-    const auto size = NATURAL_MORTALITY.size() / 4u;
-    NAT_MOR.reserve(max_age);
-    NAT_MOR.assign(size, 0.0);
-    FISH_MOR.reserve(max_age);
-    FISH_MOR.assign(size, 0.0);
+    elongate(&MIGRATION_DISTRIBUTIONS_, MAX_AGE);
+}
+
+void Individual::set_static_mortality() {
+    const auto size = JSON.natural_mortality.size() / 4u;
+    NATURAL_MORTALITY_.reserve(MAX_AGE);
+    NATURAL_MORTALITY_.assign(size, 0.0);
+    FISHING_MORTALITY_.reserve(MAX_AGE);
+    FISHING_MORTALITY_.assign(size, 0.0);
     for (size_t year=0; year<size; ++year) {
-        for (size_t q = 4u * year, q_end = q + 4u; q<q_end; ++q) {
-            NAT_MOR[year] += NATURAL_MORTALITY[q];
-            FISH_MOR[year] += FISHING_MORTALITY[q];
+        for (size_t q = 0; q < 4u; ++q) {
+            const auto q_i = 4u * year + q;
+            NATURAL_MORTALITY_[year] += JSON.natural_mortality[q_i];
+            FISHING_MORTALITY_[year] += JSON.fishing_mortality[q_i];
         }
     }
-    elongate(&NAT_MOR, max_age);
-    elongate(&FISH_MOR, max_age);
-    NAT_MOR.back() = 1e9;
-    WEIGHT_FOR_YEAR_AGE.reserve(max_age);
-    WEIGHT_FOR_YEAR_AGE.resize(WEIGHT_FOR_AGE.size() / 4u);
-    for (size_t year=0; year<WEIGHT_FOR_YEAR_AGE.size(); ++year) {
-        WEIGHT_FOR_YEAR_AGE[year] = WEIGHT_FOR_AGE[4u * year];
+    elongate(&NATURAL_MORTALITY_, MAX_AGE);
+    elongate(&FISHING_MORTALITY_, MAX_AGE);
+    NATURAL_MORTALITY_.back() = 1e9;
+}
+
+void Individual::set_static_weight() {
+    WEIGHT_FOR_AGE_.reserve(MAX_AGE);
+    WEIGHT_FOR_AGE_.resize(JSON.weight_for_age.size() / 4u);
+    for (size_t year=0; year<WEIGHT_FOR_AGE_.size(); ++year) {
+        WEIGHT_FOR_AGE_[year] = JSON.weight_for_age[4u * year];
     }
-    elongate(&WEIGHT_FOR_YEAR_AGE, max_age);
+    elongate(&WEIGHT_FOR_AGE_, MAX_AGE);
 }
 
 inline uint_fast32_t sub_sat(const uint_fast32_t x, const uint_fast32_t y) {
     return (x > y) ? x - y : uint_fast32_t{};
 }
 
-void IndividualJson::set_dependent_static(const uint_fast32_t years) {
-    const auto fc_size = static_cast<uint_fast32_t>(FISHING_COEF.size());
+void Individual::set_dependent_static(const uint_fast32_t years) {
+    set_static_migration();
+    set_static_mortality();
+    set_static_weight();
+    const auto fc_size = static_cast<uint_fast32_t>(JSON.fishing_coef.size());
     const auto offset = sub_sat(fc_size, years);
-    decltype(FISHING_COEF) res(years, 1.0);
-    std::copy_backward(FISHING_COEF.begin() + offset, FISHING_COEF.end(), res.end());
-    FISHING_COEF.swap(res);
+    FISHING_COEF_.assign(years, 1.0);
+    std::copy_backward(JSON.fishing_coef.begin() + offset, JSON.fishing_coef.end(),
+                       FISHING_COEF_.end());
+}
+
+//! @cond
+IndividualJson::IndividualJson() {
+    std::istringstream iss(default_values);
+    read(iss);
 }
 
 void IndividualJson::read(std::istream& ist) {
     nlohmann::json obj;
     ist >> obj;
-    NATURAL_MORTALITY = obj.at("natural_mortality").get<decltype(NATURAL_MORTALITY)>();
-    FISHING_MORTALITY = obj.at("fishing_mortality").get<decltype(FISHING_MORTALITY)>();
-    FISHING_COEF = obj.value("fishing_coef", FISHING_COEF);
-    WEIGHT_FOR_AGE = obj.at("weight_for_age").get<decltype(WEIGHT_FOR_AGE)>();
-    MIGRATION_MATRICES = obj.at("migration_matrices").get<decltype(MIGRATION_MATRICES)>();
-    set_dependent_static();
+    obj.at("natural_mortality").get_to(natural_mortality);
+    obj.at("fishing_mortality").get_to(fishing_mortality);
+    fishing_mortality = obj.value("fishing_coef", fishing_mortality);
+    obj.at("weight_for_age").get_to(weight_for_age);
+    obj.at("migration_matrices").get_to(migration_matrices);
 }
 
 std::ostream& IndividualJson::write(std::ostream& ost) const {
     nlohmann::json obj;
-    obj["natural_mortality"] = NATURAL_MORTALITY;
-    obj["fishing_mortality"] = FISHING_MORTALITY;
-    obj["fishing_coef"] = FISHING_COEF;
-    obj["weight_for_age"] = WEIGHT_FOR_AGE;
-    obj["migration_matrices"] = MIGRATION_MATRICES;
+    obj["natural_mortality"] = natural_mortality;
+    obj["fishing_mortality"] = fishing_mortality;
+    obj["fishing_coef"] = fishing_coef;
+    obj["weight_for_age"] = weight_for_age;
+    obj["migration_matrices"] = migration_matrices;
     return ost << obj;
 }
 //! @endcond

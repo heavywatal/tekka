@@ -27,8 +27,8 @@ void Population::run(const int_fast32_t simulating_duration,
                      const std::vector<size_t>& sample_size_adult,
                      const std::vector<size_t>& sample_size_juvenile,
                      const int_fast32_t recording_duration) {
-    if (!Individual::JSON.is_ready(simulating_duration)) {
-        Individual::JSON.set_dependent_static(simulating_duration);
+    if (!Individual::is_ready(simulating_duration)) {
+        Individual::set_dependent_static(simulating_duration);
     }
     loc_year_samples_.resize(std::min(num_subpops(),
                                       std::max(sample_size_adult.size(),
@@ -86,7 +86,7 @@ void Population::reproduce(const uint_fast32_t location, const double density_ef
     std::discrete_distribution<uint_fast32_t> mate_distr(fitnesses.begin(), fitnesses.end());
     const double exp_recruitment = density_effect * Individual::param().RECRUITMENT_COEF * female_biomass;
     juveniles.reserve(static_cast<size_t>(exp_recruitment * 1.1));
-    const double d0 = Individual::death_rate(year_, 0);
+    const double d0 = Individual::death_rate(0, year_);
     for (const auto& mother: adults) {
         if (mother->is_male()) continue;
         uint_fast32_t num_juveniles = mother->recruitment(year_, density_effect, *engine_);
@@ -106,7 +106,7 @@ void Population::survive() {
         size_t n = individuals.size();
         for (size_t i=0; i<n; ++i) {
             auto& p = individuals[i];
-            if (p->is_dead(year_, *engine_)) {
+            if (wtl::generate_canonical(*engine_) < p->death_rate(year_)) {
                 p = std::move(individuals.back());
                 individuals.pop_back();
                 --n;

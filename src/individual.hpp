@@ -38,43 +38,30 @@ struct IndividualParams {
 //! @brief Parameters for Individual class (JSON file)
 /*! @ingroup params
 */
-struct IndividualJson {
+class IndividualJson {
+    friend class Individual;
+  public:
     //! @cond
     IndividualJson();
-    bool is_ready(const uint_fast32_t years) const {
-        return FISHING_COEF.size() >= years;
-    }
     //! @endcond
-    //! Set static variables that depend on others
-    void set_dependent_static();
-    void set_dependent_static(const uint_fast32_t years);
     //! Read class variables from stream in json
     void read(std::istream&);
     //! Write class variables to stream in json
     std::ostream& write(std::ostream&) const;
-
+  private:
     //! @ingroup params
     //@{
     //! mortality due to natural causes
-    std::vector<double> NATURAL_MORTALITY;
+    std::vector<double> natural_mortality;
     //! mortality due to fishing activities
-    std::vector<double> FISHING_MORTALITY;
+    std::vector<double> fishing_mortality;
     //! fluctuation of fishing mortality by year
-    std::vector<double> FISHING_COEF;
+    std::vector<double> fishing_coef;
     //! precalculated values (quarter age)
-    std::vector<double> WEIGHT_FOR_AGE;
+    std::vector<double> weight_for_age;
     //! transition matrix for migration
-    std::vector<std::vector<std::vector<double>>> MIGRATION_MATRICES;
+    std::vector<std::vector<std::vector<double>>> migration_matrices;
     //@}
-
-    //! natural mortality per year
-    std::vector<double> NAT_MOR;
-    //! fishing mortality per year
-    std::vector<double> FISH_MOR;
-    //! precalculated values (age)
-    std::vector<double> WEIGHT_FOR_YEAR_AGE;
-    //! discrete distributions for migration
-    std::vector<std::vector<std::function<uint_fast32_t(URBG&)>>> MIGRATION_DISTRIBUTIONS;
 };
 
 /*! @brief Individual class
@@ -92,8 +79,10 @@ class Individual {
     : father_(father), mother_(mother),
       birth_year_(year), is_male_(is_male) {}
 
-    //! evaluate survival
-    bool is_dead(const int_fast32_t year, URBG&) const;
+    //! finite death rate per year
+    double death_rate(const int_fast32_t year) const {
+        return death_rate(year - birth_year_, year);
+    }
 
     //! number of juveniles
     uint_fast32_t recruitment(int_fast32_t year, double density_effect, URBG&) const noexcept;
@@ -114,10 +103,15 @@ class Individual {
 
     //! Parameters shared among instances (JSON file)
     static inline IndividualJson JSON;
+    //! Set static variables that depend on others
+    static void set_dependent_static(const uint_fast32_t years);
+    static bool is_ready(const uint_fast32_t years) {
+        return FISHING_COEF_.size() >= years;
+    }
     //! finite death rate per year
-    static double death_rate(const int_fast32_t year, const int_fast32_t age) {
-        const auto f = JSON.FISH_MOR[age] * JSON.FISHING_COEF[year];
-        return 1.0 - std::exp(-JSON.NAT_MOR[age] - f);
+    static double death_rate(const int_fast32_t age, const int_fast32_t year) {
+        const auto f = FISHING_MORTALITY_[age] * FISHING_COEF_[year];
+        return 1.0 - std::exp(-NATURAL_MORTALITY_[age] - f);
     }
 
     //! Set #PARAM_
@@ -127,9 +121,9 @@ class Individual {
 
     //! @name Getter functions
     //@{
-    //! IndividualJson.WEIGHT_FOR_YEAR_AGE
+    //! weight for year age
     double weight(int_fast32_t year) const noexcept {
-        return JSON.WEIGHT_FOR_YEAR_AGE[year - birth_year_];
+        return WEIGHT_FOR_AGE_[year - birth_year_];
     }
     //! !#father_
     bool is_first_gen() const noexcept {return !father_;}
@@ -142,8 +136,22 @@ class Individual {
     //@}
 
   private:
+    static void set_static_migration();
+    static void set_static_mortality();
+    static void set_static_weight();
+    constexpr static inline int_fast32_t MAX_AGE = 80;
     //! Parameters shared among instances (command-line)
     static inline param_type PARAM_;
+    //! natural mortality per year
+    static inline std::vector<double> NATURAL_MORTALITY_;
+    //! fishing mortality per year
+    static inline std::vector<double> FISHING_MORTALITY_;
+    //! fluctuation of fishing mortality by year
+    static inline std::vector<double> FISHING_COEF_;
+    //! precalculated values (age)
+    static inline std::vector<double> WEIGHT_FOR_AGE_;
+    //! discrete distributions for migration
+    static inline std::vector<std::vector<std::function<uint_fast32_t(URBG&)>>> MIGRATION_DISTRIBUTIONS_;
 
     //! father
     const std::shared_ptr<Individual> father_ = nullptr;
