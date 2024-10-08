@@ -41,7 +41,7 @@ uint_fast32_t Individual::recruitment(const int_fast32_t year, const double dens
 }
 
 uint_fast32_t Individual::migrate(const uint_fast32_t loc, const int_fast32_t year, URBG& engine) {
-    return JSON_.MIGRATION_DISTRIBUTIONS[year - birth_year_][loc](engine);
+    return JSON.MIGRATION_DISTRIBUTIONS[year - birth_year_][loc](engine);
 }
 
 void Individual::trace_back(std::ostream& ost, std::unordered_map<const Individual*, uint_fast32_t>* ids,

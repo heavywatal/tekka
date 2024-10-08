@@ -27,6 +27,9 @@ void Population::run(const int_fast32_t simulating_duration,
                      const std::vector<size_t>& sample_size_adult,
                      const std::vector<size_t>& sample_size_juvenile,
                      const int_fast32_t recording_duration) {
+    if (!Individual::JSON.is_ready(simulating_duration)) {
+        Individual::JSON.set_dependent_static(simulating_duration);
+    }
     loc_year_samples_.resize(std::min(num_subpops(),
                                       std::max(sample_size_adult.size(),
                                                sample_size_juvenile.size())));

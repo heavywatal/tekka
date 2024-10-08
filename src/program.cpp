@@ -102,20 +102,20 @@ Program::Program(const std::vector<std::string>& arguments)
     }
     Individual::param(individual_params);
     if (vm_local.at("default")) {
-        Individual::write_json(std::cout);
+        Individual::JSON.write(std::cout);
         throw wtl::ExitSuccess();
     }
     const std::string infile = VM.at("infile");
     if (!infile.empty()) {
         auto ifs = wtl::make_ifs(infile);
-        Individual::read_json(ifs);
+        Individual::JSON.read(ifs);
     }
-    Individual::set_dependent_static(VM.at("years"));
+    Individual::JSON.set_dependent_static(VM.at("years"));
     config_ = VM.dump(2) + "\n";
     if (vm_local.at("verbose")) {
         std::cerr << wtl::iso8601datetime() << std::endl;
         std::cerr << config_ << std::endl;
-        Individual::write_json(std::cerr) << std::endl;
+        Individual::JSON.write(std::cerr) << std::endl;
     }
 }
 

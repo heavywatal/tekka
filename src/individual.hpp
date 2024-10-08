@@ -41,11 +41,17 @@ struct IndividualParams {
 struct IndividualJson {
     //! @cond
     IndividualJson();
+    bool is_ready(const uint_fast32_t years) const {
+        return FISHING_COEF.size() >= years;
+    }
+    //! @endcond
+    //! Set static variables that depend on others
     void set_dependent_static();
     void set_dependent_static(const uint_fast32_t years);
+    //! Read class variables from stream in json
     void read(std::istream&);
+    //! Write class variables to stream in json
     std::ostream& write(std::ostream&) const;
-    //! @endcond
 
     //! @ingroup params
     //@{
@@ -105,18 +111,13 @@ class Individual {
     friend std::ostream& operator<<(std::ostream&, const Individual&);
     //! column names for write()
     static std::vector<std::string> names();
-    //! Read class variables from stream in json
-    static void read_json(std::istream& ist) {JSON_.read(ist);}
-    //! Write class variables to stream in json
-    static std::ostream& write_json(std::ostream& ost) {return JSON_.write(ost);}
-    //! Set static variables that depend on others
-    static void set_dependent_static(const uint_fast32_t years) {
-        JSON_.set_dependent_static(years);
-    }
+
+    //! Parameters shared among instances (JSON file)
+    static inline IndividualJson JSON;
     //! finite death rate per year
     static double death_rate(const int_fast32_t year, const int_fast32_t age) {
-        const auto f = JSON_.FISH_MOR[age] * JSON_.FISHING_COEF[year];
-        return 1.0 - std::exp(-JSON_.NAT_MOR[age] - f);
+        const auto f = JSON.FISH_MOR[age] * JSON.FISHING_COEF[year];
+        return 1.0 - std::exp(-JSON.NAT_MOR[age] - f);
     }
 
     //! Set #PARAM_
@@ -128,7 +129,7 @@ class Individual {
     //@{
     //! IndividualJson.WEIGHT_FOR_YEAR_AGE
     double weight(int_fast32_t year) const noexcept {
-        return JSON_.WEIGHT_FOR_YEAR_AGE[year - birth_year_];
+        return JSON.WEIGHT_FOR_YEAR_AGE[year - birth_year_];
     }
     //! !#father_
     bool is_first_gen() const noexcept {return !father_;}
@@ -143,8 +144,6 @@ class Individual {
   private:
     //! Parameters shared among instances (command-line)
     static inline param_type PARAM_;
-    //! Parameters shared among instances (JSON file)
-    static inline IndividualJson JSON_;
 
     //! father
     const std::shared_ptr<Individual> father_ = nullptr;
