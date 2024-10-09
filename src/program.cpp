@@ -119,8 +119,6 @@ Program::Program(const std::vector<std::string>& arguments)
     }
 }
 
-Program::~Program() = default;
-
 void Program::run() {
     const double K = VM.at("carrying_capacity");
     const double O = VM.at("origin");

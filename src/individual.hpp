@@ -24,15 +24,16 @@ namespace pbf {
 */
 struct IndividualParams {
     //! @ingroup params
-    //@{
-    //! \f$r\f$:  used in Individual::recruitment()
+    //!@{
+
+    //! \f$r\f$: coefficient used in Individual::recruitment()
     double RECRUITMENT_COEF = 2.0;
     //! \f$K\f$: carrying capacity used in Individual::recruitment()
     double CARRYING_CAPACITY = 1e+3;
-    //! \f$k \in (0, \infty)\f$ for overdispersion in recruitment().
+    //! \f$k \in (0, \infty)\f$ for overdispersion in Individual::recruitment().
     //! Equivalent to Poisson when \f$k \to \infty\f$ (or \f$k<0\f$ for convience).
     double NEGATIVE_BINOM_K = -1.0;
-    //@}
+    //!@}
 };
 
 //! @brief Parameters for Individual class (JSON file)
@@ -41,27 +42,30 @@ struct IndividualParams {
 class IndividualJson {
     friend class Individual;
   public:
-    //! @cond
+    //! Constructor
     IndividualJson();
-    //! @endcond
     //! Read class variables from stream in json
     void read(std::istream&);
     //! Write class variables to stream in json
     std::ostream& write(std::ostream&) const;
   private:
+    //! Alias for readability
+    using RowMatrix = std::vector<std::vector<double>>;
     //! @ingroup params
-    //@{
-    //! mortality due to natural causes
+    //!@{
+
+    //! Array of \f$M\f$ for quarter age: instantaneous mortality due to natural causes
     std::vector<double> natural_mortality;
-    //! mortality due to fishing activities
+    //! Array of \f$F\f$ for quarter age: instantaneous mortality due to fishing activities
     std::vector<double> fishing_mortality;
-    //! fluctuation of fishing mortality by year
+    //! Array of \f$e\f$ by year: coefficient of fishing mortality.
+    //! The last part is used for the last years if its length differs from `--years` option.
     std::vector<double> fishing_coef;
-    //! precalculated values (quarter age)
+    //! Weight in kg for quarter age
     std::vector<double> weight_for_age;
-    //! transition matrix for migration
-    std::vector<std::vector<std::vector<double>>> migration_matrices;
-    //@}
+    //! Transition matrix for migration
+    std::vector<RowMatrix> migration_matrices;
+    //!@}
 };
 
 /*! @brief Individual class
@@ -72,43 +76,55 @@ class Individual {
     using param_type = IndividualParams;
     Individual() = delete;
     //! for initial population
-    explicit Individual(bool is_male): is_male_(is_male) {}
+    explicit Individual(bool is_male) noexcept: is_male_(is_male) {}
     //! for sexual reproduction
     Individual(const std::shared_ptr<Individual>& father,
-               const std::shared_ptr<Individual>& mother, int_fast32_t year, bool is_male)
+               const std::shared_ptr<Individual>& mother,
+               int_fast32_t year, bool is_male) noexcept
     : father_(father), mother_(mother),
       birth_year_(year), is_male_(is_male) {}
+    Individual(const Individual&) = delete;
+    ~Individual() = default;
 
-    //! finite death rate per year
+    //! Finite death rate per year: \f$ d = 1 - \exp(- M - eF) \f$
     double death_rate(const int_fast32_t year) const {
-        return death_rate(year - birth_year_, year);
+        return death_rate(age(year), year);
     }
 
-    //! number of juveniles
+    //! Generate random number for reproduction.
     uint_fast32_t recruitment(int_fast32_t year, double density_effect, URBG&) const noexcept;
 
-    //! return new location
+    //! Generate random number for new location.
     uint_fast32_t migrate(uint_fast32_t loc, int_fast32_t year, URBG&);
 
-    //! collect ancestral IDs
+    //! Write ancestors recursively.
     void trace_back(std::ostream& ost, std::unordered_map<const Individual*, uint_fast32_t>* ids,
                     uint_fast32_t loc, int_fast32_t year) const;
-    //! write all the data members in TSV
+    //! Write all the data members in TSV
     std::ostream& write(std::ostream&) const;
-    //! write all the data members in TSV with translated IDs
+    //! Write all the data members in TSV with translated IDs
     std::ostream& write(std::ostream&, const std::unordered_map<const Individual*, uint_fast32_t>&) const;
     friend std::ostream& operator<<(std::ostream&, const Individual&);
-    //! column names for write()
+    //! Column names for write()
     static std::vector<std::string> names();
 
-    //! Parameters shared among instances (JSON file)
+    //! No individual lives longer than this.
+    constexpr static inline int_fast32_t MAX_AGE = 80;
+    //! Parameters shared among instances (JSON file).
     static inline IndividualJson JSON;
-    //! Set static variables that depend on others
+    //! Set static variables that depend on others.
     static void set_dependent_static(const uint_fast32_t years);
+    //! Test if static variables are ready.
     static bool is_ready(const uint_fast32_t years) {
-        return FISHING_COEF_.size() >= years;
+        return (
+          FISHING_COEF_.size() >= years
+          && NATURAL_MORTALITY_.size() >= MAX_AGE
+          && FISHING_MORTALITY_.size() >= MAX_AGE
+          && WEIGHT_FOR_AGE_.size() >= MAX_AGE
+          && MIGRATION_DISTRIBUTIONS_.size() >= MAX_AGE
+        );
     }
-    //! finite death rate per year
+    //! Finite death rate per year
     static double death_rate(const int_fast32_t age, const int_fast32_t year) {
         const auto f = FISHING_MORTALITY_[age] * FISHING_COEF_[year];
         return 1.0 - std::exp(-NATURAL_MORTALITY_[age] - f);
@@ -120,46 +136,47 @@ class Individual {
     static const param_type& param() {return PARAM_;}
 
     //! @name Getter functions
-    //@{
-    //! weight for year age
-    double weight(int_fast32_t year) const noexcept {
-        return WEIGHT_FOR_AGE_[year - birth_year_];
+    //!@{
+
+    //! Age in the given year
+    int_fast32_t age(const int_fast32_t year) const noexcept {
+        return year - birth_year_;
     }
-    //! !#father_
-    bool is_first_gen() const noexcept {return !father_;}
-    //! @cond
-    const Individual* father_get() const noexcept {return father_.get();}
-    const Individual* mother_get() const noexcept {return mother_.get();}
-    int_fast32_t birth_year() const noexcept {return birth_year_;}
+    //! Weight for year age
+    double weight(int_fast32_t year) const noexcept {
+        return WEIGHT_FOR_AGE_[age(year)];
+    }
+    //! Just returns #is_male_
     bool is_male() const noexcept {return is_male_;}
-    //! @endcond
-    //@}
+    //!@}
 
   private:
+    //! Prepare #MIGRATION_DISTRIBUTIONS_
     static void set_static_migration();
+    //! Prepare #NATURAL_MORTALITY_ and #FISHING_MORTALITY_
     static void set_static_mortality();
+    //! Prepare #WEIGHT_FOR_AGE_
     static void set_static_weight();
-    constexpr static inline int_fast32_t MAX_AGE = 80;
     //! Parameters shared among instances (command-line)
     static inline param_type PARAM_;
-    //! natural mortality per year
+    //! Instantaneous natural mortality per year: \f$ M \f$
     static inline std::vector<double> NATURAL_MORTALITY_;
-    //! fishing mortality per year
+    //! Instantaneous fishing mortality per year: \f$ F \f$
     static inline std::vector<double> FISHING_MORTALITY_;
-    //! fluctuation of fishing mortality by year
+    //! Fluctuation of fishing mortality by year
     static inline std::vector<double> FISHING_COEF_;
-    //! precalculated values (age)
+    //! year version of #IndividualJson::weight_for_age
     static inline std::vector<double> WEIGHT_FOR_AGE_;
-    //! discrete distributions for migration
+    //! Discrete distributions for migration
     static inline std::vector<std::vector<std::function<uint_fast32_t(URBG&)>>> MIGRATION_DISTRIBUTIONS_;
 
-    //! father
+    //! Pointer to father
     const std::shared_ptr<Individual> father_ = nullptr;
-    //! mother
+    //! Pointer to mother
     const std::shared_ptr<Individual> mother_ = nullptr;
-    //! year of birth
+    //! Year of birth
     int_fast32_t birth_year_ = -4;
-    //! sex
+    //! Sex
     const bool is_male_;
 };
 

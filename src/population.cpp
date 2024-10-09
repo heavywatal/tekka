@@ -21,8 +21,6 @@ Population::Population(const size_t initial_size, std::random_device::result_typ
     }
 }
 
-Population::~Population() = default;
-
 void Population::run(const int_fast32_t simulating_duration,
                      const std::vector<size_t>& sample_size_adult,
                      const std::vector<size_t>& sample_size_juvenile,
@@ -56,24 +54,24 @@ void Population::reproduce() {
     for (uint_fast32_t loc=0u; loc<num_breeding_places; ++loc) {
         popsize += subpopulations_[loc].size();
     }
-    const auto N = static_cast<double>(popsize);
-    const double density_effect = std::max(0.0, 1.0 - N / Individual::param().CARRYING_CAPACITY);
     for (uint_fast32_t loc=0u; loc<num_breeding_places; ++loc) {
-        reproduce(loc, density_effect);
+        reproduce(loc, popsize);
     }
 }
 
-void Population::reproduce(const uint_fast32_t location, const double density_effect) {
+void Population::reproduce(const uint_fast32_t location, const size_t popsize) {
+    const double K = Individual::param().CARRYING_CAPACITY;
+    const double density_effect = 1.0 - popsize / K;
+    if (density_effect <= 0.0) return;
     const auto& adults = subpopulations_[location];
     auto& juveniles = juveniles_subpops_[location];
-    const size_t n = adults.size();
     double female_biomass = 0.0;
     std::vector<uint_fast32_t> male_indices;
     std::vector<double> fitnesses;
-    const size_t num_males = (adults.size() / 5u) + (adults.size() / 10u);
-    male_indices.reserve(num_males);
-    fitnesses.reserve(num_males);
-    for (uint_fast32_t i=0u; i<n; ++i) {
+    const size_t males_capa = (6u * adults.size() / 10u);
+    male_indices.reserve(males_capa);
+    fitnesses.reserve(males_capa);
+    for (uint_fast32_t i=0u; i<adults.size(); ++i) {
         const auto& p = adults[i];
         if (p->is_male()) {
             male_indices.push_back(i);
@@ -169,6 +167,7 @@ void Population::sample(std::vector<std::vector<std::shared_ptr<Individual>>>* s
 std::ostream& Population::write_sample_family(std::ostream& ost) const {
     if (loc_year_samples_.empty() || loc_year_samples_[0u].empty()) return ost;
     wtl::join(Individual::names(), ost, "\t") << "\tlocation\tcapture_year\n";
+    // unordered_set suffices to remove duplicates, but address is not reproducible.
     std::unordered_map<const Individual*, uint_fast32_t> ids;
     ids.emplace(nullptr, 0u);
     for (uint_fast32_t loc=0u; loc<loc_year_samples_.size(); ++loc) {
@@ -189,7 +188,7 @@ std::ostream& Population::write_sample_family(std::ostream& ost) const {
 }
 
 std::vector<std::vector<uint_fast32_t>> Population::count(const int_fast32_t season) const {
-    std::vector<std::vector<uint_fast32_t>> counter(num_subpops(), std::vector<uint_fast32_t>(80u));
+    std::vector<std::vector<uint_fast32_t>> counter(num_subpops(), std::vector<uint_fast32_t>(Individual::MAX_AGE));
     if (!juveniles_demography_.empty()) {
         const auto& jd_season = juveniles_demography_.at(season);
         for (uint_fast32_t loc=0; loc<jd_season.size(); ++loc) {
@@ -199,7 +198,7 @@ std::vector<std::vector<uint_fast32_t>> Population::count(const int_fast32_t sea
     for (uint_fast32_t loc=0u; loc<num_subpops(); ++loc) {
         auto& counter_loc = counter[loc];
         for (const auto& p: subpopulations_[loc]) {
-            ++counter_loc[year_ - p->birth_year()];
+            ++counter_loc[p->age(year_)];
         }
     }
     return counter;
@@ -241,7 +240,7 @@ std::ostream& Population::write(std::ostream& ost) const {
     return ost;
 }
 
-//! shortcut Population::write(ost)
+//! Shortcut for Population::write(ost)
 std::ostream& operator<<(std::ostream& ost, const Population& pop) {
     return pop.write(ost);
 }

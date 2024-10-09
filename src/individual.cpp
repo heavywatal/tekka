@@ -13,16 +13,47 @@
 
 namespace pbf {
 
+static_assert(std::is_nothrow_constructible<Individual, bool>{}, "");
 static_assert(!std::is_default_constructible<Individual>{}, "");
-static_assert(std::is_nothrow_copy_constructible<Individual>{}, "");
-static_assert(std::is_nothrow_move_constructible<Individual>{}, "");
+static_assert(!std::is_copy_constructible<Individual>{}, "");
+static_assert(!std::is_move_constructible<Individual>{}, "");
 
-//! Translate parameter `mean` to `prob`
+namespace {
+
+template <class T> inline
+void elongate(std::vector<T>* v, size_t n) noexcept {
+    for (size_t i=v->size(); i<n; ++i) {
+        v->emplace_back(v->back());
+    }
+}
+
+inline std::function<uint_fast32_t(URBG&)> make_dist(const std::vector<double>& v) {
+    uint_fast32_t idx = 0u;
+    unsigned num_positive = 0u;
+    for (uint_fast32_t i=0u; i<v.size(); ++i) {
+        if (v[i] > 0.0) {
+            ++num_positive;
+            idx = i;
+        }
+    }
+    if (num_positive == 1u) {
+        return [idx](URBG&){return idx;};
+    } else {
+        return std::discrete_distribution<uint_fast32_t>(v.begin(), v.end());
+    }
+}
+
+inline uint_fast32_t sub_sat(const uint_fast32_t x, const uint_fast32_t y) {
+    return (x > y) ? x - y : uint_fast32_t{};
+}
+
 template <class T> inline wtl::negative_binomial_distribution<T>
 nbinom_distribution(double k, double mu) {
     const double prob = k / (mu + k);
     return wtl::negative_binomial_distribution<T>(k, prob);
 }
+
+} // anonymous namespace
 
 uint_fast32_t Individual::recruitment(const int_fast32_t year, const double density_effect, URBG& engine) const noexcept {
     if (density_effect < 0.0) return 0u;
@@ -36,7 +67,7 @@ uint_fast32_t Individual::recruitment(const int_fast32_t year, const double dens
 }
 
 uint_fast32_t Individual::migrate(const uint_fast32_t loc, const int_fast32_t year, URBG& engine) {
-    return MIGRATION_DISTRIBUTIONS_[year - birth_year_][loc](engine);
+    return MIGRATION_DISTRIBUTIONS_[age(year)][loc](engine);
 }
 
 void Individual::trace_back(std::ostream& ost, std::unordered_map<const Individual*, uint_fast32_t>* ids,
@@ -73,29 +104,6 @@ std::ostream& Individual::write(std::ostream& ost, const std::unordered_map<cons
 //! Shortcut of Individual::write
 std::ostream& operator<<(std::ostream& ost, const Individual& x) {
     return x.write(ost);
-}
-
-template <class T> inline
-void elongate(std::vector<T>* v, size_t n) noexcept {
-    for (size_t i=v->size(); i<n; ++i) {
-        v->emplace_back(v->back());
-    }
-}
-
-inline std::function<uint_fast32_t(URBG&)> make_dist(const std::vector<double>& v) {
-    uint_fast32_t idx = 0u;
-    unsigned num_positive = 0u;
-    for (uint_fast32_t i=0u; i<v.size(); ++i) {
-        if (v[i] > 0.0) {
-            ++num_positive;
-            idx = i;
-        }
-    }
-    if (num_positive == 1u) {
-        return [idx](URBG&){return idx;};
-    } else {
-        return std::discrete_distribution<uint_fast32_t>(v.begin(), v.end());
-    }
 }
 
 void Individual::set_static_migration() {
@@ -139,10 +147,6 @@ void Individual::set_static_weight() {
     elongate(&WEIGHT_FOR_AGE_, MAX_AGE);
 }
 
-inline uint_fast32_t sub_sat(const uint_fast32_t x, const uint_fast32_t y) {
-    return (x > y) ? x - y : uint_fast32_t{};
-}
-
 void Individual::set_dependent_static(const uint_fast32_t years) {
     set_static_migration();
     set_static_mortality();
@@ -154,7 +158,6 @@ void Individual::set_dependent_static(const uint_fast32_t years) {
                        FISHING_COEF_.end());
 }
 
-//! @cond
 IndividualJson::IndividualJson() {
     std::istringstream iss(default_values);
     read(iss);
@@ -179,6 +182,5 @@ std::ostream& IndividualJson::write(std::ostream& ost) const {
     obj["migration_matrices"] = migration_matrices;
     return ost << obj;
 }
-//! @endcond
 
 } // namespace pbf

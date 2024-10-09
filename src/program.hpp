@@ -17,27 +17,27 @@ class Population;
 */
 class Program {
   public:
-    //! parse command arguments
+    //! Initialize with command-line arguments.
     Program(const std::vector<std::string>& args);
-    //! destructor
-    ~Program();
-    //! top level function that should be called once from global main
+    ~Program() = default;
+    //! Top level function that should be called once from global main.
     void run();
 
-    //! @name Getter for main()
-    //@{
-    //! Get #population_
+    //! @name Getter for `main()`.
+    //!@{
+
+    //! Get reference to #population_.
     const Population& population() const noexcept {return *population_;}
-    //! Get #config_
+    //! Get reference to #config_.
     const std::string& config() const noexcept {return config_;}
-    //! Get VM["outdir"]
+    //! Get `VM["outdir"]`.
     std::string outdir() const;
-    //@}
+    //!@}
 
   private:
-    //! command line arguments
+    //! Command-line arguments
     std::vector<std::string> command_args_;
-    //! written to "config.json"
+    //! Written to "config.json"
     std::string config_ = "";
     //! Population instance
     std::unique_ptr<Population> population_;

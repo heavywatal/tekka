@@ -23,22 +23,23 @@ class Individual;
 */
 class Population {
   public:
-    //! constructor
+    //! Constructor
     Population(const size_t initial_size, std::random_device::result_type seed);
-    //! destructor
-    ~Population();
+    ~Population() = default;
 
-    //! main iteration
+    //! Main iteration
     void run(const int_fast32_t simulating_duration,
              const std::vector<size_t>& sample_size_adult={1u, 1u},
              const std::vector<size_t>& sample_size_juvenile={1u,1u},
              const int_fast32_t recording_duration=1);
 
-    //! Construct and write tree from samples
+    //! Construct and write tree from #loc_year_samples_.
+    //! Serial IDs are assigned to sampled individuals.
+    //! IDs larger than sample size are assigned to unsampled ancestors.
     std::ostream& write_sample_family(std::ostream& ost) const;
-    //! write #demography_
+    //! Write #demography_.
     std::ostream& write_demography(std::ostream&) const;
-    //! write
+    //! Write #subpopulations_ and #juveniles_subpops_ for debugging.
     std::ostream& write(std::ostream&) const;
     friend std::ostream& operator<<(std::ostream&, const Population&);
 
@@ -46,20 +47,23 @@ class Population {
     //! give birth to children
     void reproduce();
 
-    //! give birth to children
-    void reproduce(uint_fast32_t location, double density_effect);
+    //! Append new individuals to #juveniles_subpops_ at `location`.
+    //! The expected number of children for each adult is proportional to its weight.
+    //! All the mothers are evaluated for Individual::recruitment(),
+    //! whereas fathers are stochastically selected.
+    void reproduce(uint_fast32_t location, size_t popsize);
 
-    //! evaluate survival
+    //! Evaluate survival.
     void survive();
 
-    //! evaluate migration
+    //! Evaluate migration. Individuals in #juveniles_subpops_ moves to #subpopulations_.
     void migrate();
 
-    //! sample individuals
+    //! Sample individuals.
     void sample(std::vector<std::vector<std::shared_ptr<Individual>>>* subpops,
                 const std::vector<size_t>& sample_sizes);
 
-    //! append current state to #demography_
+    //! Append current state to #demography_
     void append_demography(int_fast32_t season);
 
     //! Count individuals for each location and age
@@ -70,17 +74,18 @@ class Population {
 
     //! Individual array for each subpopulation
     std::vector<std::vector<std::shared_ptr<Individual>>> subpopulations_;
-    //! first-year individuals
+    //! First-year individuals separated for #sample().
+    //! Note that it becomes empty in #migrate().
     std::vector<std::vector<std::shared_ptr<Individual>>> juveniles_subpops_;
-    //! Counts of juveniles; [[number for each location] for each season]
+    //! Counts of juveniles of the year: [[number for each location] for each season]
     std::vector<std::vector<uint_fast32_t>> juveniles_demography_;
-    //! samples: capture_year => individuals
+    //! Samples: [{capture_year => individuals} for each location]
     std::vector<std::map<int_fast32_t, std::vector<std::shared_ptr<Individual>>>> loc_year_samples_;
     //! (year, season) => [[count for each age] for each location]
     std::map<std::pair<int_fast32_t, int_fast32_t>, std::vector<std::vector<uint_fast32_t>>> demography_;
-    //! year
+    //! Current time.
     int_fast32_t year_ = 0;
-    //! random bit generator
+    //! Uniform Random Bit Generator
     std::unique_ptr<URBG> engine_;
 };
 
