@@ -75,6 +75,7 @@ $(function(){ initResizable(false); });
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="classpbf_1_1_program-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">pbf::Program Class Reference</div></div>
 </div><!--header-->
@@ -89,42 +90,40 @@ $(function(){ initResizable(false); });
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a26cb94f748331b01422dabf35b1b8d83" id="r_a26cb94f748331b01422dabf35b1b8d83"><td class="memItemLeft" align="right" valign="top"><a id="a26cb94f748331b01422dabf35b1b8d83" name="a26cb94f748331b01422dabf35b1b8d83"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>Program</b> (const std::vector&lt; std::string &gt; &amp;args)</td></tr>
-<tr class="memdesc:a26cb94f748331b01422dabf35b1b8d83"><td class="mdescLeft">&#160;</td><td class="mdescRight">parse command arguments <br /></td></tr>
+<tr class="memdesc:a26cb94f748331b01422dabf35b1b8d83"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize with command-line arguments. <br /></td></tr>
 <tr class="separator:a26cb94f748331b01422dabf35b1b8d83"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aca63f2f75ac215599e8463b698d7fc30" id="r_aca63f2f75ac215599e8463b698d7fc30"><td class="memItemLeft" align="right" valign="top"><a id="aca63f2f75ac215599e8463b698d7fc30" name="aca63f2f75ac215599e8463b698d7fc30"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>~Program</b> ()</td></tr>
-<tr class="memdesc:aca63f2f75ac215599e8463b698d7fc30"><td class="mdescLeft">&#160;</td><td class="mdescRight">destructor <br /></td></tr>
-<tr class="separator:aca63f2f75ac215599e8463b698d7fc30"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a684e5519af8230b61209f61b5b694138" id="r_a684e5519af8230b61209f61b5b694138"><td class="memItemLeft" align="right" valign="top"><a id="a684e5519af8230b61209f61b5b694138" name="a684e5519af8230b61209f61b5b694138"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>run</b> ()</td></tr>
-<tr class="memdesc:a684e5519af8230b61209f61b5b694138"><td class="mdescLeft">&#160;</td><td class="mdescRight">top level function that should be called once from global main <br /></td></tr>
+<tr class="memdesc:a684e5519af8230b61209f61b5b694138"><td class="mdescLeft">&#160;</td><td class="mdescRight">Top level function that should be called once from global main. <br /></td></tr>
 <tr class="separator:a684e5519af8230b61209f61b5b694138"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">Getter for &lt;tt&gt;main()&lt;/tt&gt;.</div></td></tr>
+<tr class="memitem:a07983e3496252c432f235388e3a172f0" id="r_a07983e3496252c432f235388e3a172f0"><td class="memItemLeft" align="right" valign="top"><a id="a07983e3496252c432f235388e3a172f0" name="a07983e3496252c432f235388e3a172f0"></a>
+const <a class="el" href="classpbf_1_1_population.html">Population</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>population</b> () const noexcept</td></tr>
+<tr class="memdesc:a07983e3496252c432f235388e3a172f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get reference to <a class="el" href="#aae7b26e86d3dc2953aa53dcbf1f2602c" title="Population instance.">population_</a>. <br /></td></tr>
+<tr class="separator:a07983e3496252c432f235388e3a172f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7644f34e708050012dd127637c95d015" id="r_a7644f34e708050012dd127637c95d015"><td class="memItemLeft" align="right" valign="top"><a id="a7644f34e708050012dd127637c95d015" name="a7644f34e708050012dd127637c95d015"></a>
+const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>config</b> () const noexcept</td></tr>
+<tr class="memdesc:a7644f34e708050012dd127637c95d015"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get reference to <a class="el" href="#a9b8108d60f0252d48cdcf745f3891fd6" title="Written to &quot;config.json&quot;.">config_</a>. <br /></td></tr>
+<tr class="separator:a7644f34e708050012dd127637c95d015"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1db02dc0be6602d253732b76f915fdb3" id="r_a1db02dc0be6602d253732b76f915fdb3"><td class="memItemLeft" align="right" valign="top"><a id="a1db02dc0be6602d253732b76f915fdb3" name="a1db02dc0be6602d253732b76f915fdb3"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><b>outdir</b> () const</td></tr>
+<tr class="memdesc:a1db02dc0be6602d253732b76f915fdb3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get <code>VM["outdir"]</code>. <br /></td></tr>
+<tr class="separator:a1db02dc0be6602d253732b76f915fdb3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader">Getter for main()</h2></td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
+Private Attributes</h2></td></tr>
 <tr class="memitem:a629a043413714d26f8885f9b990b7a92" id="r_a629a043413714d26f8885f9b990b7a92"><td class="memItemLeft" align="right" valign="top"><a id="a629a043413714d26f8885f9b990b7a92" name="a629a043413714d26f8885f9b990b7a92"></a>
 std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>command_args_</b></td></tr>
-<tr class="memdesc:a629a043413714d26f8885f9b990b7a92"><td class="mdescLeft">&#160;</td><td class="mdescRight">command line arguments <br /></td></tr>
+<tr class="memdesc:a629a043413714d26f8885f9b990b7a92"><td class="mdescLeft">&#160;</td><td class="mdescRight">Command-line arguments. <br /></td></tr>
 <tr class="separator:a629a043413714d26f8885f9b990b7a92"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9b8108d60f0252d48cdcf745f3891fd6" id="r_a9b8108d60f0252d48cdcf745f3891fd6"><td class="memItemLeft" align="right" valign="top"><a id="a9b8108d60f0252d48cdcf745f3891fd6" name="a9b8108d60f0252d48cdcf745f3891fd6"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><b>config_</b> = &quot;&quot;</td></tr>
-<tr class="memdesc:a9b8108d60f0252d48cdcf745f3891fd6"><td class="mdescLeft">&#160;</td><td class="mdescRight">written to "config.json" <br /></td></tr>
+<tr class="memdesc:a9b8108d60f0252d48cdcf745f3891fd6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Written to "config.json". <br /></td></tr>
 <tr class="separator:a9b8108d60f0252d48cdcf745f3891fd6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aae7b26e86d3dc2953aa53dcbf1f2602c" id="r_aae7b26e86d3dc2953aa53dcbf1f2602c"><td class="memItemLeft" align="right" valign="top"><a id="aae7b26e86d3dc2953aa53dcbf1f2602c" name="aae7b26e86d3dc2953aa53dcbf1f2602c"></a>
 std::unique_ptr&lt; <a class="el" href="classpbf_1_1_population.html">Population</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>population_</b></td></tr>
 <tr class="memdesc:aae7b26e86d3dc2953aa53dcbf1f2602c"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classpbf_1_1_population.html" title="Population class.">Population</a> instance. <br /></td></tr>
 <tr class="separator:aae7b26e86d3dc2953aa53dcbf1f2602c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a07983e3496252c432f235388e3a172f0" id="r_a07983e3496252c432f235388e3a172f0"><td class="memItemLeft" align="right" valign="top"><a id="a07983e3496252c432f235388e3a172f0" name="a07983e3496252c432f235388e3a172f0"></a>
-const <a class="el" href="classpbf_1_1_population.html">Population</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>population</b> () const noexcept</td></tr>
-<tr class="memdesc:a07983e3496252c432f235388e3a172f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get <a class="el" href="#aae7b26e86d3dc2953aa53dcbf1f2602c" title="Population instance.">population_</a>. <br /></td></tr>
-<tr class="separator:a07983e3496252c432f235388e3a172f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7644f34e708050012dd127637c95d015" id="r_a7644f34e708050012dd127637c95d015"><td class="memItemLeft" align="right" valign="top"><a id="a7644f34e708050012dd127637c95d015" name="a7644f34e708050012dd127637c95d015"></a>
-const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>config</b> () const noexcept</td></tr>
-<tr class="memdesc:a7644f34e708050012dd127637c95d015"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get <a class="el" href="#a9b8108d60f0252d48cdcf745f3891fd6" title="written to &quot;config.json&quot;">config_</a>. <br /></td></tr>
-<tr class="separator:a7644f34e708050012dd127637c95d015"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1db02dc0be6602d253732b76f915fdb3" id="r_a1db02dc0be6602d253732b76f915fdb3"><td class="memItemLeft" align="right" valign="top"><a id="a1db02dc0be6602d253732b76f915fdb3" name="a1db02dc0be6602d253732b76f915fdb3"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>outdir</b> () const</td></tr>
-<tr class="memdesc:a1db02dc0be6602d253732b76f915fdb3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get VM["outdir"]. <br /></td></tr>
-<tr class="separator:a1db02dc0be6602d253732b76f915fdb3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="classpbf_1_1_program.html" title="Program class.">Program</a> class. </p>
