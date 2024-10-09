@@ -165,7 +165,7 @@ void IndividualJson::read(std::istream& ist) {
     ist >> obj;
     obj.at("natural_mortality").get_to(natural_mortality);
     obj.at("fishing_mortality").get_to(fishing_mortality);
-    fishing_mortality = obj.value("fishing_coef", fishing_mortality);
+    fishing_coef = obj.value("fishing_coef", fishing_coef);
     obj.at("weight_for_age").get_to(weight_for_age);
     obj.at("migration_matrices").get_to(migration_matrices);
 }
