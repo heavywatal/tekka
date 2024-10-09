@@ -56,23 +56,23 @@ inline clipp::group program_options(nlohmann::json* vm) {
     ).doc("Program:");
 }
 
-//! Individual options
+//! Reproduction options
 /*! @ingroup params
 
     Command line option      | Symbol   | Variable
     ------------------------ | -------- | -------------------------------
-    `-r,--recruitment`       | \f$r\f$  | IndividualParams::RECRUITMENT_COEF
-    `-K,--carrying_capacity` | \f$K\f$  | IndividualParams::CARRYING_CAPACITY
-    `-k,--overdispersion`    | \f$k\f$  | IndividualParams::NEGATIVE_BINOM_K
+    `-r,--recruitment`       | \f$r\f$  | Population::recruitment_coef_
+    `-K,--carrying_capacity` | \f$K\f$  | Population::carrying_capacity_
+    `-k,--overdispersion`    | \f$k\f$  | Population::k_nbinom_
 */
-inline clipp::group individual_options(nlohmann::json* vm, IndividualParams* p) {
+inline clipp::group reproduction_options(nlohmann::json* vm) {
     return (
-      wtl::option(vm, {"r", "recruitment"}, &p->RECRUITMENT_COEF),
-      wtl::option(vm, {"K", "carrying_capacity"}, &p->CARRYING_CAPACITY),
-      wtl::option(vm, {"k", "overdispersion"}, &p->NEGATIVE_BINOM_K,
+      wtl::option(vm, {"r", "recruitment"}, 2.0),
+      wtl::option(vm, {"K", "carrying_capacity"}, 1e3),
+      wtl::option(vm, {"k", "overdispersion"}, -1.0,
         "k ∈ (0, ∞); equivalent to Poisson when k→∞ (or k<0 for convience)"
       )
-    ).doc("Individual:");
+    ).doc("Reproduction:");
 }
 
 Program::Program(const std::vector<std::string>& arguments)
@@ -83,11 +83,10 @@ Program::Program(const std::vector<std::string>& arguments)
     std::cerr.precision(6);
 
     nlohmann::json vm_local;
-    IndividualParams individual_params;
     auto cli = (
       general_options(&vm_local),
       program_options(&VM),
-      individual_options(&VM, &individual_params)
+      reproduction_options(&VM)
     );
     wtl::parse(cli, arguments);
     if (vm_local.at("help")) {
@@ -100,7 +99,6 @@ Program::Program(const std::vector<std::string>& arguments)
         std::cout << PROJECT_VERSION << "\n";
         throw wtl::ExitSuccess();
     }
-    Individual::param(individual_params);
     if (vm_local.at("default")) {
         Individual::JSON.write(std::cout);
         throw wtl::ExitSuccess();
@@ -124,7 +122,10 @@ void Program::run() {
     const double O = VM.at("origin");
     population_ = std::make_unique<Population>(
         static_cast<size_t>(K * O),
-        VM.at("seed")
+        VM.at("seed"),
+        K,
+        VM.at("recruitment"),
+        VM.at("overdispersion")
     );
     population_->run(
         VM.at("years"),

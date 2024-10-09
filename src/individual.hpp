@@ -19,23 +19,6 @@
 
 namespace pbf {
 
-//! @brief Parameters for Individual class (command-line)
-/*! @ingroup params
-*/
-struct IndividualParams {
-    //! @ingroup params
-    //!@{
-
-    //! \f$r\f$: coefficient used in Individual::recruitment()
-    double RECRUITMENT_COEF = 2.0;
-    //! \f$K\f$: carrying capacity used in Individual::recruitment()
-    double CARRYING_CAPACITY = 1e+3;
-    //! \f$k \in (0, \infty)\f$ for overdispersion in Individual::recruitment().
-    //! Equivalent to Poisson when \f$k \to \infty\f$ (or \f$k<0\f$ for convience).
-    double NEGATIVE_BINOM_K = -1.0;
-    //!@}
-};
-
 //! @brief Parameters for Individual class (JSON file)
 /*! @ingroup params
 */
@@ -73,7 +56,6 @@ class IndividualJson {
 class Individual {
   public:
     //! Alias
-    using param_type = IndividualParams;
     Individual() = delete;
     //! for initial population
     explicit Individual(bool is_male) noexcept: is_male_(is_male) {}
@@ -90,9 +72,6 @@ class Individual {
     double death_rate(const int_fast32_t year) const {
         return death_rate(age(year), year);
     }
-
-    //! Generate random number for reproduction.
-    uint_fast32_t recruitment(int_fast32_t year, double density_effect, URBG&) const noexcept;
 
     //! Generate random number for new location.
     uint_fast32_t migrate(uint_fast32_t loc, int_fast32_t year, URBG&);
@@ -130,11 +109,6 @@ class Individual {
         return 1.0 - std::exp(-NATURAL_MORTALITY_[age] - f);
     }
 
-    //! Set #PARAM_
-    static void param(const param_type& p) {PARAM_ = p;}
-    //! Get #PARAM_
-    static const param_type& param() {return PARAM_;}
-
     //! @name Getter functions
     //!@{
 
@@ -157,8 +131,6 @@ class Individual {
     static void set_static_mortality();
     //! Prepare #WEIGHT_FOR_AGE_
     static void set_static_weight();
-    //! Parameters shared among instances (command-line)
-    static inline param_type PARAM_;
     //! Instantaneous natural mortality per year: \f$ M \f$
     static inline std::vector<double> NATURAL_MORTALITY_;
     //! Instantaneous fishing mortality per year: \f$ F \f$

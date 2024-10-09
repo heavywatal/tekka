@@ -47,24 +47,7 @@ inline uint_fast32_t sub_sat(const uint_fast32_t x, const uint_fast32_t y) {
     return (x > y) ? x - y : uint_fast32_t{};
 }
 
-template <class T> inline wtl::negative_binomial_distribution<T>
-nbinom_distribution(double k, double mu) {
-    const double prob = k / (mu + k);
-    return wtl::negative_binomial_distribution<T>(k, prob);
-}
-
 } // anonymous namespace
-
-uint_fast32_t Individual::recruitment(const int_fast32_t year, const double density_effect, URBG& engine) const noexcept {
-    if (density_effect < 0.0) return 0u;
-    const double mean = density_effect * param().RECRUITMENT_COEF * weight(year);
-    const double k = param().NEGATIVE_BINOM_K;
-    if (k > 0.0) {
-        return nbinom_distribution<uint_fast32_t>(k, mean)(engine);
-    } else {
-        return std::poisson_distribution<uint_fast32_t>(mean)(engine);
-    }
-}
 
 uint_fast32_t Individual::migrate(const uint_fast32_t loc, const int_fast32_t year, URBG& engine) {
     return MIGRATION_DISTRIBUTIONS_[age(year)][loc](engine);

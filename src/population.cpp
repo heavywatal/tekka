@@ -11,8 +11,14 @@
 
 namespace pbf {
 
-Population::Population(const size_t initial_size, std::random_device::result_type seed)
+Population::Population(const size_t initial_size, std::random_device::result_type seed,
+  const double carrying_capacity,
+  const double recruitment_coef,
+  const double negative_binom_k)
 : subpopulations_(4u), juveniles_subpops_(2u),
+  carrying_capacity_(carrying_capacity),
+  recruitment_coef_(recruitment_coef),
+  k_nbinom_(negative_binom_k),
   engine_(std::make_unique<URBG>(seed)) {
     subpopulations_[0u].reserve(initial_size);
     const size_t half = initial_size / 2UL;
@@ -47,6 +53,25 @@ void Population::run(const int_fast32_t simulating_duration,
     }
 }
 
+namespace {
+
+template <class T> inline wtl::negative_binomial_distribution<T>
+nbinom_distribution(double k, double mu) {
+    const double prob = k / (mu + k);
+    return wtl::negative_binomial_distribution<T>(k, prob);
+}
+
+template <class T> inline T
+rnbinom(double k, double mu, URBG& engine) {
+    if (k > 0.0) {
+        return nbinom_distribution<T>(k, mu)(engine);
+    } else {
+        return std::poisson_distribution<T>(mu)(engine);
+    }
+}
+
+} // anonymous namespace
+
 void Population::reproduce() {
     const auto num_breeding_places = static_cast<uint_fast32_t>(juveniles_subpops_.size());
     juveniles_demography_.assign(4u, std::vector<uint_fast32_t>(num_breeding_places));
@@ -60,9 +85,8 @@ void Population::reproduce() {
 }
 
 void Population::reproduce(const uint_fast32_t location, const size_t popsize) {
-    const double K = Individual::param().CARRYING_CAPACITY;
-    const double density_effect = 1.0 - popsize / K;
-    if (density_effect <= 0.0) return;
+    const double rec_rate = recruitment_coef_ * (1.0 - popsize / carrying_capacity_);
+    if (rec_rate <= 0.0) return;
     const auto& adults = subpopulations_[location];
     auto& juveniles = juveniles_subpops_[location];
     double female_biomass = 0.0;
@@ -82,17 +106,17 @@ void Population::reproduce(const uint_fast32_t location, const size_t popsize) {
     }
     if (male_indices.size() == 0u) return;
     std::discrete_distribution<uint_fast32_t> mate_distr(fitnesses.begin(), fitnesses.end());
-    const double exp_recruitment = density_effect * Individual::param().RECRUITMENT_COEF * female_biomass;
-    juveniles.reserve(static_cast<size_t>(exp_recruitment * 1.1));
+    juveniles.reserve(static_cast<size_t>(1.1 * rec_rate * female_biomass));
     const double d0 = Individual::death_rate(0, year_);
     for (const auto& mother: adults) {
         if (mother->is_male()) continue;
-        uint_fast32_t num_juveniles = mother->recruitment(year_, density_effect, *engine_);
-        juveniles_demography_[0u][location] += num_juveniles;
-        num_juveniles -= std::binomial_distribution<uint_fast32_t>(num_juveniles, d0)(*engine_);
-        juveniles_demography_[3u][location] += num_juveniles;
-        const auto num_boys = std::binomial_distribution<uint_fast32_t>(num_juveniles, 0.5)(*engine_);
-        for (uint_fast32_t j=0; j<num_juveniles; ++j) {
+        const double rec_mean = rec_rate * mother->weight(year_);
+        uint_fast32_t rec = rnbinom<uint_fast32_t>(k_nbinom_, rec_mean, *engine_);
+        juveniles_demography_[0u][location] += rec;
+        rec -= std::binomial_distribution<uint_fast32_t>(rec, d0)(*engine_);
+        juveniles_demography_[3u][location] += rec;
+        const auto num_boys = std::binomial_distribution<uint_fast32_t>(rec, 0.5)(*engine_);
+        for (uint_fast32_t j=0; j<rec; ++j) {
             const auto& father = adults[male_indices[mate_distr(*engine_)]];
             juveniles.emplace_back(std::make_shared<Individual>(father, mother, year_, j < num_boys));
         }

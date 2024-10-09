@@ -24,7 +24,10 @@ class Individual;
 class Population {
   public:
     //! Constructor
-    Population(const size_t initial_size, std::random_device::result_type seed);
+    Population(const size_t initial_size, std::random_device::result_type seed,
+               const double carrying_capacity = 1e3,
+               const double recruitment_coef = 2.0,
+               const double negative_binom_k = -1.0);
     ~Population() = default;
 
     //! Main iteration
@@ -49,8 +52,8 @@ class Population {
 
     //! Append new individuals to #juveniles_subpops_ at `location`.
     //! The expected number of children for each adult is proportional to its weight.
-    //! All the mothers are evaluated for Individual::recruitment(),
-    //! whereas fathers are stochastically selected.
+    //! All the females are evaluated for recruitment,
+    //! whereas males are stochastically chosen.
     void reproduce(uint_fast32_t location, size_t popsize);
 
     //! Evaluate survival.
@@ -83,6 +86,18 @@ class Population {
     std::vector<std::map<int_fast32_t, std::vector<std::shared_ptr<Individual>>>> loc_year_samples_;
     //! (year, season) => [[count for each age] for each location]
     std::map<std::pair<int_fast32_t, int_fast32_t>, std::vector<std::vector<uint_fast32_t>>> demography_;
+
+    //! @ingroup params
+    //!@{
+
+    //! \f$K\f$: carrying capacity used in reproduce()
+    const double carrying_capacity_;
+    //! \f$r\f$: coefficient used in reproduce()
+    const double recruitment_coef_;
+    //! \f$k \in (0, \infty)\f$ for overdispersion in reproduce().
+    //! Equivalent to Poisson when \f$k \to \infty\f$ (or \f$k<0\f$ for convience).
+    const double k_nbinom_;
+    //!@}
     //! Current time.
     int_fast32_t year_ = 0;
     //! Uniform Random Bit Generator
