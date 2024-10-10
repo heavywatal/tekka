@@ -104,8 +104,8 @@ void Population::reproduce(const uint_fast32_t location, const size_t popsize) {
     }
     if (male_indices.size() == 0u) return;
     std::discrete_distribution<uint_fast32_t> mate_distr(fitnesses.begin(), fitnesses.end());
-    juveniles.reserve(static_cast<size_t>(1.1 * rec_rate * female_biomass));
     const double d0 = Individual::death_rate(0, year_);
+    juveniles.reserve(static_cast<size_t>((1.1 - d0) * rec_rate * female_biomass));
     for (const auto& mother: adults) {
         if (mother->is_male()) continue;
         const double rec_mean = rec_rate * mother->weight(year_);
