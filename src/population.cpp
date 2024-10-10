@@ -6,8 +6,6 @@
 
 #include <wtl/random.hpp>
 #include <wtl/debug.hpp>
-#include <wtl/iostr.hpp>
-#include <wtl/exception.hpp>
 
 namespace pbf {
 
@@ -190,7 +188,7 @@ void Population::sample(std::vector<std::vector<std::shared_ptr<Individual>>>* s
 
 std::ostream& Population::write_sample_family(std::ostream& ost) const {
     if (loc_year_samples_.empty() || loc_year_samples_[0u].empty()) return ost;
-    wtl::join(Individual::names(), ost, "\t") << "\tlocation\tcapture_year\n";
+    Individual::write_trace_back_header(ost);
     // unordered_set suffices to remove duplicates, but address is not reproducible.
     std::unordered_map<const Individual*, uint_fast32_t> ids;
     ids.emplace(nullptr, 0u);

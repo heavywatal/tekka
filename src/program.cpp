@@ -7,11 +7,12 @@
 #include "individual.hpp"
 #include "config.hpp"
 
-#include <wtl/exception.hpp>
-#include <wtl/debug.hpp>
-#include <wtl/iostr.hpp>
 #include <wtl/chrono.hpp>
+#include <wtl/debug.hpp>
 #include <clippson/clippson.hpp>
+
+#include <fstream>
+#include <cstdlib>
 
 namespace pbf {
 
@@ -93,19 +94,19 @@ Program::Program(const std::vector<std::string>& arguments)
         auto fmt = wtl::doc_format();
         std::cout << "Usage: " << PROJECT_NAME << " [options]\n\n";
         std::cout << clipp::documentation(cli, fmt) << "\n";
-        throw wtl::ExitSuccess();
+        std::exit(EXIT_SUCCESS);
     }
     if (vm_local.at("version")) {
         std::cout << PROJECT_VERSION << "\n";
-        throw wtl::ExitSuccess();
+        std::exit(EXIT_SUCCESS);
     }
     if (vm_local.at("default")) {
         Individual::JSON.write(std::cout);
-        throw wtl::ExitSuccess();
+        std::exit(EXIT_SUCCESS);
     }
     const std::string infile = VM.at("infile");
     if (!infile.empty()) {
-        auto ifs = wtl::make_ifs(infile);
+        std::ifstream ifs(infile);
         Individual::JSON.read(ifs);
     }
     Individual::set_dependent_static(VM.at("years"));

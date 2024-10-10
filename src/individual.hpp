@@ -83,9 +83,11 @@ class Individual {
     std::ostream& write(std::ostream&) const;
     //! Write all the data members in TSV with translated IDs
     std::ostream& write(std::ostream&, const std::unordered_map<const Individual*, uint_fast32_t>&) const;
+    //! Write column names for trace_back()
+    static std::ostream& write_trace_back_header(std::ostream&);
+    //! Write column names for write()
+    static std::ostream& write_names(std::ostream&);
     friend std::ostream& operator<<(std::ostream&, const Individual&);
-    //! Column names for write()
-    static std::vector<std::string> names();
 
     //! No individual lives longer than this.
     constexpr static inline int_fast32_t MAX_AGE = 80;

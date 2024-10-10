@@ -4,11 +4,11 @@
 #include "individual.hpp"
 #include "config.hpp"
 
-#include <wtl/random.hpp>
 #include <wtl/debug.hpp>
-#include <wtl/iostr.hpp>
 #include <clippson/json.hpp>
 
+#include <random>
+#include <sstream>
 #include <type_traits>
 
 namespace pbf {
@@ -66,8 +66,15 @@ void Individual::trace_back(std::ostream& ost, std::unordered_map<const Individu
     }
 }
 
-std::vector<std::string> Individual::names() {
-    return {"id", "father_id", "mother_id", "birth_year"};
+std::ostream& Individual::write_trace_back_header(std::ostream& ost) {
+   return write_names(ost) << "\tlocation\tcapture_year\n";
+}
+
+std::ostream& Individual::write_names(std::ostream& ost) {
+    return ost << "id\t"
+               << "father_id\t"
+               << "mother_id\t"
+               << "birth_year";
 }
 
 std::ostream& Individual::write(std::ostream& ost) const {
