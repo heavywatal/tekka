@@ -78,9 +78,6 @@ $(function(){ initResizable(false); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpbf_1_1_individual_params.html">pbf::IndividualParams</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parameters for <a class="el" href="classpbf_1_1_individual.html" title="Individual class.">Individual</a> class (command-line)  <a href="structpbf_1_1_individual_params.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpbf_1_1_individual_json.html">pbf::IndividualJson</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parameters for <a class="el" href="classpbf_1_1_individual.html" title="Individual class.">Individual</a> class (JSON file)  <a href="classpbf_1_1_individual_json.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -90,19 +87,9 @@ Functions</h2></td></tr>
 <tr class="memitem:ga9671bce0c356ee9cfc314f1ef0ed017e" id="r_ga9671bce0c356ee9cfc314f1ef0ed017e"><td class="memItemLeft" align="right" valign="top">clipp::group&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga9671bce0c356ee9cfc314f1ef0ed017e">pbf::program_options</a> (nlohmann::json *vm)</td></tr>
 <tr class="memdesc:ga9671bce0c356ee9cfc314f1ef0ed017e"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classpbf_1_1_program.html" title="Program class.">Program</a> options.  <br /></td></tr>
 <tr class="separator:ga9671bce0c356ee9cfc314f1ef0ed017e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga0be3c0fb678e6dc89783ef42413d588c" id="r_ga0be3c0fb678e6dc89783ef42413d588c"><td class="memItemLeft" align="right" valign="top">clipp::group&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga0be3c0fb678e6dc89783ef42413d588c">pbf::individual_options</a> (nlohmann::json *vm, <a class="el" href="structpbf_1_1_individual_params.html">IndividualParams</a> *p)</td></tr>
-<tr class="memdesc:ga0be3c0fb678e6dc89783ef42413d588c"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classpbf_1_1_individual.html" title="Individual class.">Individual</a> options.  <br /></td></tr>
-<tr class="separator:ga0be3c0fb678e6dc89783ef42413d588c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gab7f175e8129290dc11cf4f01639aa345" id="r_gab7f175e8129290dc11cf4f01639aa345"><td class="memItemLeft" align="right" valign="top"><a id="gab7f175e8129290dc11cf4f01639aa345" name="gab7f175e8129290dc11cf4f01639aa345"></a>
-double&#160;</td><td class="memItemRight" valign="bottom"><b>pbf::IndividualParams::RECRUITMENT_COEF</b> = 2.0</td></tr>
-<tr class="memdesc:gab7f175e8129290dc11cf4f01639aa345"><td class="mdescLeft">&#160;</td><td class="mdescRight">\(r\): coefficient used in <a class="el" href="classpbf_1_1_individual.html#a48e4a6388c545ebcabec2faa7cf5dcf5" title="Generate random number for reproduction.">Individual::recruitment()</a> <br /></td></tr>
-<tr class="separator:gab7f175e8129290dc11cf4f01639aa345"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga7836c146b5e010ff39c482e18e7f4925" id="r_ga7836c146b5e010ff39c482e18e7f4925"><td class="memItemLeft" align="right" valign="top"><a id="ga7836c146b5e010ff39c482e18e7f4925" name="ga7836c146b5e010ff39c482e18e7f4925"></a>
-double&#160;</td><td class="memItemRight" valign="bottom"><b>pbf::IndividualParams::CARRYING_CAPACITY</b> = 1e+3</td></tr>
-<tr class="memdesc:ga7836c146b5e010ff39c482e18e7f4925"><td class="mdescLeft">&#160;</td><td class="mdescRight">\(K\): carrying capacity used in <a class="el" href="classpbf_1_1_individual.html#a48e4a6388c545ebcabec2faa7cf5dcf5" title="Generate random number for reproduction.">Individual::recruitment()</a> <br /></td></tr>
-<tr class="separator:ga7836c146b5e010ff39c482e18e7f4925"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga6d08e413138bb1390f223607737ff52e" id="r_ga6d08e413138bb1390f223607737ff52e"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga6d08e413138bb1390f223607737ff52e">pbf::IndividualParams::NEGATIVE_BINOM_K</a> = -1.0</td></tr>
-<tr class="separator:ga6d08e413138bb1390f223607737ff52e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaabaa71de22ffcf5e0cd2c747bd833ec6" id="r_gaabaa71de22ffcf5e0cd2c747bd833ec6"><td class="memItemLeft" align="right" valign="top">clipp::group&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gaabaa71de22ffcf5e0cd2c747bd833ec6">pbf::reproduction_options</a> (nlohmann::json *vm)</td></tr>
+<tr class="memdesc:gaabaa71de22ffcf5e0cd2c747bd833ec6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reproduction options.  <br /></td></tr>
+<tr class="separator:gaabaa71de22ffcf5e0cd2c747bd833ec6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gad376687fc4484b7add11b7a0b22d1c55" id="r_gad376687fc4484b7add11b7a0b22d1c55"><td class="memItemLeft" align="right" valign="top"><a id="gad376687fc4484b7add11b7a0b22d1c55" name="gad376687fc4484b7add11b7a0b22d1c55"></a>
 std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>pbf::IndividualJson::natural_mortality</b></td></tr>
 <tr class="memdesc:gad376687fc4484b7add11b7a0b22d1c55"><td class="mdescLeft">&#160;</td><td class="mdescRight">Array of \(M\) for quarter age: instantaneous mortality due to natural causes. <br /></td></tr>
@@ -121,50 +108,19 @@ std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><
 std::vector&lt; <a class="el" href="classpbf_1_1_individual_json.html#aa0ae747e54ae416855c9713944fc3ac1">RowMatrix</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>pbf::IndividualJson::migration_matrices</b></td></tr>
 <tr class="memdesc:ga418b8f2676a4d3d4c6f6bba35ccfa8f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transition matrix for migration. <br /></td></tr>
 <tr class="separator:ga418b8f2676a4d3d4c6f6bba35ccfa8f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa50c36997d9df3e12f976fb48ea7e5d0" id="r_gaa50c36997d9df3e12f976fb48ea7e5d0"><td class="memItemLeft" align="right" valign="top"><a id="gaa50c36997d9df3e12f976fb48ea7e5d0" name="gaa50c36997d9df3e12f976fb48ea7e5d0"></a>
+const double&#160;</td><td class="memItemRight" valign="bottom"><b>pbf::Population::carrying_capacity_</b></td></tr>
+<tr class="memdesc:gaa50c36997d9df3e12f976fb48ea7e5d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">\(K\): carrying capacity used in <a class="el" href="classpbf_1_1_population.html#a06875166f8643742c374805c13375f93" title="give birth to children">reproduce()</a> <br /></td></tr>
+<tr class="separator:gaa50c36997d9df3e12f976fb48ea7e5d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga21ab4341abe444f098d420cc5d57eb27" id="r_ga21ab4341abe444f098d420cc5d57eb27"><td class="memItemLeft" align="right" valign="top"><a id="ga21ab4341abe444f098d420cc5d57eb27" name="ga21ab4341abe444f098d420cc5d57eb27"></a>
+const double&#160;</td><td class="memItemRight" valign="bottom"><b>pbf::Population::recruitment_coef_</b></td></tr>
+<tr class="memdesc:ga21ab4341abe444f098d420cc5d57eb27"><td class="mdescLeft">&#160;</td><td class="mdescRight">\(r\): coefficient used in <a class="el" href="classpbf_1_1_population.html#a06875166f8643742c374805c13375f93" title="give birth to children">reproduce()</a> <br /></td></tr>
+<tr class="separator:ga21ab4341abe444f098d420cc5d57eb27"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga5f7f3361fa3318f902af0cd896cd5395" id="r_ga5f7f3361fa3318f902af0cd896cd5395"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga5f7f3361fa3318f902af0cd896cd5395">pbf::Population::k_nbinom_</a></td></tr>
+<tr class="separator:ga5f7f3361fa3318f902af0cd896cd5395"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="ga0be3c0fb678e6dc89783ef42413d588c" name="ga0be3c0fb678e6dc89783ef42413d588c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga0be3c0fb678e6dc89783ef42413d588c">&#9670;&#160;</a></span>individual_options()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">clipp::group pbf::individual_options </td>
-          <td>(</td>
-          <td class="paramtype">nlohmann::json *</td>          <td class="paramname"><span class="paramname"><em>vm</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="structpbf_1_1_individual_params.html">IndividualParams</a> *</td>          <td class="paramname"><span class="paramname"><em>p</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p><a class="el" href="classpbf_1_1_individual.html" title="Individual class.">Individual</a> options. </p>
-<table class="markdownTable">
-<tr class="markdownTableHead">
-<th class="markdownTableHeadNone">Command line option   </th><th class="markdownTableHeadNone">Symbol   </th><th class="markdownTableHeadNone">Variable    </th></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>-r,--recruitment</code>   </td><td class="markdownTableBodyNone">\(r\)   </td><td class="markdownTableBodyNone"><a class="el" href="#gab7f175e8129290dc11cf4f01639aa345" title=": coefficient used in Individual::recruitment()">IndividualParams::RECRUITMENT_COEF</a>    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>-K,--carrying_capacity</code>   </td><td class="markdownTableBodyNone">\(K\)   </td><td class="markdownTableBodyNone"><a class="el" href="#ga7836c146b5e010ff39c482e18e7f4925" title=": carrying capacity used in Individual::recruitment()">IndividualParams::CARRYING_CAPACITY</a>    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>-k,--overdispersion</code>   </td><td class="markdownTableBodyNone">\(k\)   </td><td class="markdownTableBodyNone"><a class="el" href="#ga6d08e413138bb1390f223607737ff52e">IndividualParams::NEGATIVE_BINOM_K</a>   </td></tr>
-</table>
-
-</div>
-</div>
 <a id="ga9671bce0c356ee9cfc314f1ef0ed017e" name="ga9671bce0c356ee9cfc314f1ef0ed017e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ga9671bce0c356ee9cfc314f1ef0ed017e">&#9670;&#160;</a></span>program_options()</h2>
 
@@ -210,6 +166,43 @@ std::vector&lt; <a class="el" href="classpbf_1_1_individual_json.html#aa0ae747e5
 
 </div>
 </div>
+<a id="gaabaa71de22ffcf5e0cd2c747bd833ec6" name="gaabaa71de22ffcf5e0cd2c747bd833ec6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaabaa71de22ffcf5e0cd2c747bd833ec6">&#9670;&#160;</a></span>reproduction_options()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">clipp::group pbf::reproduction_options </td>
+          <td>(</td>
+          <td class="paramtype">nlohmann::json *</td>          <td class="paramname"><span class="paramname"><em>vm</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Reproduction options. </p>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Command line option   </th><th class="markdownTableHeadNone">Symbol   </th><th class="markdownTableHeadNone">Variable    </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><code>-r,--recruitment</code>   </td><td class="markdownTableBodyNone">\(r\)   </td><td class="markdownTableBodyNone"><a class="el" href="#ga21ab4341abe444f098d420cc5d57eb27" title=": coefficient used in reproduce()">Population::recruitment_coef_</a>    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><code>-K,--carrying_capacity</code>   </td><td class="markdownTableBodyNone">\(K\)   </td><td class="markdownTableBodyNone"><a class="el" href="#gaa50c36997d9df3e12f976fb48ea7e5d0" title=": carrying capacity used in reproduce()">Population::carrying_capacity_</a>    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><code>-k,--overdispersion</code>   </td><td class="markdownTableBodyNone">\(k\)   </td><td class="markdownTableBodyNone"><a class="el" href="#ga5f7f3361fa3318f902af0cd896cd5395">Population::k_nbinom_</a>   </td></tr>
+</table>
+
+</div>
+</div>
 <h2 class="groupheader">Variable Documentation</h2>
 <a id="ga7859a7986113b3843ef058e309cc730c" name="ga7859a7986113b3843ef058e309cc730c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ga7859a7986113b3843ef058e309cc730c">&#9670;&#160;</a></span>fishing_coef</h2>
@@ -234,18 +227,26 @@ std::vector&lt; <a class="el" href="classpbf_1_1_individual_json.html#aa0ae747e5
 
 </div>
 </div>
-<a id="ga6d08e413138bb1390f223607737ff52e" name="ga6d08e413138bb1390f223607737ff52e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga6d08e413138bb1390f223607737ff52e">&#9670;&#160;</a></span>NEGATIVE_BINOM_K</h2>
+<a id="ga5f7f3361fa3318f902af0cd896cd5395" name="ga5f7f3361fa3318f902af0cd896cd5395"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga5f7f3361fa3318f902af0cd896cd5395">&#9670;&#160;</a></span>k_nbinom_</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double pbf::IndividualParams::NEGATIVE_BINOM_K = -1.0</td>
+          <td class="memname">const double pbf::Population::k_nbinom_</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
-<p>\(k \in (0, \infty)\) for overdispersion in <a class="el" href="classpbf_1_1_individual.html#a48e4a6388c545ebcabec2faa7cf5dcf5" title="Generate random number for reproduction.">Individual::recruitment()</a>. Equivalent to Poisson when \(k \to \infty\) (or \(k&lt;0\) for convience). </p>
+<p>\(k \in (0, \infty)\) for overdispersion in <a class="el" href="classpbf_1_1_population.html#a06875166f8643742c374805c13375f93" title="give birth to children">reproduce()</a>. Equivalent to Poisson when \(k \to \infty\) (or \(k&lt;0\) for convience). </p>
 
 </div>
 </div>

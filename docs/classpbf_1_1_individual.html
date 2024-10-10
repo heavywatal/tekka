@@ -74,7 +74,6 @@ $(function(){ initResizable(false); });
 <div id="doc-content">
 <div class="header">
   <div class="summary">
-<a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#pub-static-attribs">Static Public Attributes</a> &#124;
@@ -92,15 +91,12 @@ $(function(){ initResizable(false); });
 
 <p><code>#include &lt;<a class="el" href="individual_8hpp_source.html">individual.hpp</a>&gt;</code></p>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-types" name="pub-types"></a>
-Public Types</h2></td></tr>
-<tr class="memitem:ac5a8e30996e2c471ae9d5b7fe015a89f" id="r_ac5a8e30996e2c471ae9d5b7fe015a89f"><td class="memItemLeft" align="right" valign="top"><a id="ac5a8e30996e2c471ae9d5b7fe015a89f" name="ac5a8e30996e2c471ae9d5b7fe015a89f"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>param_type</b> = <a class="el" href="structpbf_1_1_individual_params.html">IndividualParams</a></td></tr>
-<tr class="memdesc:ac5a8e30996e2c471ae9d5b7fe015a89f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Alias. <br /></td></tr>
-<tr class="separator:ac5a8e30996e2c471ae9d5b7fe015a89f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a0c420968ce1eece0042c96dc66ded420" id="r_a0c420968ce1eece0042c96dc66ded420"><td class="memItemLeft" align="right" valign="top"><a id="a0c420968ce1eece0042c96dc66ded420" name="a0c420968ce1eece0042c96dc66ded420"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Individual</b> ()=delete</td></tr>
+<tr class="memdesc:a0c420968ce1eece0042c96dc66ded420"><td class="mdescLeft">&#160;</td><td class="mdescRight">Alias. <br /></td></tr>
+<tr class="separator:a0c420968ce1eece0042c96dc66ded420"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a05960aaa9552fddf411a183b19308034" id="r_a05960aaa9552fddf411a183b19308034"><td class="memItemLeft" align="right" valign="top"><a id="a05960aaa9552fddf411a183b19308034" name="a05960aaa9552fddf411a183b19308034"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>Individual</b> (bool <a class="el" href="#a9a4c573b0194752a2850e4a78ff95814">is_male</a>) noexcept</td></tr>
 <tr class="memdesc:a05960aaa9552fddf411a183b19308034"><td class="mdescLeft">&#160;</td><td class="mdescRight">for initial population <br /></td></tr>
@@ -116,10 +112,6 @@ Public Member Functions</h2></td></tr>
 double&#160;</td><td class="memItemRight" valign="bottom"><b>death_rate</b> (const int_fast32_t year) const</td></tr>
 <tr class="memdesc:a92104448c6ca3b20b22c8f2980cb032b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finite death rate per year: \( d = 1 - \exp(- M - eF) \). <br /></td></tr>
 <tr class="separator:a92104448c6ca3b20b22c8f2980cb032b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a48e4a6388c545ebcabec2faa7cf5dcf5" id="r_a48e4a6388c545ebcabec2faa7cf5dcf5"><td class="memItemLeft" align="right" valign="top"><a id="a48e4a6388c545ebcabec2faa7cf5dcf5" name="a48e4a6388c545ebcabec2faa7cf5dcf5"></a>
-uint_fast32_t&#160;</td><td class="memItemRight" valign="bottom"><b>recruitment</b> (int_fast32_t year, double density_effect, URBG &amp;) const noexcept</td></tr>
-<tr class="memdesc:a48e4a6388c545ebcabec2faa7cf5dcf5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate random number for reproduction. <br /></td></tr>
-<tr class="separator:a48e4a6388c545ebcabec2faa7cf5dcf5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2b91f6115e6165a3ed57b8d4d4132904" id="r_a2b91f6115e6165a3ed57b8d4d4132904"><td class="memItemLeft" align="right" valign="top"><a id="a2b91f6115e6165a3ed57b8d4d4132904" name="a2b91f6115e6165a3ed57b8d4d4132904"></a>
 uint_fast32_t&#160;</td><td class="memItemRight" valign="bottom"><b>migrate</b> (uint_fast32_t loc, int_fast32_t year, URBG &amp;)</td></tr>
 <tr class="memdesc:a2b91f6115e6165a3ed57b8d4d4132904"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate random number for new location. <br /></td></tr>
@@ -152,10 +144,14 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>is_male</b> () const 
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:af55e04b9a05be10729496e75259cbc0f" id="r_af55e04b9a05be10729496e75259cbc0f"><td class="memItemLeft" align="right" valign="top"><a id="af55e04b9a05be10729496e75259cbc0f" name="af55e04b9a05be10729496e75259cbc0f"></a>
-static std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>names</b> ()</td></tr>
-<tr class="memdesc:af55e04b9a05be10729496e75259cbc0f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Column names for <a class="el" href="#a4bcff6598aada476e113c8edf9d1e061" title="Write all the data members in TSV.">write()</a> <br /></td></tr>
-<tr class="separator:af55e04b9a05be10729496e75259cbc0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aab5f463f7cdf8bd63252bfaf486ace02" id="r_aab5f463f7cdf8bd63252bfaf486ace02"><td class="memItemLeft" align="right" valign="top"><a id="aab5f463f7cdf8bd63252bfaf486ace02" name="aab5f463f7cdf8bd63252bfaf486ace02"></a>
+static std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>write_trace_back_header</b> (std::ostream &amp;)</td></tr>
+<tr class="memdesc:aab5f463f7cdf8bd63252bfaf486ace02"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write column names for <a class="el" href="#affe57b47f63fc67870d9541792106e6c" title="Write ancestors recursively.">trace_back()</a> <br /></td></tr>
+<tr class="separator:aab5f463f7cdf8bd63252bfaf486ace02"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a136b1eeaac0e9cd1effd9e04c6b54051" id="r_a136b1eeaac0e9cd1effd9e04c6b54051"><td class="memItemLeft" align="right" valign="top"><a id="a136b1eeaac0e9cd1effd9e04c6b54051" name="a136b1eeaac0e9cd1effd9e04c6b54051"></a>
+static std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>write_names</b> (std::ostream &amp;)</td></tr>
+<tr class="memdesc:a136b1eeaac0e9cd1effd9e04c6b54051"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write column names for <a class="el" href="#a4bcff6598aada476e113c8edf9d1e061" title="Write all the data members in TSV.">write()</a> <br /></td></tr>
+<tr class="separator:a136b1eeaac0e9cd1effd9e04c6b54051"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa67f3c2428548f1cf72dd526775a6df0" id="r_aa67f3c2428548f1cf72dd526775a6df0"><td class="memItemLeft" align="right" valign="top"><a id="aa67f3c2428548f1cf72dd526775a6df0" name="aa67f3c2428548f1cf72dd526775a6df0"></a>
 static void&#160;</td><td class="memItemRight" valign="bottom"><b>set_dependent_static</b> (const uint_fast32_t years)</td></tr>
 <tr class="memdesc:aa67f3c2428548f1cf72dd526775a6df0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set static variables that depend on others. <br /></td></tr>
@@ -168,14 +164,6 @@ static bool&#160;</td><td class="memItemRight" valign="bottom"><b>is_ready</b> (
 static double&#160;</td><td class="memItemRight" valign="bottom"><b>death_rate</b> (const int_fast32_t <a class="el" href="#a6ae080ef15f556f6cc838a55b45687b5">age</a>, const int_fast32_t year)</td></tr>
 <tr class="memdesc:aa14cfe458ca4997cf1b21a0ef3e0c58a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finite death rate per year. <br /></td></tr>
 <tr class="separator:aa14cfe458ca4997cf1b21a0ef3e0c58a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2027986aec2a231c6d1fe1f057236f4d" id="r_a2027986aec2a231c6d1fe1f057236f4d"><td class="memItemLeft" align="right" valign="top"><a id="a2027986aec2a231c6d1fe1f057236f4d" name="a2027986aec2a231c6d1fe1f057236f4d"></a>
-static void&#160;</td><td class="memItemRight" valign="bottom"><b>param</b> (const <a class="el" href="#ac5a8e30996e2c471ae9d5b7fe015a89f">param_type</a> &amp;p)</td></tr>
-<tr class="memdesc:a2027986aec2a231c6d1fe1f057236f4d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set <a class="el" href="#aaaf19c3ed185730df8ba1b275ba419a5" title="Parameters shared among instances (command-line)">PARAM_</a>. <br /></td></tr>
-<tr class="separator:a2027986aec2a231c6d1fe1f057236f4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9cc8048cb3dba4217cddb417c7c07f20" id="r_a9cc8048cb3dba4217cddb417c7c07f20"><td class="memItemLeft" align="right" valign="top"><a id="a9cc8048cb3dba4217cddb417c7c07f20" name="a9cc8048cb3dba4217cddb417c7c07f20"></a>
-static const <a class="el" href="#ac5a8e30996e2c471ae9d5b7fe015a89f">param_type</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>param</b> ()</td></tr>
-<tr class="memdesc:a9cc8048cb3dba4217cddb417c7c07f20"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get <a class="el" href="#aaaf19c3ed185730df8ba1b275ba419a5" title="Parameters shared among instances (command-line)">PARAM_</a>. <br /></td></tr>
-<tr class="separator:a9cc8048cb3dba4217cddb417c7c07f20"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-attribs" name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
@@ -224,10 +212,6 @@ const bool&#160;</td><td class="memItemRight" valign="bottom"><b>is_male_</b></t
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-static-attribs" name="pri-static-attribs"></a>
 Static Private Attributes</h2></td></tr>
-<tr class="memitem:aaaf19c3ed185730df8ba1b275ba419a5" id="r_aaaf19c3ed185730df8ba1b275ba419a5"><td class="memItemLeft" align="right" valign="top"><a id="aaaf19c3ed185730df8ba1b275ba419a5" name="aaaf19c3ed185730df8ba1b275ba419a5"></a>
-static <a class="el" href="#ac5a8e30996e2c471ae9d5b7fe015a89f">param_type</a>&#160;</td><td class="memItemRight" valign="bottom"><b>PARAM_</b></td></tr>
-<tr class="memdesc:aaaf19c3ed185730df8ba1b275ba419a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parameters shared among instances (command-line) <br /></td></tr>
-<tr class="separator:aaaf19c3ed185730df8ba1b275ba419a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa19851e62635467307c6ad1311aa0247" id="r_aa19851e62635467307c6ad1311aa0247"><td class="memItemLeft" align="right" valign="top"><a id="aa19851e62635467307c6ad1311aa0247" name="aa19851e62635467307c6ad1311aa0247"></a>
 static std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>NATURAL_MORTALITY_</b></td></tr>
 <tr class="memdesc:aa19851e62635467307c6ad1311aa0247"><td class="mdescLeft">&#160;</td><td class="mdescRight">Instantaneous natural mortality per year: \( M \). <br /></td></tr>

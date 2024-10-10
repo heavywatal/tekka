@@ -90,10 +90,10 @@ $(function(){ initResizable(false); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:aba89c019a8c55ef487b0f43f5413be2f" id="r_aba89c019a8c55ef487b0f43f5413be2f"><td class="memItemLeft" align="right" valign="top"><a id="aba89c019a8c55ef487b0f43f5413be2f" name="aba89c019a8c55ef487b0f43f5413be2f"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Population</b> (const size_t initial_size, std::random_device::result_type seed)</td></tr>
-<tr class="memdesc:aba89c019a8c55ef487b0f43f5413be2f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor. <br /></td></tr>
-<tr class="separator:aba89c019a8c55ef487b0f43f5413be2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8fa5e228336a46c1fca44ac731aa8210" id="r_a8fa5e228336a46c1fca44ac731aa8210"><td class="memItemLeft" align="right" valign="top"><a id="a8fa5e228336a46c1fca44ac731aa8210" name="a8fa5e228336a46c1fca44ac731aa8210"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Population</b> (const size_t initial_size, std::random_device::result_type seed, const double carrying_capacity=1e3, const double recruitment_coef=2.0, const double negative_binom_k=-1.0)</td></tr>
+<tr class="memdesc:a8fa5e228336a46c1fca44ac731aa8210"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor. <br /></td></tr>
+<tr class="separator:a8fa5e228336a46c1fca44ac731aa8210"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac11d0e1ff8862e502dad97255396756e" id="r_ac11d0e1ff8862e502dad97255396756e"><td class="memItemLeft" align="right" valign="top"><a id="ac11d0e1ff8862e502dad97255396756e" name="ac11d0e1ff8862e502dad97255396756e"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>run</b> (const int_fast32_t simulating_duration, const std::vector&lt; size_t &gt; &amp;sample_size_adult={1u, 1u}, const std::vector&lt; size_t &gt; &amp;sample_size_juvenile={1u, 1u}, const int_fast32_t recording_duration=1)</td></tr>
 <tr class="memdesc:ac11d0e1ff8862e502dad97255396756e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Main iteration. <br /></td></tr>
@@ -162,14 +162,23 @@ std::vector&lt; std::map&lt; int_fast32_t, std::vector&lt; std::shared_ptr&lt; <
 std::map&lt; std::pair&lt; int_fast32_t, int_fast32_t &gt;, std::vector&lt; std::vector&lt; uint_fast32_t &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>demography_</b></td></tr>
 <tr class="memdesc:ab1246141d73cc4ed64f45b3ca8f9ecb2"><td class="mdescLeft">&#160;</td><td class="mdescRight">(year, season) =&gt; [[count for each age] for each location] <br /></td></tr>
 <tr class="separator:ab1246141d73cc4ed64f45b3ca8f9ecb2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa2c5067e2d4860504e1c1f87c5b4908f" id="r_aa2c5067e2d4860504e1c1f87c5b4908f"><td class="memItemLeft" align="right" valign="top"><a id="aa2c5067e2d4860504e1c1f87c5b4908f" name="aa2c5067e2d4860504e1c1f87c5b4908f"></a>
-int_fast32_t&#160;</td><td class="memItemRight" valign="bottom"><b>year_</b> = 0</td></tr>
-<tr class="memdesc:aa2c5067e2d4860504e1c1f87c5b4908f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current time. <br /></td></tr>
+<tr class="memitem:aa2c5067e2d4860504e1c1f87c5b4908f" id="r_aa2c5067e2d4860504e1c1f87c5b4908f"><td class="memItemLeft" align="right" valign="top">int_fast32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa2c5067e2d4860504e1c1f87c5b4908f">year_</a> = 0</td></tr>
 <tr class="separator:aa2c5067e2d4860504e1c1f87c5b4908f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3eeccb575c5fe9115dc3ec03cb970ccb" id="r_a3eeccb575c5fe9115dc3ec03cb970ccb"><td class="memItemLeft" align="right" valign="top"><a id="a3eeccb575c5fe9115dc3ec03cb970ccb" name="a3eeccb575c5fe9115dc3ec03cb970ccb"></a>
 std::unique_ptr&lt; URBG &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>engine_</b></td></tr>
 <tr class="memdesc:a3eeccb575c5fe9115dc3ec03cb970ccb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Uniform Random Bit Generator. <br /></td></tr>
 <tr class="separator:a3eeccb575c5fe9115dc3ec03cb970ccb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader"></div></td></tr>
+<tr class="memitem:gaa50c36997d9df3e12f976fb48ea7e5d0" id="r_gaa50c36997d9df3e12f976fb48ea7e5d0"><td class="memItemLeft" align="right" valign="top">
+const double&#160;</td><td class="memItemRight" valign="bottom"><b>carrying_capacity_</b></td></tr>
+<tr class="memdesc:gaa50c36997d9df3e12f976fb48ea7e5d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">\(K\): carrying capacity used in <a class="el" href="#a06875166f8643742c374805c13375f93" title="give birth to children">reproduce()</a> <br /></td></tr>
+<tr class="separator:gaa50c36997d9df3e12f976fb48ea7e5d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga21ab4341abe444f098d420cc5d57eb27" id="r_ga21ab4341abe444f098d420cc5d57eb27"><td class="memItemLeft" align="right" valign="top">
+const double&#160;</td><td class="memItemRight" valign="bottom"><b>recruitment_coef_</b></td></tr>
+<tr class="memdesc:ga21ab4341abe444f098d420cc5d57eb27"><td class="mdescLeft">&#160;</td><td class="mdescRight">\(r\): coefficient used in <a class="el" href="#a06875166f8643742c374805c13375f93" title="give birth to children">reproduce()</a> <br /></td></tr>
+<tr class="separator:ga21ab4341abe444f098d420cc5d57eb27"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga5f7f3361fa3318f902af0cd896cd5395" id="r_ga5f7f3361fa3318f902af0cd896cd5395"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__params.html#ga5f7f3361fa3318f902af0cd896cd5395">k_nbinom_</a></td></tr>
+<tr class="separator:ga5f7f3361fa3318f902af0cd896cd5395"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="friends" name="friends"></a>
 Friends</h2></td></tr>
@@ -207,7 +216,7 @@ std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operato
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Append new individuals to <a class="el" href="#aad658866beeafed077d224b27a54bb0c">juveniles_subpops_</a> at <code>location</code>. The expected number of children for each adult is proportional to its weight. All the mothers are evaluated for <a class="el" href="classpbf_1_1_individual.html#a48e4a6388c545ebcabec2faa7cf5dcf5" title="Generate random number for reproduction.">Individual::recruitment()</a>, whereas fathers are stochastically selected. </p>
+<p>Append new individuals to <a class="el" href="#aad658866beeafed077d224b27a54bb0c">juveniles_subpops_</a> at <code>location</code>. The expected number of children for each adult is proportional to its weight. All the females are evaluated for recruitment, whereas males are stochastically chosen. </p>
 
 </div>
 </div>
@@ -250,6 +259,29 @@ std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operato
 </table>
 </div><div class="memdoc">
 <p>First-year individuals separated for <a class="el" href="#ae9604f211cb222f64098dfcab8934249" title="Sample individuals.">sample()</a>. Note that it becomes empty in <a class="el" href="#a9488ca17eefb54af69ebfd43c2103d6f" title="Evaluate migration. Individuals in juveniles_subpops_ moves to subpopulations_.">migrate()</a>. </p>
+
+</div>
+</div>
+<a id="aa2c5067e2d4860504e1c1f87c5b4908f" name="aa2c5067e2d4860504e1c1f87c5b4908f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa2c5067e2d4860504e1c1f87c5b4908f">&#9670;&#160;</a></span>year_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int_fast32_t pbf::Population::year_ = 0</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Current time. </p>
 
 </div>
 </div>
