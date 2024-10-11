@@ -7,6 +7,8 @@
 #include <wtl/random.hpp>
 #include <wtl/debug.hpp>
 
+#include <algorithm>
+
 namespace pbf {
 
 Population::Population(const size_t initial_size, std::random_device::result_type seed,
