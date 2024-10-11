@@ -73,7 +73,7 @@ rnbinom(double k, double mu, URBG& engine) {
 } // anonymous namespace
 
 void Population::reproduce() {
-    const auto num_breeding_places = static_cast<uint_fast32_t>(juveniles_subpops_.size());
+    const auto num_breeding_places = juveniles_subpops_.size();
     juveniles_demography_.assign(4u, std::vector<uint_fast32_t>(num_breeding_places));
     size_t popsize = 0;
     for (uint_fast32_t loc=0u; loc<num_breeding_places; ++loc) {
@@ -85,8 +85,9 @@ void Population::reproduce() {
 }
 
 void Population::reproduce(const uint_fast32_t location, const size_t popsize) {
-    const double rec_rate = recruitment_coef_ * (1.0 - popsize / carrying_capacity_);
-    if (rec_rate <= 0.0) return;
+    const auto N = static_cast<double>(popsize);
+    if (N > carrying_capacity_) return;
+    const double rec_rate = recruitment_coef_ * (1.0 - N / carrying_capacity_);
     const auto& adults = subpopulations_[location];
     auto& juveniles = juveniles_subpops_[location];
     double female_biomass = 0.0;

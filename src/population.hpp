@@ -81,11 +81,11 @@ class Population {
     //! Note that it becomes empty in #migrate().
     std::vector<std::vector<std::shared_ptr<Individual>>> juveniles_subpops_;
     //! Counts of juveniles of the year: [[number for each location] for each season]
-    std::vector<std::vector<uint_fast32_t>> juveniles_demography_;
+    std::vector<std::vector<uint_fast32_t>> juveniles_demography_ = {};
     //! Samples: [{capture_year => individuals} for each location]
-    std::vector<std::map<int_fast32_t, std::vector<std::shared_ptr<Individual>>>> loc_year_samples_;
+    std::vector<std::map<int_fast32_t, std::vector<std::shared_ptr<Individual>>>> loc_year_samples_ = {};
     //! (year, season) => [[count for each age] for each location]
-    std::map<std::pair<int_fast32_t, int_fast32_t>, std::vector<std::vector<uint_fast32_t>>> demography_;
+    std::map<std::pair<int_fast32_t, int_fast32_t>, std::vector<std::vector<uint_fast32_t>>> demography_ = {};
 
     //! @ingroup params
     //!@{

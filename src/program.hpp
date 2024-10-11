@@ -36,11 +36,11 @@ class Program {
 
   private:
     //! Command-line arguments
-    std::vector<std::string> command_args_;
+    std::vector<std::string> command_args_ = {};
     //! Written to "config.json"
     std::string config_ = "";
     //! Population instance
-    std::unique_ptr<Population> population_;
+    std::unique_ptr<Population> population_ = nullptr;
 };
 
 } // namespace pbf

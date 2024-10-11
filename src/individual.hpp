@@ -36,16 +36,16 @@ class IndividualJson {
     //!@{
 
     //! Array of \f$M\f$ for quarter age: instantaneous mortality due to natural causes
-    std::vector<double> natural_mortality;
+    std::vector<double> natural_mortality = {};
     //! Array of \f$F\f$ for quarter age: instantaneous mortality due to fishing activities
-    std::vector<double> fishing_mortality;
+    std::vector<double> fishing_mortality = {};
     //! Array of \f$e\f$ by year: coefficient of fishing mortality.
     //! The last part is used for the last years if its length differs from `--years` option.
-    std::vector<double> fishing_coef;
+    std::vector<double> fishing_coef = {};
     //! Weight in kg for quarter age
-    std::vector<double> weight_for_age;
+    std::vector<double> weight_for_age = {};
     //! Transition matrix for migration
-    std::vector<RowMatrix> migration_matrices;
+    std::vector<RowMatrix> migration_matrices = {};
     //!@}
 };
 
