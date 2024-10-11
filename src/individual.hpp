@@ -12,8 +12,6 @@
 #include <memory>
 #include <vector>
 #include <unordered_map>
-#include <functional>
-#include <limits>
 
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////
 
@@ -102,7 +100,7 @@ class Individual {
           && NATURAL_MORTALITY_.size() >= MAX_AGE
           && FISHING_MORTALITY_.size() >= MAX_AGE
           && WEIGHT_FOR_AGE_.size() >= MAX_AGE
-          && MIGRATION_DISTRIBUTIONS_.size() >= MAX_AGE
+          && MIGRATION_DESTINATION_.size() >= MAX_AGE
         );
     }
     //! Finite death rate per year
@@ -127,7 +125,9 @@ class Individual {
     //!@}
 
   private:
-    //! Prepare #MIGRATION_DISTRIBUTIONS_
+    //! Alias for readability
+    using PairDestDist=std::pair<int_fast32_t, std::discrete_distribution<uint_fast32_t>>;
+    //! Prepare #MIGRATION_DESTINATION_
     static void set_static_migration();
     //! Prepare #NATURAL_MORTALITY_ and #FISHING_MORTALITY_
     static void set_static_mortality();
@@ -142,7 +142,7 @@ class Individual {
     //! year version of #IndividualJson::weight_for_age
     static inline std::vector<double> WEIGHT_FOR_AGE_;
     //! Discrete distributions for migration
-    static inline std::vector<std::vector<std::function<uint_fast32_t(URBG&)>>> MIGRATION_DISTRIBUTIONS_;
+    static inline std::vector<std::vector<PairDestDist>> MIGRATION_DESTINATION_;
 
     //! Pointer to father
     const std::shared_ptr<Individual> father_ = nullptr;

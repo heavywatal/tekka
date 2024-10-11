@@ -27,20 +27,16 @@ void elongate(std::vector<T>* v, size_t n) noexcept {
     }
 }
 
-inline std::function<uint_fast32_t(URBG&)> make_dist(const std::vector<double>& v) {
-    uint_fast32_t idx = 0u;
-    unsigned num_positive = 0u;
+inline int_fast32_t get_dest(const std::vector<double>& v) {
+    int_fast32_t idx = 0;
+    uint_fast32_t num_positive = 0u;
     for (uint_fast32_t i=0u; i<v.size(); ++i) {
         if (v[i] > 0.0) {
             ++num_positive;
             idx = i;
         }
     }
-    if (num_positive == 1u) {
-        return [idx](URBG&){return idx;};
-    } else {
-        return std::discrete_distribution<uint_fast32_t>(v.begin(), v.end());
-    }
+    return num_positive == 1u ? idx : -1;
 }
 
 inline uint_fast32_t sub_sat(const uint_fast32_t x, const uint_fast32_t y) {
@@ -50,7 +46,8 @@ inline uint_fast32_t sub_sat(const uint_fast32_t x, const uint_fast32_t y) {
 } // anonymous namespace
 
 uint_fast32_t Individual::migrate(const uint_fast32_t loc, const int_fast32_t year, URBG& engine) {
-    return MIGRATION_DISTRIBUTIONS_[age(year)][loc](engine);
+    auto& p = MIGRATION_DESTINATION_[age(year)][loc];
+    return p.first < 0 ? p.second(engine) : static_cast<uint_fast32_t>(p.first);
 }
 
 void Individual::trace_back(std::ostream& ost, std::unordered_map<const Individual*, uint_fast32_t>* ids,
@@ -97,17 +94,18 @@ std::ostream& operator<<(std::ostream& ost, const Individual& x) {
 }
 
 void Individual::set_static_migration() {
-    MIGRATION_DISTRIBUTIONS_.clear();
-    MIGRATION_DISTRIBUTIONS_.reserve(MAX_AGE);
+    using dist_t = PairDestDist::second_type;
+    MIGRATION_DESTINATION_.clear();
+    MIGRATION_DESTINATION_.reserve(MAX_AGE);
     for (const auto& matrix: JSON.migration_matrices) {
-        decltype(MIGRATION_DISTRIBUTIONS_)::value_type distributions;
-        distributions.reserve(matrix.size());
+        std::vector<PairDestDist> pairs;
+        pairs.reserve(matrix.size());
         for (const auto& row: matrix) {
-            distributions.emplace_back(make_dist(row));
+            pairs.emplace_back(get_dest(row), dist_t(row.begin(), row.end()));
         }
-        MIGRATION_DISTRIBUTIONS_.emplace_back(std::move(distributions));
+        MIGRATION_DESTINATION_.emplace_back(std::move(pairs));
     }
-    elongate(&MIGRATION_DISTRIBUTIONS_, MAX_AGE);
+    elongate(&MIGRATION_DESTINATION_, MAX_AGE);
 }
 
 void Individual::set_static_mortality() {
