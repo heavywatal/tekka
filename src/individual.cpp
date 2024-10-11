@@ -46,8 +46,8 @@ inline uint_fast32_t sub_sat(const uint_fast32_t x, const uint_fast32_t y) {
 } // anonymous namespace
 
 uint_fast32_t Individual::migrate(const uint_fast32_t loc, const int_fast32_t year, URBG& engine) {
-    auto& p = MIGRATION_DESTINATION_[age(year)][loc];
-    return p.first < 0 ? p.second(engine) : static_cast<uint_fast32_t>(p.first);
+    auto& [dest, dist] = MIGRATION_DESTINATION_[age(year)][loc];
+    return dest < 0 ? dist(engine) : static_cast<uint_fast32_t>(dest);
 }
 
 void Individual::trace_back(std::ostream& ost, std::unordered_map<const Individual*, uint_fast32_t>* ids,

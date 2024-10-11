@@ -193,16 +193,16 @@ std::ostream& Population::write_sample_family(std::ostream& ost) const {
     std::unordered_map<const Individual*, uint_fast32_t> ids;
     ids.emplace(nullptr, 0u);
     for (uint_fast32_t loc=0u; loc<loc_year_samples_.size(); ++loc) {
-        for (const auto& ys: loc_year_samples_.at(loc)) {
-            for (const auto& p: ys.second) {
+        for (const auto& [_year, samples]: loc_year_samples_.at(loc)) {
+            for (const auto& p: samples) {
                 ids.emplace(p.get(), static_cast<uint_fast32_t>(ids.size()));
             }
         }
     }
     for (uint_fast32_t loc=0u; loc<loc_year_samples_.size(); ++loc) {
-        for (const auto& ys: loc_year_samples_.at(loc)) {
-            for (const auto& p: ys.second) {
-                p->trace_back(ost, &ids, loc, ys.first);
+        for (const auto& [year, samples]: loc_year_samples_.at(loc)) {
+            for (const auto& p: samples) {
+                p->trace_back(ost, &ids, loc, year);
             }
         }
     }
@@ -236,13 +236,13 @@ void Population::append_demography(const int_fast32_t season) {
 
 std::ostream& Population::write_demography(std::ostream& ost) const {
     ost << "year\tseason\tlocation\tage\tcount\n";
-    for (const auto& time_structure: demography_) {
-        const auto time = time_structure.first;
+    for (const auto& [time, values]: demography_) {
+        const auto [year, season] = time;
         for (uint_fast32_t loc=0; loc<num_subpops(); ++loc) {
-            const auto structure = time_structure.second[loc];
+            const auto& structure = values[loc];
             for (uint_fast32_t age=0u; age<structure.size(); ++age) {
                 if (structure[age] == 0u) continue;
-                ost << time.first << "\t" << time.second << "\t"
+                ost << year << "\t" << season << "\t"
                     << loc << "\t"
                     << age << "\t"
                     << structure[age] << "\n";
