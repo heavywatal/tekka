@@ -105,26 +105,30 @@ if(BUILD_EXECUTABLE)
   )
 endif()
 
-set(VERSION_CONFIG ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake)
-include(CMakePackageConfigHelpers)
-write_basic_package_version_file(
-  ${VERSION_CONFIG} COMPATIBILITY AnyNewerVersion
-)
-
 install(TARGETS ${PROJECT_NAME}
   EXPORT ${PROJECT_NAME}-config
-  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )
 install(DIRECTORY src/
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
-  FILES_MATCHING PATTERN "*.hpp")
-install(EXPORT ${PROJECT_NAME}-config
+  FILES_MATCHING PATTERN "*.hpp"
+)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/util/parameters.json
   DESTINATION ${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}
+)
+
+set(config_destination ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
+install(EXPORT ${PROJECT_NAME}-config
+  DESTINATION ${config_destination}
   NAMESPACE ${PROJECT_NAME}::
 )
-install(FILES ${VERSION_CONFIG} ${CMAKE_CURRENT_SOURCE_DIR}/util/parameters.json
-  DESTINATION ${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}
+
+set(version_file ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake)
+include(CMakePackageConfigHelpers)
+write_basic_package_version_file(${version_file}
+  COMPATIBILITY AnyNewerVersion
+)
+install(FILES ${version_file}
+  DESTINATION ${config_destination}
 )
 
 include(CTest)
