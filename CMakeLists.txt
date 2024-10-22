@@ -58,9 +58,8 @@ function(find_package_or_fetch package tag repo)
   cmake_print_variables(${package}_SOURCE_DIR ${package}_BINARY_DIR)
 endfunction()
 
-find_package_or_fetch(wtl v0.9.0 heavywatal/cxxwtl)
+find_package_or_fetch(wtl v0.9.1 heavywatal/cxxwtl)
 find_package_or_fetch(clippson v0.8.7 heavywatal/clippson)
-cmake_print_variables(pcg_FOUND)
 
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 add_library(${PROJECT_NAME})
@@ -73,9 +72,9 @@ target_compile_options(common INTERFACE
   $<$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},x86_64>:-march=native>
   $<$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},arm64>:-march=armv8.3-a+sha3>
 )
+target_link_libraries(common INTERFACE wtl::wtl)
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 set_target_properties(${PROJECT_NAME} PROPERTIES
-  CXX_STANDARD_REQUIRED ON
   CXX_EXTENSIONS OFF
   POSITION_INDEPENDENT_CODE ON
   WINDOWS_EXPORT_ALL_SYMBOLS ON
@@ -85,13 +84,13 @@ target_include_directories(${PROJECT_NAME} PUBLIC
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 target_link_libraries(${PROJECT_NAME}
-  PRIVATE common wtl::wtl clippson::clippson
+  PRIVATE common clippson::clippson
 )
 
 option(BUILD_EXECUTABLE "Build executable file" ON)
 if(BUILD_EXECUTABLE)
   add_executable(${PROJECT_NAME}-exe src/main.cpp)
-  target_link_libraries(${PROJECT_NAME}-exe PRIVATE ${PROJECT_NAME} common wtl::wtl)
+  target_link_libraries(${PROJECT_NAME}-exe PRIVATE ${PROJECT_NAME} common)
   find_package(ZLIB)
   if(ZLIB_FOUND)
     target_compile_definitions(${PROJECT_NAME}-exe PRIVATE ZLIB_FOUND)
