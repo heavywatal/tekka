@@ -48,8 +48,11 @@ int main(int argc, char* argv[]) {
         pbf::Program program(arguments);
         program.run();
         write(program);
-    } catch (const std::runtime_error& e) {
+    } catch (const pbf::exit_success&) {
+        return 0;
+    } catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;
+        return 1;
     }
     return 0;
 }

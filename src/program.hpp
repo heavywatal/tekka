@@ -8,10 +8,16 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include <stdexcept>
 
 namespace pbf {
 
 class Population;
+
+class exit_success: public std::logic_error {
+  public:
+    exit_success() noexcept: std::logic_error("") {}
+};
 
 /*! @brief Program class
 */

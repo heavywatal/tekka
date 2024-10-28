@@ -22,10 +22,10 @@ nlohmann::json VM;
 //! Options description for general purpose
 inline clipp::group general_options(nlohmann::json* vm) {
     return (
-      wtl::option(vm, {"h", "help"}, false, "Print this help"),
-      wtl::option(vm, {"version"}, false, "Print version"),
-      wtl::option(vm, {"v", "verbose"}, false, "Verbose output"),
-      wtl::option(vm, {"default"}, false, "Print default parameters in json")
+      clippson::option(vm, {"h", "help"}, false, "Print this help"),
+      clippson::option(vm, {"version"}, false, "Print version"),
+      clippson::option(vm, {"v", "verbose"}, false, "Verbose output"),
+      clippson::option(vm, {"default"}, false, "Print default parameters in json")
     ).doc("General:");
 }
 
@@ -46,14 +46,14 @@ inline clipp::group program_options(nlohmann::json* vm) {
     const std::string OUT_DIR = wtl::strftime("thunnus_%Y%m%d_%H%M%S");
     const int seed = static_cast<int>(std::random_device{}()); // 32-bit signed integer for R
     return (
-      wtl::option(vm, {"O", "origin"}, 0.2, "Initial population size relative to K"),
-      wtl::option(vm, {"y", "years"}, 100, "Duration of simulation"),
-      wtl::option(vm, {"l", "last"}, 3, "Sample last _ years"),
-      wtl::option(vm, {"sa", "sample_size_adult"}, std::vector<size_t>{10u, 10u}, "per location"),
-      wtl::option(vm, {"sj", "sample_size_juvenile"}, std::vector<size_t>{10u, 10u}, "per location"),
-      wtl::option(vm, {"i", "infile"}, std::string(""), "config file in json format"),
-      wtl::option(vm, {"o", "outdir"}, OUT_DIR),
-      wtl::option(vm, {"seed"}, seed)
+      clippson::option(vm, {"O", "origin"}, 0.2, "Initial population size relative to K"),
+      clippson::option(vm, {"y", "years"}, 100, "Duration of simulation"),
+      clippson::option(vm, {"l", "last"}, 3, "Sample last _ years"),
+      clippson::option(vm, {"sa", "sample_size_adult"}, std::vector<size_t>{10u, 10u}, "per location"),
+      clippson::option(vm, {"sj", "sample_size_juvenile"}, std::vector<size_t>{10u, 10u}, "per location"),
+      clippson::option(vm, {"i", "infile"}, std::string(""), "config file in json format"),
+      clippson::option(vm, {"o", "outdir"}, OUT_DIR),
+      clippson::option(vm, {"seed"}, seed)
     ).doc("Program:");
 }
 
@@ -68,9 +68,9 @@ inline clipp::group program_options(nlohmann::json* vm) {
 */
 inline clipp::group reproduction_options(nlohmann::json* vm) {
     return (
-      wtl::option(vm, {"r", "recruitment"}, 2.0),
-      wtl::option(vm, {"K", "carrying_capacity"}, 1e3),
-      wtl::option(vm, {"k", "overdispersion"}, -1.0,
+      clippson::option(vm, {"r", "recruitment"}, 2.0),
+      clippson::option(vm, {"K", "carrying_capacity"}, 1e3),
+      clippson::option(vm, {"k", "overdispersion"}, -1.0,
         "k ∈ (0, ∞); equivalent to Poisson when k→∞ (or k<0 for convience)"
       )
     ).doc("Reproduction:");
@@ -89,20 +89,20 @@ Program::Program(const std::vector<std::string>& arguments)
       program_options(&VM),
       reproduction_options(&VM)
     );
-    wtl::parse(cli, arguments);
+    clippson::parse(cli, arguments);
     if (vm_local.at("help")) {
-        auto fmt = wtl::doc_format();
+        auto fmt = clippson::doc_format();
         std::cout << "Usage: " << PROJECT_NAME << " [options]\n\n";
         std::cout << clipp::documentation(cli, fmt) << "\n";
-        std::exit(EXIT_SUCCESS);
+        throw exit_success();
     }
     if (vm_local.at("version")) {
         std::cout << PROJECT_VERSION << "\n";
-        std::exit(EXIT_SUCCESS);
+        throw exit_success();
     }
     if (vm_local.at("default")) {
         Individual::JSON.write(std::cout);
-        std::exit(EXIT_SUCCESS);
+        throw exit_success();
     }
     const std::string infile = VM.at("infile");
     if (!infile.empty()) {
