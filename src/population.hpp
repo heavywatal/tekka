@@ -28,7 +28,7 @@ class Population {
                const double carrying_capacity = 1e3,
                const double recruitment_coef = 2.0,
                const double negative_binom_k = -1.0);
-    ~Population() = default;
+    ~Population();
 
     //! Main iteration
     void run(const int_fast32_t simulating_duration,

@@ -27,6 +27,8 @@ Population::Population(const size_t initial_size, std::random_device::result_typ
     }
 }
 
+Population::~Population() = default;
+
 void Population::run(const int_fast32_t simulating_duration,
                      const std::vector<size_t>& sample_size_adult,
                      const std::vector<size_t>& sample_size_juvenile,
