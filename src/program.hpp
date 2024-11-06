@@ -30,17 +30,8 @@ class Program {
     ~Program() = default;
     //! Top level function that should be called once from global main.
     void run();
-
-    //! @name Getter for `main()`.
-    //!@{
-
-    //! Get reference to #population_.
-    const Population& population() const noexcept {return *population_;}
-    //! Get reference to #config_.
-    const std::string& config() const noexcept {return config_;}
-    //! Get `VM["outdir"]`.
-    std::string outdir() const;
-    //!@}
+    //! Output results to files
+    void write() const;
 
   private:
     //! Command-line arguments

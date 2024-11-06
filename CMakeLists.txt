@@ -61,7 +61,7 @@ add_subdirectory(src)
 
 find_package(ZLIB)
 if(ZLIB_FOUND)
-  target_compile_definitions(${PROJECT_NAME} PUBLIC ZLIB_FOUND)
+  target_compile_definitions(${PROJECT_NAME} PRIVATE ZLIB_FOUND)
   target_link_libraries(${PROJECT_NAME} PUBLIC ZLIB::ZLIB)
 endif()
 
@@ -77,8 +77,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 target_link_libraries(${PROJECT_NAME}
-  PUBLIC wtl::wtl
-  PRIVATE clippson::clippson
+  PRIVATE wtl::wtl clippson::clippson
 )
 
 add_executable(${PROJECT_NAME}-exe src/main.cpp)
@@ -87,7 +86,6 @@ set_target_properties(${PROJECT_NAME}-exe PROPERTIES
   OUTPUT_NAME ${PROJECT_NAME}
 )
 install(TARGETS ${PROJECT_NAME}-exe
-  ${PROJECT_NAME} # temporary workaround for old tekkamaki
   EXPORT ${PROJECT_NAME}-config
 )
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/util/parameters.json

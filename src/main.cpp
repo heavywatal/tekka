@@ -4,42 +4,8 @@
 #include "program.hpp"
 #include "population.hpp"
 
-#ifdef ZLIB_FOUND
-  #include <wtl/zlib.hpp>
-#endif
-
-#include <filesystem>
 #include <iostream>
-#include <fstream>
 #include <stdexcept>
-
-//! Output results to files
-void write(const pbf::Program& program) {
-    namespace fs = std::filesystem;
-  #ifdef ZLIB_FOUND
-    using ofstream = wtl::zlib::ofstream;
-    const std::string ext = ".tsv.gz";
-  #else
-    using ofstream = std::ofstream;
-    const std::string ext = ".tsv";
-  #endif
-    const auto& population = program.population();
-    const auto outdir = fs::path(program.outdir());
-    if (!outdir.empty()) {
-        fs::create_directory(outdir);
-        std::ofstream{outdir / "config.json"} << program.config();
-        {
-            ofstream ost{outdir / ("sample_family" + ext)};
-            population.write_sample_family(ost);
-        }
-        {
-            ofstream ost{outdir / ("demography" + ext)};
-            population.write_demography(ost);
-        }
-    } else {
-        population.write_demography(std::cout);
-    }
-}
 
 //! Just instantiate and run Program
 int main(int argc, char* argv[]) {
@@ -47,7 +13,7 @@ int main(int argc, char* argv[]) {
     try {
         pbf::Program program(arguments);
         program.run();
-        write(program);
+        program.write();
     } catch (const pbf::exit_success&) {
         return 0;
     } catch (const std::exception& e) {
