@@ -3,7 +3,7 @@ project(tekka
   VERSION 0.7.5
   LANGUAGES CXX)
 
-cmake_policy(SET CMP0169 OLD)  # 3.28
+cmake_policy(SET CMP0169 OLD) # 3.28
 set(CMAKE_VERBOSE_MAKEFILE ON)
 include(CMakePrintHelpers)
 include(FetchContent)
@@ -15,13 +15,6 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 cmake_print_variables(CMAKE_BUILD_TYPE)
 set(CMAKE_CXX_FLAGS_DEV "-O2 -g")
-
-set(CMAKE_MODULE_PATH "$ENV{HOME}/.cmake/packages")
-include(WarningFlagsCXX OPTIONAL)
-
-set(CMAKE_INSTALL_NAME_DIR ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR})
-set(CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR})
-set(CMAKE_INSTALL_RPATH_USE_LINK_PATH ON)
 
 function(import_env variable)
   if(DEFINED ENV{${variable}})
@@ -62,55 +55,40 @@ endfunction()
 find_package_or_fetch(wtl v0.9.1 heavywatal/cxxwtl)
 find_package_or_fetch(clippson v0.8.8 heavywatal/clippson)
 
-option(BUILD_SHARED_LIBS "Build shared libraries" ON)
-add_library(${PROJECT_NAME})
+add_library(${PROJECT_NAME} STATIC)
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 add_subdirectory(src)
 
-add_library(common INTERFACE)
-target_compile_options(common INTERFACE
+find_package(ZLIB)
+if(ZLIB_FOUND)
+  target_compile_definitions(${PROJECT_NAME} PUBLIC ZLIB_FOUND)
+  target_link_libraries(${PROJECT_NAME} PUBLIC ZLIB::ZLIB)
+endif()
+
+target_compile_options(${PROJECT_NAME} INTERFACE
   -Wall -Wextra -pedantic
   $<$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},x86_64>:-march=native>
   $<$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},arm64>:-march=armv8.3-a+sha3>
 )
-target_link_libraries(common INTERFACE wtl::wtl)
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
-set_target_properties(${PROJECT_NAME} PROPERTIES
-  CXX_EXTENSIONS OFF
-  POSITION_INDEPENDENT_CODE ON
-  WINDOWS_EXPORT_ALL_SYMBOLS ON
-)
+set_target_properties(${PROJECT_NAME} PROPERTIES CXX_EXTENSIONS OFF)
 target_include_directories(${PROJECT_NAME} PUBLIC
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 target_link_libraries(${PROJECT_NAME}
-  PRIVATE common clippson::clippson
+  PUBLIC wtl::wtl
+  PRIVATE clippson::clippson
 )
 
-option(BUILD_EXECUTABLE "Build executable file" ON)
-if(BUILD_EXECUTABLE)
-  add_executable(${PROJECT_NAME}-exe src/main.cpp)
-  target_link_libraries(${PROJECT_NAME}-exe PRIVATE ${PROJECT_NAME} common)
-  find_package(ZLIB)
-  if(ZLIB_FOUND)
-    target_compile_definitions(${PROJECT_NAME}-exe PRIVATE ZLIB_FOUND)
-    target_link_libraries(${PROJECT_NAME}-exe PRIVATE ZLIB::ZLIB)
-  endif()
-  set_target_properties(${PROJECT_NAME}-exe PROPERTIES
-    OUTPUT_NAME ${PROJECT_NAME}
-  )
-  install(TARGETS ${PROJECT_NAME}-exe
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-  )
-endif()
-
-install(TARGETS ${PROJECT_NAME}
+add_executable(${PROJECT_NAME}-exe src/main.cpp)
+target_link_libraries(${PROJECT_NAME}-exe PRIVATE ${PROJECT_NAME})
+set_target_properties(${PROJECT_NAME}-exe PROPERTIES
+  OUTPUT_NAME ${PROJECT_NAME}
+)
+install(TARGETS ${PROJECT_NAME}-exe
+  ${PROJECT_NAME} # temporary workaround for old tekkamaki
   EXPORT ${PROJECT_NAME}-config
-)
-install(DIRECTORY src/
-  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
-  FILES_MATCHING PATTERN "*.hpp"
 )
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/util/parameters.json
   DESTINATION ${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}
