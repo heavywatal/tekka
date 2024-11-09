@@ -54,6 +54,7 @@ endfunction()
 
 find_package_or_fetch(wtl v0.9.1 heavywatal/cxxwtl)
 find_package_or_fetch(clippson v0.8.8 heavywatal/clippson)
+find_package_or_fetch(pcglite v0.1.2 heavywatal/pcglite)
 
 add_library(${PROJECT_NAME} STATIC)
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
@@ -77,6 +78,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 target_link_libraries(${PROJECT_NAME}
+  PUBLIC pcglite::pcglite
   PRIVATE wtl::wtl clippson::clippson
 )
 
