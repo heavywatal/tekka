@@ -17,6 +17,7 @@ The following libraries are optional or automatically installed:
 
 - [clippson](https://github.com/heavywatal/clippson)
 - [cxxwtl](https://github.com/heavywatal/cxxwtl)
+- [pcglite](https://github.com/heavywatal/pcglite)
 - [zlib](https://zlib.net)
 
 

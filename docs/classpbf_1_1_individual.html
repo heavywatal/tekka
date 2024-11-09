@@ -109,10 +109,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a88bca55c81220db6624bba986c28eed0" id="r_a88bca55c81220db6624bba986c28eed0"><td class="memItemLeft" align="right" valign="top"><a id="a88bca55c81220db6624bba986c28eed0" name="a88bca55c81220db6624bba986c28eed0"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>Individual</b> (const <a class="el" href="classpbf_1_1_individual.html">Individual</a> &amp;)=delete</td></tr>
 <tr class="separator:a88bca55c81220db6624bba986c28eed0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a92104448c6ca3b20b22c8f2980cb032b" id="r_a92104448c6ca3b20b22c8f2980cb032b"><td class="memItemLeft" align="right" valign="top"><a id="a92104448c6ca3b20b22c8f2980cb032b" name="a92104448c6ca3b20b22c8f2980cb032b"></a>
-double&#160;</td><td class="memItemRight" valign="bottom"><b>death_rate</b> (const int_fast32_t year) const</td></tr>
-<tr class="memdesc:a92104448c6ca3b20b22c8f2980cb032b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finite death rate per year: \( d = 1 - \exp(- M - eF) \). <br /></td></tr>
-<tr class="separator:a92104448c6ca3b20b22c8f2980cb032b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a18fdec828f90528c2200979a9aca8e0c" id="r_a18fdec828f90528c2200979a9aca8e0c"><td class="memItemLeft" align="right" valign="top"><a id="a18fdec828f90528c2200979a9aca8e0c" name="a18fdec828f90528c2200979a9aca8e0c"></a>
+double&#160;</td><td class="memItemRight" valign="bottom"><b>death_rate</b> (const int_fast32_t year, const int_fast32_t season) const</td></tr>
+<tr class="memdesc:a18fdec828f90528c2200979a9aca8e0c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finite death rate per quarter year: \( d = 1 - \exp(- M - eF) \). <br /></td></tr>
+<tr class="separator:a18fdec828f90528c2200979a9aca8e0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2b91f6115e6165a3ed57b8d4d4132904" id="r_a2b91f6115e6165a3ed57b8d4d4132904"><td class="memItemLeft" align="right" valign="top"><a id="a2b91f6115e6165a3ed57b8d4d4132904" name="a2b91f6115e6165a3ed57b8d4d4132904"></a>
 uint_fast32_t&#160;</td><td class="memItemRight" valign="bottom"><b>migrate</b> (uint_fast32_t loc, int_fast32_t year, URBG &amp;)</td></tr>
 <tr class="memdesc:a2b91f6115e6165a3ed57b8d4d4132904"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate random number for new location. <br /></td></tr>
@@ -161,10 +161,10 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><b>set_dependent_
 static bool&#160;</td><td class="memItemRight" valign="bottom"><b>is_ready</b> (const uint_fast32_t years)</td></tr>
 <tr class="memdesc:aa2de0ae92ed336933c4fb3ffc12936d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test if static variables are ready. <br /></td></tr>
 <tr class="separator:aa2de0ae92ed336933c4fb3ffc12936d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa14cfe458ca4997cf1b21a0ef3e0c58a" id="r_aa14cfe458ca4997cf1b21a0ef3e0c58a"><td class="memItemLeft" align="right" valign="top"><a id="aa14cfe458ca4997cf1b21a0ef3e0c58a" name="aa14cfe458ca4997cf1b21a0ef3e0c58a"></a>
-static double&#160;</td><td class="memItemRight" valign="bottom"><b>death_rate</b> (const int_fast32_t <a class="el" href="#a6ae080ef15f556f6cc838a55b45687b5">age</a>, const int_fast32_t year)</td></tr>
-<tr class="memdesc:aa14cfe458ca4997cf1b21a0ef3e0c58a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finite death rate per year. <br /></td></tr>
-<tr class="separator:aa14cfe458ca4997cf1b21a0ef3e0c58a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6edeb30ad5a8cac2668be65e7ef357ad" id="r_a6edeb30ad5a8cac2668be65e7ef357ad"><td class="memItemLeft" align="right" valign="top"><a id="a6edeb30ad5a8cac2668be65e7ef357ad" name="a6edeb30ad5a8cac2668be65e7ef357ad"></a>
+static double&#160;</td><td class="memItemRight" valign="bottom"><b>DEATH_RATE</b> (const int_fast32_t q_age, const int_fast32_t year)</td></tr>
+<tr class="memdesc:a6edeb30ad5a8cac2668be65e7ef357ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finite death rate per quarter year. <br /></td></tr>
+<tr class="separator:a6edeb30ad5a8cac2668be65e7ef357ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-attribs" name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
@@ -192,7 +192,7 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><b>set_static_mig
 <tr class="separator:a551571715964c2d67e7570b87bdbaa1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abab97ca4eb0dad9150e41d3a32c73e66" id="r_abab97ca4eb0dad9150e41d3a32c73e66"><td class="memItemLeft" align="right" valign="top"><a id="abab97ca4eb0dad9150e41d3a32c73e66" name="abab97ca4eb0dad9150e41d3a32c73e66"></a>
 static void&#160;</td><td class="memItemRight" valign="bottom"><b>set_static_mortality</b> ()</td></tr>
-<tr class="memdesc:abab97ca4eb0dad9150e41d3a32c73e66"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prepare <a class="el" href="#aa19851e62635467307c6ad1311aa0247" title="Instantaneous natural mortality per year: .">NATURAL_MORTALITY_</a> and <a class="el" href="#a0515093c8e476fe34a5094c330d822ed" title="Instantaneous fishing mortality per year: .">FISHING_MORTALITY_</a>. <br /></td></tr>
+<tr class="memdesc:abab97ca4eb0dad9150e41d3a32c73e66"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prepare mortality vectors. <br /></td></tr>
 <tr class="separator:abab97ca4eb0dad9150e41d3a32c73e66"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a63ccc7c46562c9734a5ed23b9809b438" id="r_a63ccc7c46562c9734a5ed23b9809b438"><td class="memItemLeft" align="right" valign="top"><a id="a63ccc7c46562c9734a5ed23b9809b438" name="a63ccc7c46562c9734a5ed23b9809b438"></a>
 static void&#160;</td><td class="memItemRight" valign="bottom"><b>set_static_weight</b> ()</td></tr>
@@ -220,14 +220,6 @@ const bool&#160;</td><td class="memItemRight" valign="bottom"><b>is_male_</b></t
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-static-attribs" name="pri-static-attribs"></a>
 Static Private Attributes</h2></td></tr>
-<tr class="memitem:aa19851e62635467307c6ad1311aa0247" id="r_aa19851e62635467307c6ad1311aa0247"><td class="memItemLeft" align="right" valign="top"><a id="aa19851e62635467307c6ad1311aa0247" name="aa19851e62635467307c6ad1311aa0247"></a>
-static std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>NATURAL_MORTALITY_</b></td></tr>
-<tr class="memdesc:aa19851e62635467307c6ad1311aa0247"><td class="mdescLeft">&#160;</td><td class="mdescRight">Instantaneous natural mortality per year: \( M \). <br /></td></tr>
-<tr class="separator:aa19851e62635467307c6ad1311aa0247"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0515093c8e476fe34a5094c330d822ed" id="r_a0515093c8e476fe34a5094c330d822ed"><td class="memItemLeft" align="right" valign="top"><a id="a0515093c8e476fe34a5094c330d822ed" name="a0515093c8e476fe34a5094c330d822ed"></a>
-static std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>FISHING_MORTALITY_</b></td></tr>
-<tr class="memdesc:a0515093c8e476fe34a5094c330d822ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Instantaneous fishing mortality per year: \( F \). <br /></td></tr>
-<tr class="separator:a0515093c8e476fe34a5094c330d822ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1db0439a988fb98aab2f79cf8252a3e9" id="r_a1db0439a988fb98aab2f79cf8252a3e9"><td class="memItemLeft" align="right" valign="top"><a id="a1db0439a988fb98aab2f79cf8252a3e9" name="a1db0439a988fb98aab2f79cf8252a3e9"></a>
 static std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>FISHING_COEF_</b></td></tr>
 <tr class="memdesc:a1db0439a988fb98aab2f79cf8252a3e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fluctuation of fishing mortality by year. <br /></td></tr>
