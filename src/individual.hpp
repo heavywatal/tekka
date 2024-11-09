@@ -66,9 +66,10 @@ class Individual {
     Individual(const Individual&) = delete;
     ~Individual() = default;
 
-    //! Finite death rate per year: \f$ d = 1 - \exp(- M - eF) \f$
-    double death_rate(const int_fast32_t year) const {
-        return death_rate(age(year), year);
+    //! Finite death rate per quarter year: \f$ d = 1 - \exp(- M - eF) \f$
+    double death_rate(const int_fast32_t year, const int_fast32_t season) const {
+        const auto q_age = 4 * age(year) + season;
+        return DEATH_RATE(q_age, year);
     }
 
     //! Generate random number for new location.
@@ -97,16 +98,17 @@ class Individual {
     static bool is_ready(const uint_fast32_t years) {
         return (
           FISHING_COEF_.size() >= years
-          && NATURAL_MORTALITY_.size() >= MAX_AGE
-          && FISHING_MORTALITY_.size() >= MAX_AGE
+          && JSON.natural_mortality.size() >= 4u * MAX_AGE
+          && JSON.fishing_mortality.size() >= 4u * MAX_AGE
           && WEIGHT_FOR_AGE_.size() >= MAX_AGE
           && MIGRATION_DESTINATION_.size() >= MAX_AGE
         );
     }
-    //! Finite death rate per year
-    static double death_rate(const int_fast32_t age, const int_fast32_t year) {
-        const auto f = FISHING_MORTALITY_[age] * FISHING_COEF_[year];
-        return 1.0 - std::exp(-NATURAL_MORTALITY_[age] - f);
+    //! Finite death rate per quarter year
+    static double DEATH_RATE(const int_fast32_t q_age, const int_fast32_t year) {
+        const auto m = JSON.natural_mortality[q_age];
+        const auto f = JSON.fishing_mortality[q_age] * FISHING_COEF_[year];
+        return 1.0 - std::exp(-m - f);
     }
 
     //! @name Getter functions
@@ -129,14 +131,10 @@ class Individual {
     using PairDestDist=std::pair<int_fast32_t, std::discrete_distribution<uint_fast32_t>>;
     //! Prepare #MIGRATION_DESTINATION_
     static void set_static_migration();
-    //! Prepare #NATURAL_MORTALITY_ and #FISHING_MORTALITY_
+    //! Prepare mortality vectors
     static void set_static_mortality();
     //! Prepare #WEIGHT_FOR_AGE_
     static void set_static_weight();
-    //! Instantaneous natural mortality per year: \f$ M \f$
-    static inline std::vector<double> NATURAL_MORTALITY_;
-    //! Instantaneous fishing mortality per year: \f$ F \f$
-    static inline std::vector<double> FISHING_MORTALITY_;
     //! Fluctuation of fishing mortality by year
     static inline std::vector<double> FISHING_COEF_;
     //! year version of #IndividualJson::weight_for_age

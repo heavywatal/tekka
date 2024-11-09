@@ -57,7 +57,7 @@ class Population {
     void reproduce(uint_fast32_t location, size_t popsize);
 
     //! Evaluate survival.
-    void survive();
+    void survive(int_fast32_t season);
 
     //! Evaluate migration. Individuals in #juveniles_subpops_ moves to #subpopulations_.
     void migrate();

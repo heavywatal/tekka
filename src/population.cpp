@@ -36,6 +36,9 @@ void Population::run(const int_fast32_t simulating_duration,
     if (!Individual::is_ready(simulating_duration)) {
         Individual::set_dependent_static(simulating_duration);
     }
+    if (!Individual::is_ready(simulating_duration)) {
+        throw std::logic_error("logic_error:!Individual::is_ready()");
+    }
     loc_year_samples_.resize(std::min(num_subpops(),
                                       std::max(sample_size_adult.size(),
                                                sample_size_juvenile.size())));
@@ -44,14 +47,15 @@ void Population::run(const int_fast32_t simulating_duration,
     for (year_ = 1; year_ <= simulating_duration; ++year_) {
         reproduce();
         if (year_ == 1) subpopulations_[0u].clear();
-        append_demography(0);
-        survive();
+        for (int_fast32_t q = 0; q < 4; ++q) {
+          append_demography(q);
+          survive(q);
+        }
         if (year_ > recording_start) {
             sample(&subpopulations_, sample_size_adult);
             sample(&juveniles_subpops_, sample_size_juvenile);
         }
         migrate();
-        append_demography(3);
     }
 }
 
@@ -109,15 +113,21 @@ void Population::reproduce(const uint_fast32_t location, const size_t popsize) {
     }
     if (male_indices.size() == 0u) return;
     std::discrete_distribution<uint_fast32_t> mate_distr(fitnesses.begin(), fitnesses.end());
-    const double d0 = Individual::death_rate(0, year_);
-    juveniles.reserve(static_cast<size_t>((1.1 - d0) * rec_rate * female_biomass));
+    std::vector<double> d(4u);
+    double s0 = 1.1;
+    for (int_fast32_t q = 0; q < 4; ++q) {
+        d[q] = Individual::DEATH_RATE(q, year_);
+        s0 *= (1.0 - d[q]);
+    }
+    juveniles.reserve(static_cast<size_t>(s0 * rec_rate * female_biomass));
     for (const auto& mother: adults) {
         if (mother->is_male()) continue;
         const double rec_mean = rec_rate * mother->weight(year_);
         uint_fast32_t rec = rnbinom<uint_fast32_t>(k_nbinom_, rec_mean, *engine_);
-        juveniles_demography_[0u][location] += rec;
-        rec -= std::binomial_distribution<uint_fast32_t>(rec, d0)(*engine_);
-        juveniles_demography_[3u][location] += rec;
+        for (int_fast32_t q = 0; q < 4; ++q) {
+            juveniles_demography_[q][location] += rec;
+            rec -= std::binomial_distribution<uint_fast32_t>(rec, d[q])(*engine_);
+        }
         const auto num_boys = std::binomial_distribution<uint_fast32_t>(rec, 0.5)(*engine_);
         for (uint_fast32_t j=0; j<rec; ++j) {
             const auto& father = adults[male_indices[mate_distr(*engine_)]];
@@ -126,12 +136,12 @@ void Population::reproduce(const uint_fast32_t location, const size_t popsize) {
     }
 }
 
-void Population::survive() {
+void Population::survive(const int_fast32_t season) {
     for (auto& individuals: subpopulations_) {
         size_t n = individuals.size();
         for (size_t i=0; i<n; ++i) {
             auto& p = individuals[i];
-            if (wtl::generate_canonical(*engine_) < p->death_rate(year_)) {
+            if (wtl::generate_canonical(*engine_) < p->death_rate(year_, season)) {
                 p = std::move(individuals.back());
                 individuals.pop_back();
                 --n;

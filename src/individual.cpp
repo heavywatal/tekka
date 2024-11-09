@@ -109,21 +109,9 @@ void Individual::set_static_migration() {
 }
 
 void Individual::set_static_mortality() {
-    const auto size = JSON.natural_mortality.size() / 4u;
-    NATURAL_MORTALITY_.reserve(MAX_AGE);
-    NATURAL_MORTALITY_.assign(size, 0.0);
-    FISHING_MORTALITY_.reserve(MAX_AGE);
-    FISHING_MORTALITY_.assign(size, 0.0);
-    for (size_t year=0; year<size; ++year) {
-        for (size_t q = 0; q < 4u; ++q) {
-            const auto q_i = 4u * year + q;
-            NATURAL_MORTALITY_[year] += JSON.natural_mortality[q_i];
-            FISHING_MORTALITY_[year] += JSON.fishing_mortality[q_i];
-        }
-    }
-    elongate(&NATURAL_MORTALITY_, MAX_AGE);
-    elongate(&FISHING_MORTALITY_, MAX_AGE);
-    NATURAL_MORTALITY_.back() = 1e9;
+    elongate(&JSON.natural_mortality, 4u * MAX_AGE);
+    elongate(&JSON.fishing_mortality, 4u * MAX_AGE);
+    JSON.natural_mortality.back() = 1e9;
 }
 
 void Individual::set_static_weight() {
