@@ -28,7 +28,7 @@ void elongate(std::vector<T>* v, size_t n) noexcept {
 }
 
 inline int_fast32_t get_dest(const std::vector<double>& v) {
-    int_fast32_t idx = 0;
+    uint_fast32_t idx = 0;
     uint_fast32_t num_positive = 0u;
     for (uint_fast32_t i=0u; i<v.size(); ++i) {
         if (v[i] > 0.0) {
@@ -45,9 +45,9 @@ inline uint_fast32_t sub_sat(const uint_fast32_t x, const uint_fast32_t y) {
 
 } // anonymous namespace
 
-uint_fast32_t Individual::migrate(const uint_fast32_t loc, const int_fast32_t year, URBG& engine) {
+int_fast32_t Individual::migrate(const uint_fast32_t loc, const int_fast32_t year, URBG& engine) {
     auto& [dest, dist] = MIGRATION_DESTINATION_[age(year)][loc];
-    return dest < 0 ? dist(engine) : static_cast<uint_fast32_t>(dest);
+    return dest < 0 ? dist(engine) : dest;
 }
 
 void Individual::trace_back(std::ostream& ost, std::unordered_map<const Individual*, uint_fast32_t>* ids,

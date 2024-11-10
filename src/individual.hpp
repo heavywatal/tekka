@@ -73,7 +73,7 @@ class Individual {
     }
 
     //! Generate random number for new location.
-    uint_fast32_t migrate(uint_fast32_t loc, int_fast32_t year, URBG&);
+    int_fast32_t migrate(uint_fast32_t loc, int_fast32_t year, URBG&);
 
     //! Write ancestors recursively.
     void trace_back(std::ostream& ost, std::unordered_map<const Individual*, uint_fast32_t>* ids,
@@ -128,7 +128,7 @@ class Individual {
 
   private:
     //! Alias for readability
-    using PairDestDist=std::pair<int_fast32_t, std::discrete_distribution<uint_fast32_t>>;
+    using PairDestDist=std::pair<int_fast32_t, std::discrete_distribution<int_fast32_t>>;
     //! Prepare #MIGRATION_DESTINATION_
     static void set_static_migration();
     //! Prepare mortality vectors
