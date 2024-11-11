@@ -80,6 +80,8 @@ inline clipp::group reproduction_options(nlohmann::json* vm) {
     ).doc("Reproduction:");
 }
 
+Program::~Program() = default;
+
 Program::Program(const std::vector<std::string>& arguments)
 : command_args_(arguments) {
     std::ios::sync_with_stdio(false);

@@ -78,8 +78,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 target_link_libraries(${PROJECT_NAME}
-  PUBLIC pcglite::pcglite
-  PRIVATE wtl::wtl clippson::clippson
+  PRIVATE wtl::wtl clippson::clippson pcglite::pcglite
 )
 
 add_executable(${PROJECT_NAME}-exe src/main.cpp)

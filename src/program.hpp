@@ -27,7 +27,7 @@ class Program {
   public:
     //! Initialize with command-line arguments.
     Program(const std::vector<std::string>& args);
-    ~Program() = default;
+    ~Program();
     //! Top level function that should be called once from global main.
     void run();
     //! Output results to files

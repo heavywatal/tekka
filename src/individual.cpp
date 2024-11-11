@@ -7,7 +7,6 @@
 #include <wtl/debug.hpp>
 #include <clippson/json.hpp>
 
-#include <random>
 #include <sstream>
 #include <type_traits>
 
@@ -44,11 +43,6 @@ inline uint_fast32_t sub_sat(const uint_fast32_t x, const uint_fast32_t y) {
 }
 
 } // anonymous namespace
-
-int_fast32_t Individual::migrate(const uint_fast32_t loc, const int_fast32_t year, URBG& engine) {
-    auto& [dest, dist] = MIGRATION_DESTINATION_[age(year)][loc];
-    return dest < 0 ? dist(engine) : dest;
-}
 
 void Individual::trace_back(std::ostream& ost, std::unordered_map<const Individual*, uint_fast32_t>* ids,
                             uint_fast32_t loc, int_fast32_t year) const {

@@ -6,6 +6,7 @@
 
 #include <wtl/random.hpp>
 #include <wtl/debug.hpp>
+#include <pcglite/pcglite.hpp>
 
 #include <algorithm>
 
@@ -162,7 +163,7 @@ void Population::migrate() {
         size_t num_immigrants = individuals.size() - n;
         for (size_t i=0; i<n; ++i) {
             auto& p = individuals[i];
-            auto new_loc = p->migrate(loc, year_, *engine_);
+            auto new_loc = p->destination(loc, year_, *engine_);
             if (new_loc == loc) continue;
             subpopulations_[new_loc].emplace_back(std::move(p));
             p = std::move(individuals.back());
@@ -178,7 +179,7 @@ void Population::migrate() {
     for (uint_fast32_t loc=0; loc<juveniles_subpops_.size(); ++loc) {
         auto& juveniles = juveniles_subpops_[loc];
         for (auto& p: juveniles) {
-            auto new_loc = p->migrate(loc, year_, *engine_);
+            auto new_loc = p->destination(loc, year_, *engine_);
             subpopulations_[new_loc].emplace_back(std::move(p));
         }
         juveniles.clear();

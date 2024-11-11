@@ -5,17 +5,21 @@
 #ifndef PBT_POPULATION_HPP_
 #define PBT_POPULATION_HPP_
 
-#include "random_fwd.hpp"
-
 #include <cstdint>
 #include <iosfwd>
 #include <vector>
 #include <map>
 #include <memory>
+#include <random>
 
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////
+namespace pcglite {
+  template <class UIntType> class permuted_congruential_engine;
+  using pcg64 = permuted_congruential_engine<uint64_t>;
+}
 
 namespace pbf {
+
+using URBG = pcglite::pcg64;
 
 class Individual;
 

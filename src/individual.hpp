@@ -5,15 +5,12 @@
 #ifndef PBT_INDIVIDUAL_HPP_
 #define PBT_INDIVIDUAL_HPP_
 
-#include "random_fwd.hpp"
-
 #include <cstdint>
 #include <iosfwd>
 #include <memory>
 #include <vector>
+#include <random>
 #include <unordered_map>
-
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////
 
 namespace pbf {
 
@@ -73,7 +70,11 @@ class Individual {
     }
 
     //! Generate random number for new location.
-    int_fast32_t migrate(uint_fast32_t loc, int_fast32_t year, URBG&);
+    template <class URBG>
+    int_fast32_t destination(uint_fast32_t loc, int_fast32_t year, URBG& engine) const {
+        auto& [dest, dist] = MIGRATION_DESTINATION_[age(year)][loc];
+        return dest < 0 ? dist(engine) : dest;
+    }
 
     //! Write ancestors recursively.
     void trace_back(std::ostream& ost, std::unordered_map<const Individual*, uint_fast32_t>* ids,

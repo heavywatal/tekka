@@ -2,7 +2,6 @@
     @brief Only defines tiny main()
 */
 #include "program.hpp"
-#include "population.hpp"
 
 #include <iostream>
 #include <stdexcept>
