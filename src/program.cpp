@@ -83,7 +83,7 @@ inline clipp::group reproduction_options(nlohmann::json* vm) {
 Program::~Program() = default;
 
 Program::Program(const std::vector<std::string>& arguments)
-: command_args_(arguments) {
+: command_args_(arguments), population_(nullptr) {
     std::ios::sync_with_stdio(false);
     std::cin.tie(0);
     std::cout.precision(15);

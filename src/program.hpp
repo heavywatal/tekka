@@ -39,7 +39,7 @@ class Program {
     //! Written to "config.json"
     std::string config_ = "";
     //! Population instance
-    std::unique_ptr<Population> population_ = nullptr;
+    std::unique_ptr<Population> population_;
 };
 
 } // namespace pbf
