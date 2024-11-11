@@ -66,7 +66,7 @@ if(ZLIB_FOUND)
   target_link_libraries(${PROJECT_NAME} PUBLIC ZLIB::ZLIB)
 endif()
 
-target_compile_options(${PROJECT_NAME} INTERFACE
+target_compile_options(${PROJECT_NAME} PUBLIC
   -Wall -Wextra -pedantic
   $<$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},x86_64>:-march=native>
   $<$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},arm64>:-march=armv8.3-a+sha3>

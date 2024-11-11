@@ -163,7 +163,7 @@ void Population::migrate() {
         size_t num_immigrants = individuals.size() - n;
         for (size_t i=0; i<n; ++i) {
             auto& p = individuals[i];
-            auto new_loc = p->destination(loc, year_, *engine_);
+            uint_fast32_t new_loc = p->destination(loc, year_, *engine_);
             if (new_loc == loc) continue;
             subpopulations_[new_loc].emplace_back(std::move(p));
             p = std::move(individuals.back());
