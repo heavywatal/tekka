@@ -12,10 +12,11 @@
 
 namespace pbf {
 
-static_assert(std::is_nothrow_constructible<Individual, bool>{}, "");
-static_assert(!std::is_default_constructible<Individual>{}, "");
-static_assert(!std::is_copy_constructible<Individual>{}, "");
-static_assert(!std::is_move_constructible<Individual>{}, "");
+static_assert(std::is_nothrow_constructible_v<Individual, bool>);
+static_assert(!std::is_default_constructible_v<Individual>);
+static_assert(!std::is_copy_constructible_v<Individual>);
+static_assert(!std::is_move_constructible_v<Individual>);
+static_assert(std::is_nothrow_destructible_v<Individual>);
 
 namespace {
 

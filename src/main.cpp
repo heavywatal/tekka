@@ -4,7 +4,7 @@
 #include "program.hpp"
 
 #include <iostream>
-#include <stdexcept>
+#include <exception>
 
 //! Just instantiate and run Program
 int main(int argc, char* argv[]) {

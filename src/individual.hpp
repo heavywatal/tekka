@@ -33,16 +33,16 @@ class IndividualJson {
     //!@{
 
     //! Array of \f$M\f$ for quarter age: instantaneous mortality due to natural causes
-    std::vector<double> natural_mortality = {};
+    std::vector<double> natural_mortality{};
     //! Array of \f$F\f$ for quarter age: instantaneous mortality due to fishing activities
-    std::vector<double> fishing_mortality = {};
+    std::vector<double> fishing_mortality{};
     //! Array of \f$e\f$ by year: coefficient of fishing mortality.
     //! The last part is used for the last years if its length differs from `--years` option.
-    std::vector<double> fishing_coef = {};
+    std::vector<double> fishing_coef{};
     //! Weight in kg for quarter age
-    std::vector<double> weight_for_age = {};
+    std::vector<double> weight_for_age{};
     //! Transition matrix for migration
-    std::vector<RowMatrix> migration_matrices = {};
+    std::vector<RowMatrix> migration_matrices{};
     //!@}
 };
 
@@ -61,6 +61,7 @@ class Individual {
     : father_(father), mother_(mother),
       birth_year_(year), is_male_(is_male) {}
     Individual(const Individual&) = delete;
+    Individual(Individual&&) = delete;
     ~Individual() = default;
 
     //! Finite death rate per quarter year: \f$ d = 1 - \exp(- M - eF) \f$
@@ -144,13 +145,13 @@ class Individual {
     static inline std::vector<std::vector<PairDestDist>> MIGRATION_DESTINATION_;
 
     //! Pointer to father
-    const std::shared_ptr<Individual> father_ = nullptr;
+    const std::shared_ptr<Individual> father_{nullptr};
     //! Pointer to mother
-    const std::shared_ptr<Individual> mother_ = nullptr;
+    const std::shared_ptr<Individual> mother_{nullptr};
     //! Year of birth
-    int_fast32_t birth_year_ = -4;
+    int_fast32_t birth_year_{-4};
     //! Sex
-    const bool is_male_;
+    const bool is_male_{false};
 };
 
 } // namespace pbf

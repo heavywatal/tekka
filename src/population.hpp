@@ -80,32 +80,32 @@ class Population {
     size_t num_subpops() const noexcept {return subpopulations_.size();}
 
     //! Individual array for each subpopulation
-    std::vector<std::vector<std::shared_ptr<Individual>>> subpopulations_;
+    std::vector<std::vector<std::shared_ptr<Individual>>> subpopulations_{};
     //! First-year individuals separated for #sample().
     //! Note that it becomes empty in #migrate().
-    std::vector<std::vector<std::shared_ptr<Individual>>> juveniles_subpops_;
+    std::vector<std::vector<std::shared_ptr<Individual>>> juveniles_subpops_{};
     //! Counts of juveniles of the year: [[number for each location] for each season]
-    std::vector<std::vector<uint_fast32_t>> juveniles_demography_ = {};
+    std::vector<std::vector<uint_fast32_t>> juveniles_demography_{};
     //! Samples: [{capture_year => individuals} for each location]
-    std::vector<std::map<int_fast32_t, std::vector<std::shared_ptr<Individual>>>> loc_year_samples_ = {};
+    std::vector<std::map<int_fast32_t, std::vector<std::shared_ptr<Individual>>>> loc_year_samples_{};
     //! (year, season) => [[count for each age] for each location]
-    std::map<std::pair<int_fast32_t, int_fast32_t>, std::vector<std::vector<uint_fast32_t>>> demography_ = {};
+    std::map<std::pair<int_fast32_t, int_fast32_t>, std::vector<std::vector<uint_fast32_t>>> demography_{};
 
     //! @ingroup params
     //!@{
 
     //! \f$K\f$: carrying capacity used in reproduce()
-    const double carrying_capacity_;
+    const double carrying_capacity_{};
     //! \f$r\f$: coefficient used in reproduce()
-    const double recruitment_coef_;
+    const double recruitment_coef_{};
     //! \f$k \in (0, \infty)\f$ for overdispersion in reproduce().
     //! Equivalent to Poisson when \f$k \to \infty\f$ (or \f$k<0\f$ for convience).
-    const double k_nbinom_;
+    const double k_nbinom_{};
     //!@}
     //! Current time.
-    int_fast32_t year_ = 0;
+    int_fast32_t year_{0};
     //! Uniform Random Bit Generator
-    std::unique_ptr<URBG> engine_;
+    std::unique_ptr<URBG> engine_{nullptr};
 };
 
 } // namespace pbf
