@@ -37,12 +37,8 @@ void Population::run(const int_fast32_t simulating_duration,
     if (!Individual::is_ready(simulating_duration)) {
         Individual::set_dependent_static(simulating_duration);
     }
-    if (!Individual::is_ready(simulating_duration)) {
-        throw std::logic_error("logic_error:!Individual::is_ready()");
-    }
-    loc_year_samples_.resize(std::min(num_subpops(),
-                                      std::max(sample_size_adult.size(),
-                                               sample_size_juvenile.size())));
+    const auto num_sample_locs = std::max(sample_size_adult.size(), sample_size_juvenile.size());
+    loc_year_samples_.resize(std::min(num_subpops(), num_sample_locs));
     auto recording_start = simulating_duration - recording_duration;
     append_demography(3);
     for (year_ = 1; year_ <= simulating_duration; ++year_) {

@@ -127,6 +127,9 @@ void Individual::set_dependent_static(const uint_fast32_t years) {
     FISHING_COEF_.assign(years, 1.0);
     std::copy_backward(JSON.fishing_coef.begin() + offset, JSON.fishing_coef.end(),
                        FISHING_COEF_.end());
+    if (!is_ready(years)) {
+        throw std::logic_error("logic_error:!Individual::is_ready()");
+    }
 }
 
 IndividualJson::IndividualJson() {
