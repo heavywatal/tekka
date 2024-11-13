@@ -67,7 +67,7 @@ class Population {
     void migrate();
 
     //! Sample individuals.
-    void sample(std::vector<std::vector<std::shared_ptr<Individual>>>* subpops,
+    void sample(std::vector<std::vector<std::shared_ptr<Individual>>>& subpops,
                 const std::vector<size_t>& sample_sizes);
 
     //! Append current state to #demography_

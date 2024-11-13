@@ -55,10 +55,11 @@ class Individual {
     //! for initial population
     explicit Individual(bool is_male) noexcept: is_male_(is_male) {}
     //! for sexual reproduction
-    Individual(const std::shared_ptr<Individual>& father,
-               const std::shared_ptr<Individual>& mother,
+    Individual(std::shared_ptr<Individual> father,
+               std::shared_ptr<Individual> mother,
                int_fast32_t year, bool is_male) noexcept
-    : father_(father), mother_(mother),
+    : father_(std::move(father)),
+      mother_(std::move(mother)),
       birth_year_(year), is_male_(is_male) {}
     Individual(const Individual&) = delete;
     Individual(Individual&&) = delete;
@@ -78,7 +79,7 @@ class Individual {
     }
 
     //! Write ancestors recursively.
-    void trace_back(std::ostream& ost, std::unordered_map<const Individual*, uint_fast32_t>* ids,
+    void trace_back(std::ostream& ost, std::unordered_map<const Individual*, uint_fast32_t>& ids,
                     uint_fast32_t loc, int_fast32_t year) const;
     //! Write all the data members in TSV
     std::ostream& write(std::ostream&) const;

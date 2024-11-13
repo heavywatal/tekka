@@ -53,8 +53,8 @@ void Population::run(const int_fast32_t simulating_duration,
           survive(q);
         }
         if (year_ > recording_start) {
-            sample(&subpopulations_, sample_size_adult);
-            sample(&juveniles_subpops_, sample_size_juvenile);
+            sample(subpopulations_, sample_size_adult);
+            sample(juveniles_subpops_, sample_size_juvenile);
         }
         migrate();
     }
@@ -186,11 +186,11 @@ void Population::migrate() {
     }
 }
 
-void Population::sample(std::vector<std::vector<std::shared_ptr<Individual>>>* subpops,
+void Population::sample(std::vector<std::vector<std::shared_ptr<Individual>>>& subpops,
                         const std::vector<size_t>& sample_sizes) {
-    const auto max_loc = std::min(subpops->size(), sample_sizes.size());
+    const auto max_loc = std::min(subpops.size(), sample_sizes.size());
     for (uint_fast32_t loc=0u; loc<max_loc; ++loc) {
-        auto& individuals = subpops->at(loc);
+        auto& individuals = subpops.at(loc);
         std::shuffle(individuals.begin(), individuals.end(), *engine_);
         const auto n = std::min(individuals.size(), sample_sizes[loc]);
         std::vector<std::shared_ptr<Individual>>& sampled = loc_year_samples_[loc][year_];
@@ -218,7 +218,7 @@ std::ostream& Population::write_sample_family(std::ostream& ost) const {
     for (uint_fast32_t loc=0u; loc<loc_year_samples_.size(); ++loc) {
         for (const auto& [year, samples]: loc_year_samples_.at(loc)) {
             for (const auto& p: samples) {
-                p->trace_back(ost, &ids, loc, year);
+                p->trace_back(ost, ids, loc, year);
             }
         }
     }

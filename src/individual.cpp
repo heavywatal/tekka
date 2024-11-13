@@ -21,9 +21,9 @@ static_assert(std::is_nothrow_destructible_v<Individual>);
 namespace {
 
 template <class T> inline
-void elongate(std::vector<T>* v, size_t n) noexcept {
-    for (size_t i=v->size(); i<n; ++i) {
-        v->emplace_back(v->back());
+void elongate(std::vector<T>& v, size_t n) noexcept {
+    for (size_t i=v.size(); i<n; ++i) {
+        v.emplace_back(v.back());
     }
 }
 
@@ -45,12 +45,12 @@ inline uint_fast32_t sub_sat(const uint_fast32_t x, const uint_fast32_t y) {
 
 } // anonymous namespace
 
-void Individual::trace_back(std::ostream& ost, std::unordered_map<const Individual*, uint_fast32_t>* ids,
+void Individual::trace_back(std::ostream& ost, std::unordered_map<const Individual*, uint_fast32_t>& ids,
                             uint_fast32_t loc, int_fast32_t year) const {
-    if (!ids->emplace(this, static_cast<uint_fast32_t>(ids->size())).second && (year == 0)) return;
+    if (!ids.emplace(this, static_cast<uint_fast32_t>(ids.size())).second && (year == 0)) return;
     if (father_) father_->trace_back(ost, ids, loc, 0);
     if (mother_) mother_->trace_back(ost, ids, loc, 0);
-    write(ost, *ids);
+    write(ost, ids);
     if (year > 0) {
         ost << "\t" << loc << "\t" << year << "\n";
     } else {
@@ -100,12 +100,12 @@ void Individual::set_static_migration() {
         }
         MIGRATION_DESTINATION_.emplace_back(std::move(pairs));
     }
-    elongate(&MIGRATION_DESTINATION_, MAX_AGE);
+    elongate(MIGRATION_DESTINATION_, MAX_AGE);
 }
 
 void Individual::set_static_mortality() {
-    elongate(&JSON.natural_mortality, 4u * MAX_AGE);
-    elongate(&JSON.fishing_mortality, 4u * MAX_AGE);
+    elongate(JSON.natural_mortality, 4u * MAX_AGE);
+    elongate(JSON.fishing_mortality, 4u * MAX_AGE);
     JSON.natural_mortality.back() = 1e9;
 }
 
@@ -115,7 +115,7 @@ void Individual::set_static_weight() {
     for (size_t year=0; year<WEIGHT_FOR_AGE_.size(); ++year) {
         WEIGHT_FOR_AGE_[year] = JSON.weight_for_age[4u * year];
     }
-    elongate(&WEIGHT_FOR_AGE_, MAX_AGE);
+    elongate(WEIGHT_FOR_AGE_, MAX_AGE);
 }
 
 void Individual::set_dependent_static(const uint_fast32_t years) {
