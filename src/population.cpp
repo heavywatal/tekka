@@ -156,20 +156,15 @@ void Population::migrate() {
     for (uint_fast32_t loc=0u; loc<num_subpops(); ++loc) {
         auto& individuals = subpopulations_[loc];
         size_t n = subpop_sizes[loc];
-        size_t num_immigrants = individuals.size() - n;
-        for (size_t i=0; i<n; ++i) {
+        for (size_t i=0; i<n;) {
             auto& p = individuals[i];
             uint_fast32_t new_loc = p->destination(loc, year_, *engine_);
-            if (new_loc == loc) continue;
+            if (new_loc == loc) {++i; continue;}
             subpopulations_[new_loc].emplace_back(std::move(p));
-            p = std::move(individuals.back());
+            --n;
+            p = std::move(individuals[n]);
+            individuals[n] = std::move(individuals.back());
             individuals.pop_back();
-            if (num_immigrants == 0u) {
-                --n;
-                --i;
-            } else {
-                --num_immigrants;
-            }
         }
     }
     for (uint_fast32_t loc=0; loc<juveniles_subpops_.size(); ++loc) {
