@@ -50,17 +50,15 @@ class IndividualJson {
 */
 class Individual {
   public:
-    //! Alias
-    Individual() = delete;
     //! for initial population
-    explicit Individual(bool is_male) noexcept: is_male_(is_male) {}
+    Individual() = default;
     //! for sexual reproduction
     Individual(std::shared_ptr<Individual> father,
                std::shared_ptr<Individual> mother,
-               int_fast32_t year, bool is_male) noexcept
+               int_fast32_t year) noexcept
     : father_(std::move(father)),
       mother_(std::move(mother)),
-      birth_year_(year), is_male_(is_male) {}
+      birth_year_(year) {}
     Individual(const Individual&) = delete;
     Individual(Individual&&) = delete;
     ~Individual() = default;
@@ -125,8 +123,6 @@ class Individual {
     double weight(int_fast32_t year) const noexcept {
         return WEIGHT_FOR_AGE_[age(year)];
     }
-    //! Just returns #is_male_
-    bool is_male() const noexcept {return is_male_;}
     //!@}
 
   private:
@@ -151,8 +147,6 @@ class Individual {
     const std::shared_ptr<Individual> mother_{nullptr};
     //! Year of birth
     int_fast32_t birth_year_{-4};
-    //! Sex
-    const bool is_male_{false};
 };
 
 } // namespace pbf

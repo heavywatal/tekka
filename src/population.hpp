@@ -5,6 +5,7 @@
 #ifndef PBT_POPULATION_HPP_
 #define PBT_POPULATION_HPP_
 
+#include <array>
 #include <cstdint>
 #include <iosfwd>
 #include <vector>
@@ -23,6 +24,34 @@ using URBG = pcglite::pcg64;
 
 class Individual;
 
+enum class Sex { F, M };
+
+class SubPopulation {
+  public:
+    std::vector<std::shared_ptr<Individual>>& operator[](Sex x) {
+        return adults[static_cast<int>(x)];
+    }
+    const std::vector<std::shared_ptr<Individual>>& operator[](Sex x) const {
+        return adults[static_cast<int>(x)];
+    }
+    size_t size() const {
+        return adults[0].size() + adults[1].size();
+    }
+    void clear() {
+        adults[0].clear();
+        adults[1].clear();
+    }
+    //! Individual array for each subpopulation
+    std::array<std::vector<std::shared_ptr<Individual>>, 2> adults{};
+    //! First-year individuals separated for #sample().
+    //! Note that it becomes empty in #migrate().
+    std::vector<std::shared_ptr<Individual>> juveniles{};
+    //! Samples: {capture_year => individuals}
+    std::map<int_fast32_t, std::vector<std::shared_ptr<Individual>>> samples{};
+    //! [[[count for each age] for season] for year]
+    std::vector<std::array<std::vector<uint_fast32_t>, 4>> demography{};
+};
+
 /*! @brief Population class
 */
 class Population {
@@ -40,13 +69,13 @@ class Population {
              const std::vector<size_t>& sample_size_juvenile={1u,1u},
              const int_fast32_t recording_duration=1);
 
-    //! Construct and write tree from #loc_year_samples_.
+    //! Construct and write tree from #SubPopulation::samples.
     //! Serial IDs are assigned to sampled individuals.
     //! IDs larger than sample size are assigned to unsampled ancestors.
     std::ostream& write_sample_family(std::ostream& ost) const;
-    //! Write #demography_.
+    //! Write #SubPopulation::demography.
     std::ostream& write_demography(std::ostream&) const;
-    //! Write #subpopulations_ and #juveniles_subpops_ for debugging.
+    //! Write #subpopulations_ for debugging.
     std::ostream& write(std::ostream&) const;
     friend std::ostream& operator<<(std::ostream&, const Population&);
 
@@ -54,7 +83,7 @@ class Population {
     //! give birth to children
     void reproduce();
 
-    //! Append new individuals to #juveniles_subpops_ at `location`.
+    //! Append new individuals to #SubPopulation::juveniles at `location`.
     //! The expected number of children for each adult is proportional to its weight.
     //! All the females are evaluated for recruitment,
     //! whereas males are stochastically chosen.
@@ -63,35 +92,25 @@ class Population {
     //! Evaluate survival.
     void survive(int_fast32_t season);
 
-    //! Evaluate migration. Individuals in #juveniles_subpops_ moves to #subpopulations_.
+    //! Evaluate migration. Merge #SubPopulation::juveniles to #SubPopulation::adults.
     void migrate();
 
     //! Sample individuals.
-    void sample(std::vector<std::vector<std::shared_ptr<Individual>>>& subpops,
-                const std::vector<size_t>& sample_sizes);
+    void sample(SubPopulation& subpops, size_t n_adults, size_t n_juveniles);
     //! Implementation of sample().
     void sample(std::vector<std::shared_ptr<Individual>>& src,
                 std::vector<std::shared_ptr<Individual>>& dst, size_t n);
-    //! Append current state to #demography_
-    void append_demography(int_fast32_t season);
 
-    //! Count individuals for each location and age
-    std::vector<std::vector<uint_fast32_t>> count(int_fast32_t season) const;
+    //! Initialize #SubPopulation::demography
+    void init_demography(int_fast32_t duration);
+    //! Record current state to #SubPopulation::demography
+    void record_demography(int_fast32_t season);
 
-    //! Return size of #subpopulations_
-    size_t num_subpops() const noexcept {return subpopulations_.size();}
+    //! For male selection
+    std::vector<double> weights(const std::vector<std::shared_ptr<Individual>>&) const;
 
-    //! Individual array for each subpopulation
-    std::vector<std::vector<std::shared_ptr<Individual>>> subpopulations_{};
-    //! First-year individuals separated for #sample().
-    //! Note that it becomes empty in #migrate().
-    std::vector<std::vector<std::shared_ptr<Individual>>> juveniles_subpops_{};
-    //! Counts of juveniles of the year: [[number for each location] for each season]
-    std::vector<std::vector<uint_fast32_t>> juveniles_demography_{};
-    //! Samples: [{capture_year => individuals} for each location]
-    std::vector<std::map<int_fast32_t, std::vector<std::shared_ptr<Individual>>>> loc_year_samples_{};
-    //! (year, season) => [[count for each age] for each location]
-    std::map<std::pair<int_fast32_t, int_fast32_t>, std::vector<std::vector<uint_fast32_t>>> demography_{};
+    //!
+    std::vector<SubPopulation> subpopulations_{};
 
     //! @ingroup params
     //!@{
