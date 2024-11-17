@@ -181,15 +181,26 @@ void Population::sample(std::vector<std::vector<std::shared_ptr<Individual>>>& s
                         const std::vector<size_t>& sample_sizes) {
     const auto max_loc = std::min(subpops.size(), sample_sizes.size());
     for (uint_fast32_t loc=0u; loc<max_loc; ++loc) {
-        auto& individuals = subpops.at(loc);
-        std::shuffle(individuals.begin(), individuals.end(), *engine_);
-        const auto n = std::min(individuals.size(), sample_sizes[loc]);
-        std::vector<std::shared_ptr<Individual>>& sampled = loc_year_samples_[loc][year_];
-        sampled.reserve(sampled.size() + n);
-        for (size_t i=0; i<n; ++i) {
-            sampled.emplace_back(std::move(individuals.back()));
-            individuals.pop_back();
-        }
+        sample(subpops[loc], loc_year_samples_[loc][year_], sample_sizes[loc]);
+    }
+}
+
+void Population::sample(std::vector<std::shared_ptr<Individual>>& src,
+                        std::vector<std::shared_ptr<Individual>>& dst,
+                        size_t n) {
+    if (n > src.size()) {
+        std::cerr << "WARNING:Population::sample(): n > src.size() ("
+                  << n << " > " << src.size() << ")\n";
+        for (auto& p: src) dst.emplace_back(std::move(p));
+        src.clear();
+        return;
+    }
+    for (size_t i = 0u; i < n; ++i) {
+        std::uniform_int_distribution<size_t> uniform(0u, src.size() - 1u);
+        auto& p = src[uniform(*engine_)];
+        dst.emplace_back(std::move(p));
+        p = std::move(src.back());
+        src.pop_back();
     }
 }
 

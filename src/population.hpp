@@ -69,7 +69,9 @@ class Population {
     //! Sample individuals.
     void sample(std::vector<std::vector<std::shared_ptr<Individual>>>& subpops,
                 const std::vector<size_t>& sample_sizes);
-
+    //! Implementation of sample().
+    void sample(std::vector<std::shared_ptr<Individual>>& src,
+                std::vector<std::shared_ptr<Individual>>& dst, size_t n);
     //! Append current state to #demography_
     void append_demography(int_fast32_t season);
 
