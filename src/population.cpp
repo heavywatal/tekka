@@ -134,7 +134,7 @@ void Population::reproduce(const uint_fast32_t location, const size_t popsize) {
     }
 }
 
-std::vector<double> Population::weights(const std::vector<std::shared_ptr<Individual>>& individuals) const {
+std::vector<double> Population::weights(const std::vector<ShPtrIndividual>& individuals) const {
     std::vector<double> res;
     res.reserve(individuals.size());
     for (const auto& p: individuals) {
@@ -203,9 +203,8 @@ void Population::sample(SubPopulation& subpop, size_t num_adults, size_t num_juv
     sample(subpop.juveniles, subpop.samples[year_], num_juveniles);
 }
 
-void Population::sample(std::vector<std::shared_ptr<Individual>>& src,
-                        std::vector<std::shared_ptr<Individual>>& dst,
-                        size_t n) {
+void Population::sample(std::vector<ShPtrIndividual>& src,
+                        std::vector<ShPtrIndividual>& dst, size_t n) {
     if (n > src.size()) {
         std::cerr << "WARNING:Population::sample(): n > src.size() ("
                   << n << " > " << src.size() << ")\n";

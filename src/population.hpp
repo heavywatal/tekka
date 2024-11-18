@@ -23,15 +23,16 @@ namespace pbf {
 using URBG = pcglite::pcg64;
 
 class Individual;
+using ShPtrIndividual = std::shared_ptr<Individual>;
 
 enum class Sex { F, M };
 
 class SubPopulation {
   public:
-    std::vector<std::shared_ptr<Individual>>& operator[](Sex x) {
+    std::vector<ShPtrIndividual>& operator[](Sex x) {
         return adults[static_cast<int>(x)];
     }
-    const std::vector<std::shared_ptr<Individual>>& operator[](Sex x) const {
+    const std::vector<ShPtrIndividual>& operator[](Sex x) const {
         return adults[static_cast<int>(x)];
     }
     size_t size() const {
@@ -42,12 +43,12 @@ class SubPopulation {
         adults[1].clear();
     }
     //! Individual array for each subpopulation
-    std::array<std::vector<std::shared_ptr<Individual>>, 2> adults{};
+    std::array<std::vector<ShPtrIndividual>, 2> adults{};
     //! First-year individuals separated for #sample().
     //! Note that it becomes empty in #migrate().
-    std::vector<std::shared_ptr<Individual>> juveniles{};
+    std::vector<ShPtrIndividual> juveniles{};
     //! Samples: {capture_year => individuals}
-    std::map<int_fast32_t, std::vector<std::shared_ptr<Individual>>> samples{};
+    std::map<int_fast32_t, std::vector<ShPtrIndividual>> samples{};
     //! [[[count for each age] for season] for year]
     std::vector<std::array<std::vector<uint_fast32_t>, 4>> demography{};
 };
@@ -98,8 +99,8 @@ class Population {
     //! Sample individuals.
     void sample(SubPopulation& subpops, size_t n_adults, size_t n_juveniles);
     //! Implementation of sample().
-    void sample(std::vector<std::shared_ptr<Individual>>& src,
-                std::vector<std::shared_ptr<Individual>>& dst, size_t n);
+    void sample(std::vector<ShPtrIndividual>& src,
+                std::vector<ShPtrIndividual>& dst, size_t n);
 
     //! Initialize #SubPopulation::demography
     void init_demography(int_fast32_t duration);
@@ -107,7 +108,7 @@ class Population {
     void record_demography(int_fast32_t season);
 
     //! For male selection
-    std::vector<double> weights(const std::vector<std::shared_ptr<Individual>>&) const;
+    std::vector<double> weights(const std::vector<ShPtrIndividual>&) const;
 
     //!
     std::vector<SubPopulation> subpopulations_{};
