@@ -5,6 +5,8 @@
 #ifndef PBT_INDIVIDUAL_HPP_
 #define PBT_INDIVIDUAL_HPP_
 
+#include "parameters.hpp"
+
 #include <cstdint>
 #include <iosfwd>
 #include <limits>
@@ -14,38 +16,6 @@
 #include <unordered_map>
 
 namespace pbf {
-
-//! @brief Parameters for Individual class (JSON file)
-/*! @ingroup params
-*/
-class IndividualJson {
-    friend class Individual;
-  public:
-    //! Constructor
-    IndividualJson();
-    //! Read class variables from stream in json
-    void read(std::istream&);
-    //! Write class variables to stream in json
-    std::ostream& write(std::ostream&) const;
-  private:
-    //! Alias for readability
-    using RowMatrix = std::vector<std::vector<double>>;
-    //! @ingroup params
-    //!@{
-
-    //! Array of \f$M\f$ for quarter age: instantaneous mortality due to natural causes
-    std::vector<double> natural_mortality{};
-    //! Array of \f$F\f$ for quarter age: instantaneous mortality due to fishing activities
-    std::vector<double> fishing_mortality{};
-    //! Array of \f$e\f$ by year: coefficient of fishing mortality.
-    //! The last part is used for the last years if its length differs from `--years` option.
-    std::vector<double> fishing_coef{};
-    //! Weight in kg for quarter age
-    std::vector<double> weight_for_age{};
-    //! Transition matrix for migration
-    std::vector<RowMatrix> migration_matrices{};
-    //!@}
-};
 
 /*! @brief Individual class
 */
@@ -92,24 +62,22 @@ class Individual {
 
     //! No individual lives longer than this.
     constexpr static inline int_fast32_t MAX_AGE = 80;
-    //! Parameters shared among instances (JSON file).
-    static inline IndividualJson JSON;
     //! Set static variables that depend on others.
-    static void set_dependent_static(const uint_fast32_t years);
+    static void set_dependent_static(const Parameters&, const uint_fast32_t years);
     //! Test if static variables are ready.
     static bool is_ready(const uint_fast32_t years) {
         return (
           FISHING_COEF_.size() >= years
-          && JSON.natural_mortality.size() >= 4u * MAX_AGE
-          && JSON.fishing_mortality.size() >= 4u * MAX_AGE
+          && NATURAL_MORTALITY_.size() >= 4u * MAX_AGE
+          && FISHING_MORTALITY_.size() >= 4u * MAX_AGE
           && WEIGHT_FOR_AGE_.size() >= MAX_AGE
           && MIGRATION_DESTINATION_.size() >= MAX_AGE
         );
     }
     //! Finite death rate per quarter year
     static double DEATH_RATE(const int_fast32_t q_age, const int_fast32_t year) {
-        const auto m = JSON.natural_mortality[q_age];
-        const auto f = JSON.fishing_mortality[q_age] * FISHING_COEF_[year];
+        const auto m = NATURAL_MORTALITY_[q_age];
+        const auto f = FISHING_MORTALITY_[q_age] * FISHING_COEF_[year];
         return 1.0 - std::exp(-m - f);
     }
 
@@ -130,17 +98,19 @@ class Individual {
     //! Alias for readability
     using PairDestDist=std::pair<uint_fast32_t, std::discrete_distribution<uint_fast32_t>>;
     //! Prepare #MIGRATION_DESTINATION_
-    static void set_static_migration();
+    static void set_static_migration(const Parameters&);
     //! Prepare mortality vectors
-    static void set_static_mortality();
+    static void set_static_mortality(const Parameters&);
     //! Prepare #WEIGHT_FOR_AGE_
-    static void set_static_weight();
+    static void set_static_weight(const Parameters&);
+    static inline std::vector<double> NATURAL_MORTALITY_{};
+    static inline std::vector<double> FISHING_MORTALITY_{};
     //! Fluctuation of fishing mortality by year
-    static inline std::vector<double> FISHING_COEF_;
-    //! year version of #IndividualJson::weight_for_age
-    static inline std::vector<double> WEIGHT_FOR_AGE_;
+    static inline std::vector<double> FISHING_COEF_{};
+    //! year version of #Parameters::weight_for_age
+    static inline std::vector<double> WEIGHT_FOR_AGE_{};
     //! Discrete distributions for migration
-    static inline std::vector<std::vector<PairDestDist>> MIGRATION_DESTINATION_;
+    static inline std::vector<std::vector<PairDestDist>> MIGRATION_DESTINATION_{};
 
     //! Pointer to father
     const std::shared_ptr<Individual> father_{nullptr};

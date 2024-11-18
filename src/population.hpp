@@ -5,6 +5,8 @@
 #ifndef PBT_POPULATION_HPP_
 #define PBT_POPULATION_HPP_
 
+#include "parameters.hpp"
+
 #include <array>
 #include <cstdint>
 #include <iosfwd>
@@ -59,14 +61,15 @@ class Population {
   public:
     //! Constructor
     Population(const size_t initial_size, std::random_device::result_type seed,
+               const Parameters& = Parameters{},
+               const int_fast32_t simulating_duration = 10,
                const double carrying_capacity = 1e3,
                const double recruitment_coef = 2.0,
                const double negative_binom_k = -1.0);
     ~Population();
 
     //! Main iteration
-    void run(const int_fast32_t simulating_duration,
-             const std::vector<size_t>& sample_size_adult={1u, 1u},
+    void run(const std::vector<size_t>& sample_size_adult={1u, 1u},
              const std::vector<size_t>& sample_size_juvenile={1u,1u},
              const int_fast32_t recording_duration=1);
 
@@ -116,6 +119,7 @@ class Population {
     //! @ingroup params
     //!@{
 
+    const int_fast32_t simulating_duration_{};
     //! \f$K\f$: carrying capacity used in reproduce()
     const double carrying_capacity_{};
     //! \f$r\f$: coefficient used in reproduce()

@@ -4,6 +4,6 @@
 
 int main() {
     pbf::Population pop(200u, std::random_device{}());
-    pop.run(10u);
+    pop.run();
     return 0;
 }

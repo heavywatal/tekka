@@ -13,14 +13,17 @@
 namespace pbf {
 
 Population::Population(const size_t initial_size, std::random_device::result_type seed,
+  const Parameters& params,
+  const int_fast32_t simulating_duration,
   const double carrying_capacity,
   const double recruitment_coef,
   const double negative_binom_k)
 : subpopulations_(4u),
-  carrying_capacity_(carrying_capacity),
-  recruitment_coef_(recruitment_coef),
-  k_nbinom_(negative_binom_k),
-  engine_(std::make_unique<URBG>(seed)) {
+  simulating_duration_{simulating_duration},
+  carrying_capacity_{carrying_capacity},
+  recruitment_coef_{recruitment_coef},
+  k_nbinom_{negative_binom_k},
+  engine_{std::make_unique<URBG>(seed)} {
     auto& subpop0 = subpopulations_[0u];
     subpop0[Sex::F].reserve(initial_size);
     subpop0[Sex::M].reserve(initial_size);
@@ -31,22 +34,21 @@ Population::Population(const size_t initial_size, std::random_device::result_typ
     for (size_t i=half; i<initial_size; ++i) {
         subpop0[Sex::M].emplace_back(std::make_shared<Individual>());
     }
+    if (!Individual::is_ready(simulating_duration)) {
+        Individual::set_dependent_static(params, simulating_duration);
+    }
 }
 
 Population::~Population() = default;
 
-void Population::run(const int_fast32_t simulating_duration,
-                     const std::vector<size_t>& sample_size_adult,
+void Population::run(const std::vector<size_t>& sample_size_adult,
                      const std::vector<size_t>& sample_size_juvenile,
                      const int_fast32_t recording_duration) {
-    if (!Individual::is_ready(simulating_duration)) {
-        Individual::set_dependent_static(simulating_duration);
-    }
     const auto num_sample_locs = std::max(sample_size_adult.size(), sample_size_juvenile.size());
-    auto recording_start = simulating_duration - recording_duration;
-    init_demography(simulating_duration + 1);
+    auto recording_start = simulating_duration_ - recording_duration;
+    init_demography(simulating_duration_ + 1);
     record_demography(3);
-    for (year_ = 1; year_ <= simulating_duration; ++year_) {
+    for (year_ = 1; year_ <= simulating_duration_; ++year_) {
         reproduce();
         if (year_ == 1) subpopulations_[0u].clear();
         for (int_fast32_t q = 0; q < 4; ++q) {

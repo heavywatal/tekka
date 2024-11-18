@@ -16,6 +16,7 @@
 
 #include <filesystem>
 #include <fstream>
+#include <sstream>
 #include <cstdlib>
 
 namespace pbf {
@@ -106,36 +107,37 @@ Program::Program(const std::vector<std::string>& arguments)
         std::cout << PROJECT_VERSION << "\n";
         throw exit_success();
     }
+    Parameters params;
     if (vm_local.at("default")) {
-        Individual::JSON.write(std::cout);
+        params.write(std::cout);
         throw exit_success();
     }
     const std::string infile = VM.at("infile");
     if (!infile.empty()) {
         std::ifstream ifs(infile);
-        Individual::JSON.read(ifs);
+        params.read(ifs);
     }
-    Individual::set_dependent_static(VM.at("years"));
     config_ = VM.dump(2) + "\n";
     if (vm_local.at("verbose")) {
         std::cerr << wtl::iso8601datetime() << std::endl;
         std::cerr << config_ << std::endl;
-        Individual::JSON.write(std::cerr) << std::endl;
+        params.write(std::cerr) << std::endl;
     }
-}
-
-void Program::run() {
     const double K = VM.at("carrying_capacity");
     const double O = VM.at("origin");
     population_ = std::make_unique<Population>(
         static_cast<size_t>(K * O),
         VM.at("seed"),
+        params,
+        VM.at("years"),
         K,
         VM.at("recruitment"),
         VM.at("overdispersion")
     );
+}
+
+void Program::run() {
     population_->run(
-        VM.at("years"),
         VM.at("sample_size_adult"),
         VM.at("sample_size_juvenile"),
         VM.at("last")
@@ -166,6 +168,31 @@ void Program::write() const {
     } else {
         population_->write_demography(std::cout);
     }
+}
+
+Parameters::Parameters() {
+    std::istringstream iss(default_values);
+    read(iss);
+}
+
+void Parameters::read(std::istream& ist) {
+    nlohmann::json obj;
+    ist >> obj;
+    obj.at("natural_mortality").get_to(natural_mortality);
+    obj.at("fishing_mortality").get_to(fishing_mortality);
+    fishing_coef = obj.value("fishing_coef", fishing_coef);
+    obj.at("weight_for_age").get_to(weight_for_age);
+    obj.at("migration_matrices").get_to(migration_matrices);
+}
+
+std::ostream& Parameters::write(std::ostream& ost) const {
+    nlohmann::json obj;
+    obj["natural_mortality"] = natural_mortality;
+    obj["fishing_mortality"] = fishing_mortality;
+    obj["fishing_coef"] = fishing_coef;
+    obj["weight_for_age"] = weight_for_age;
+    obj["migration_matrices"] = migration_matrices;
+    return ost << obj;
 }
 
 } // namespace pbf

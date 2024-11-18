@@ -2,12 +2,10 @@
     @brief Implementation of Individual class
 */
 #include "individual.hpp"
-#include "config.hpp"
+#include "parameters.hpp"
 
 #include <wtl/debug.hpp>
-#include <clippson/json.hpp>
 
-#include <sstream>
 #include <type_traits>
 
 namespace pbf {
@@ -24,6 +22,15 @@ void elongate(std::vector<T>& v, size_t n) noexcept {
     for (size_t i=v.size(); i<n; ++i) {
         v.emplace_back(v.back());
     }
+}
+
+template <class T> inline
+void copy_elongate(const std::vector<T>& src, std::vector<T>& dst, size_t n) noexcept {
+    dst.reserve(n);
+    for (const auto& x: src) {
+        dst.emplace_back(x);
+    }
+    elongate(dst, n);
 }
 
 inline uint_fast32_t get_dest(const std::vector<double>& v) {
@@ -87,11 +94,11 @@ std::ostream& operator<<(std::ostream& ost, const Individual& x) {
     return x.write(ost);
 }
 
-void Individual::set_static_migration() {
+void Individual::set_static_migration(const Parameters& params) {
     using dist_t = PairDestDist::second_type;
     MIGRATION_DESTINATION_.clear();
     MIGRATION_DESTINATION_.reserve(MAX_AGE);
-    for (const auto& matrix: JSON.migration_matrices) {
+    for (const auto& matrix: params.migration_matrices) {
         std::vector<PairDestDist> pairs;
         pairs.reserve(matrix.size());
         for (const auto& row: matrix) {
@@ -102,58 +109,33 @@ void Individual::set_static_migration() {
     elongate(MIGRATION_DESTINATION_, MAX_AGE);
 }
 
-void Individual::set_static_mortality() {
-    elongate(JSON.natural_mortality, 4u * MAX_AGE);
-    elongate(JSON.fishing_mortality, 4u * MAX_AGE);
-    JSON.natural_mortality.back() = 1e9;
+void Individual::set_static_mortality(const Parameters& params) {
+    copy_elongate(params.natural_mortality, NATURAL_MORTALITY_, 4u * MAX_AGE);
+    copy_elongate(params.fishing_mortality, FISHING_MORTALITY_, 4u * MAX_AGE);
+    NATURAL_MORTALITY_.back() = 1e9;
 }
 
-void Individual::set_static_weight() {
+void Individual::set_static_weight(const Parameters& params) {
     WEIGHT_FOR_AGE_.reserve(MAX_AGE);
-    WEIGHT_FOR_AGE_.resize(JSON.weight_for_age.size() / 4u);
+    WEIGHT_FOR_AGE_.resize(params.weight_for_age.size() / 4u);
     for (size_t year=0; year<WEIGHT_FOR_AGE_.size(); ++year) {
-        WEIGHT_FOR_AGE_[year] = JSON.weight_for_age[4u * year];
+        WEIGHT_FOR_AGE_[year] = params.weight_for_age[4u * year];
     }
     elongate(WEIGHT_FOR_AGE_, MAX_AGE);
 }
 
-void Individual::set_dependent_static(const uint_fast32_t years) {
-    set_static_migration();
-    set_static_mortality();
-    set_static_weight();
-    const auto fc_size = static_cast<uint_fast32_t>(JSON.fishing_coef.size());
+void Individual::set_dependent_static(const Parameters& params, const uint_fast32_t years) {
+    set_static_migration(params);
+    set_static_mortality(params);
+    set_static_weight(params);
+    const auto fc_size = static_cast<uint_fast32_t>(params.fishing_coef.size());
     const auto offset = sub_sat(fc_size, years);
     FISHING_COEF_.assign(years, 1.0);
-    std::copy_backward(JSON.fishing_coef.begin() + offset, JSON.fishing_coef.end(),
+    std::copy_backward(params.fishing_coef.begin() + offset, params.fishing_coef.end(),
                        FISHING_COEF_.end());
     if (!is_ready(years)) {
         throw std::logic_error("logic_error:!Individual::is_ready()");
     }
-}
-
-IndividualJson::IndividualJson() {
-    std::istringstream iss(default_values);
-    read(iss);
-}
-
-void IndividualJson::read(std::istream& ist) {
-    nlohmann::json obj;
-    ist >> obj;
-    obj.at("natural_mortality").get_to(natural_mortality);
-    obj.at("fishing_mortality").get_to(fishing_mortality);
-    fishing_coef = obj.value("fishing_coef", fishing_coef);
-    obj.at("weight_for_age").get_to(weight_for_age);
-    obj.at("migration_matrices").get_to(migration_matrices);
-}
-
-std::ostream& IndividualJson::write(std::ostream& ost) const {
-    nlohmann::json obj;
-    obj["natural_mortality"] = natural_mortality;
-    obj["fishing_mortality"] = fishing_mortality;
-    obj["fishing_coef"] = fishing_coef;
-    obj["weight_for_age"] = weight_for_age;
-    obj["migration_matrices"] = migration_matrices;
-    return ost << obj;
 }
 
 } // namespace pbf
