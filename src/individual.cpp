@@ -26,7 +26,7 @@ void elongate(std::vector<T>& v, size_t n) noexcept {
     }
 }
 
-inline int_fast32_t get_dest(const std::vector<double>& v) {
+inline uint_fast32_t get_dest(const std::vector<double>& v) {
     uint_fast32_t idx = 0;
     uint_fast32_t num_positive = 0u;
     for (uint_fast32_t i=0u; i<v.size(); ++i) {
@@ -35,7 +35,7 @@ inline int_fast32_t get_dest(const std::vector<double>& v) {
             idx = i;
         }
     }
-    return num_positive == 1u ? idx : -1;
+    return num_positive == 1u ? idx : std::numeric_limits<uint_fast32_t>::max();
 }
 
 inline uint_fast32_t sub_sat(const uint_fast32_t x, const uint_fast32_t y) {

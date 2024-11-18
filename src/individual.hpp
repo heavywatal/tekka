@@ -7,6 +7,7 @@
 
 #include <cstdint>
 #include <iosfwd>
+#include <limits>
 #include <memory>
 #include <vector>
 #include <random>
@@ -71,9 +72,9 @@ class Individual {
 
     //! Generate random number for new location.
     template <class URBG>
-    int_fast32_t destination(uint_fast32_t loc, int_fast32_t year, URBG& engine) const {
+    uint_fast32_t destination(uint_fast32_t loc, int_fast32_t year, URBG& engine) const {
         auto& [dest, dist] = MIGRATION_DESTINATION_[age(year)][loc];
-        return dest < 0 ? dist(engine) : dest;
+        return (dest == std::numeric_limits<uint_fast32_t>::max()) ? dist(engine) : dest;
     }
 
     //! Write ancestors recursively.
@@ -127,7 +128,7 @@ class Individual {
 
   private:
     //! Alias for readability
-    using PairDestDist=std::pair<int_fast32_t, std::discrete_distribution<int_fast32_t>>;
+    using PairDestDist=std::pair<uint_fast32_t, std::discrete_distribution<uint_fast32_t>>;
     //! Prepare #MIGRATION_DESTINATION_
     static void set_static_migration();
     //! Prepare mortality vectors

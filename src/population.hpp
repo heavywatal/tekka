@@ -30,10 +30,10 @@ enum class Sex { F, M };
 class SubPopulation {
   public:
     std::vector<ShPtrIndividual>& operator[](Sex x) {
-        return adults[static_cast<int>(x)];
+        return adults[static_cast<uint_fast8_t>(x)];
     }
     const std::vector<ShPtrIndividual>& operator[](Sex x) const {
-        return adults[static_cast<int>(x)];
+        return adults[static_cast<uint_fast8_t>(x)];
     }
     size_t size() const {
         return adults[0].size() + adults[1].size();
