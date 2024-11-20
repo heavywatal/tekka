@@ -9,9 +9,7 @@
 
 #include <wtl/chrono.hpp>
 #include <wtl/debug.hpp>
-#ifdef ZLIB_FOUND
-  #include <wtl/zlib.hpp>
-#endif
+#include <wtl/zlib.hpp>
 #include <clippson/clippson.hpp>
 
 #include <filesystem>
@@ -146,23 +144,16 @@ void Program::run() {
 
 void Program::write() const {
     namespace fs = std::filesystem;
-  #ifdef ZLIB_FOUND
-    using ofstream = wtl::zlib::ofstream;
-    const std::string ext = ".tsv.gz";
-  #else
-    using ofstream = std::ofstream;
-    const std::string ext = ".tsv";
-  #endif
     const auto outdir = fs::path(VM.at("outdir"));
     if (!outdir.empty()) {
         fs::create_directory(outdir);
         std::ofstream{outdir / "config.json"} << config_;
         {
-            ofstream ost{outdir / ("sample_family" + ext)};
+            wtl::zlib::ofstream ost{outdir / "sample_family.tsv.gz"};
             population_->write_sample_family(ost);
         }
         {
-            ofstream ost{outdir / ("demography" + ext)};
+            wtl::zlib::ofstream ost{outdir / "demography.tsv.gz"};
             population_->write_demography(ost);
         }
     } else {
