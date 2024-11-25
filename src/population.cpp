@@ -12,6 +12,43 @@
 
 namespace pbf {
 
+namespace {
+
+template <class T> inline
+void elongate(std::vector<T>& v, size_t n) noexcept {
+    for (size_t i=v.size(); i<n; ++i) {
+        v.emplace_back(v.back());
+    }
+}
+
+template <class T> inline
+void copy_elongate(const std::vector<T>& src, std::vector<T>& dst, size_t n) noexcept {
+    dst.reserve(n);
+    for (const auto& x: src) {
+        dst.emplace_back(x);
+    }
+    elongate(dst, n);
+}
+
+inline uint_fast32_t get_dest(const std::vector<double>& v) {
+    uint_fast32_t idx = 0;
+    uint_fast32_t num_positive = 0u;
+    for (uint_fast32_t i=0u; i<v.size(); ++i) {
+        if (v[i] > 0.0) {
+            ++num_positive;
+            idx = i;
+        }
+    }
+    return num_positive == 1u ? idx : std::numeric_limits<uint_fast32_t>::max();
+}
+
+inline uint_fast32_t sub_sat(const uint_fast32_t x, const uint_fast32_t y) {
+    return (x > y) ? x - y : uint_fast32_t{};
+}
+
+} // anonymous namespace
+
+
 Population::Population(const size_t initial_size, std::random_device::result_type seed,
   const Parameters& params,
   const int_fast32_t simulating_duration,
@@ -34,8 +71,8 @@ Population::Population(const size_t initial_size, std::random_device::result_typ
     for (size_t i=half; i<initial_size; ++i) {
         subpop0[Sex::M].emplace_back(std::make_shared<Individual>());
     }
-    if (!Individual::is_ready(simulating_duration)) {
-        Individual::set_dependent_static(params, simulating_duration);
+    if (!is_ready(simulating_duration)) {
+        propagate_params(params);
     }
 }
 
@@ -69,7 +106,7 @@ void Population::init_demography(const int_fast32_t duration) {
         subpop.demography.resize(duration);
         for (auto& seasons: subpop.demography) {
             for (auto& record: seasons) {
-                record.resize(Individual::MAX_AGE);
+                record.resize(MAX_AGE);
             }
         }
     }
@@ -117,13 +154,13 @@ void Population::reproduce(const uint_fast32_t location, const size_t popsize) {
     std::discrete_distribution<uint_fast32_t> mate_distr(vw.begin(), vw.end());
     std::vector<double> d(4u);
     for (int_fast32_t q = 0; q < 4; ++q) {
-        d[q] = Individual::DEATH_RATE(q, year_);
+        d[q] = death_rate(0, q);
     }
     auto& juveniles = subpop.juveniles;
     juveniles.reserve(subpop.size());
     auto& demography_year = subpop.demography[year_];
     for (const auto& mother: females) {
-        const double rec_mean = rec_rate * mother->weight(year_);
+        const double rec_mean = rec_rate * WEIGHT_FOR_AGE_[mother->age(year_)];
         uint_fast32_t rec = rnbinom<uint_fast32_t>(k_nbinom_, rec_mean, *engine_);
         for (int_fast32_t q = 0; q < 4; ++q) {
             demography_year[q][0u] += rec;
@@ -140,7 +177,7 @@ std::vector<double> Population::weights(const std::vector<ShPtrIndividual>& indi
     std::vector<double> res;
     res.reserve(individuals.size());
     for (const auto& p: individuals) {
-        res.push_back(p->weight(year_));
+        res.push_back(WEIGHT_FOR_AGE_[p->age(year_)]);
     }
     return res;
 }
@@ -151,7 +188,7 @@ void Population::survive(const int_fast32_t season) {
         size_t n = individuals.size();
         for (size_t i=0; i<n; ++i) {
             auto& p = individuals[i];
-            if (wtl::generate_canonical(*engine_) < p->death_rate(year_, season)) {
+            if (wtl::generate_canonical(*engine_) < death_rate(p->age(year_), season)) {
                 p = std::move(individuals.back());
                 individuals.pop_back();
                 --n;
@@ -160,6 +197,13 @@ void Population::survive(const int_fast32_t season) {
         }
       }
     }
+}
+
+double Population::death_rate(const int_fast32_t age, const int_fast32_t season) const {
+    const auto q_age = 4 * age + season;
+    const auto m = NATURAL_MORTALITY_[q_age];
+    const auto f = FISHING_MORTALITY_[q_age] * FISHING_COEF_[year_];
+    return 1.0 - std::exp(-m - f);
 }
 
 void Population::migrate() {
@@ -174,7 +218,7 @@ void Population::migrate() {
             size_t n = subpop_sizes[loc];
             for (size_t i=0; i<n;) {
                 auto& p = individuals[i];
-                uint_fast32_t dst = p->destination(loc, year_, *engine_);
+                uint_fast32_t dst = destination(p->age(year_), loc);
                 if (dst == loc) {++i; continue;}
                 subpopulations_[dst][sex].emplace_back(std::move(p));
                 if (--n)
@@ -190,11 +234,16 @@ void Population::migrate() {
         for (auto& p: juveniles) {
             constexpr URBG::result_type half_max = URBG::max() >> 1u;
             const auto sex = engine_->operator()() < half_max ? Sex::F : Sex::M;
-            const auto dst = p->destination(loc, year_, *engine_);
+            const auto dst = destination(p->age(year_), loc);
             subpopulations_[dst][sex].emplace_back(std::move(p));
         }
         juveniles.clear();
     }
+}
+
+uint_fast32_t Population::destination(int_fast32_t age, uint_fast32_t loc) {
+    auto& [dest, dist] = MIGRATION_DESTINATION_[age][loc];
+    return (dest == std::numeric_limits<uint_fast32_t>::max()) ? dist(*engine_) : dest;
 }
 
 void Population::sample(SubPopulation& subpop, size_t num_adults, size_t num_juveniles) {
@@ -290,6 +339,57 @@ std::ostream& Population::write(std::ostream& ost) const {
 //! Shortcut for Population::write(ost)
 std::ostream& operator<<(std::ostream& ost, const Population& pop) {
     return pop.write(ost);
+}
+
+void Population::propagate_params(const Parameters& params) {
+    init_mortality(params);
+    init_migration(params);
+    init_weight(params);
+}
+
+void Population::init_migration(const Parameters& params) {
+    using dist_t = PairDestDist::second_type;
+    MIGRATION_DESTINATION_.clear();
+    MIGRATION_DESTINATION_.reserve(MAX_AGE);
+    for (const auto& matrix: params.migration_matrices) {
+        std::vector<PairDestDist> pairs;
+        pairs.reserve(matrix.size());
+        for (const auto& row: matrix) {
+            pairs.emplace_back(get_dest(row), dist_t(row.begin(), row.end()));
+        }
+        MIGRATION_DESTINATION_.emplace_back(std::move(pairs));
+    }
+    elongate(MIGRATION_DESTINATION_, MAX_AGE);
+}
+
+void Population::init_mortality(const Parameters& params) {
+    copy_elongate(params.natural_mortality, NATURAL_MORTALITY_, 4u * MAX_AGE);
+    copy_elongate(params.fishing_mortality, FISHING_MORTALITY_, 4u * MAX_AGE);
+    NATURAL_MORTALITY_.back() = 1e9;
+    const auto fc_size = static_cast<uint_fast32_t>(params.fishing_coef.size());
+    const auto offset = sub_sat(fc_size, simulating_duration_);
+    FISHING_COEF_.assign(simulating_duration_, 1.0);
+    std::copy_backward(params.fishing_coef.begin() + offset, params.fishing_coef.end(),
+                       FISHING_COEF_.end());
+}
+
+void Population::init_weight(const Parameters& params) {
+    WEIGHT_FOR_AGE_.reserve(MAX_AGE);
+    WEIGHT_FOR_AGE_.resize(params.weight_for_age.size() / 4u);
+    for (size_t year=0; year<WEIGHT_FOR_AGE_.size(); ++year) {
+        WEIGHT_FOR_AGE_[year] = params.weight_for_age[4u * year];
+    }
+    elongate(WEIGHT_FOR_AGE_, MAX_AGE);
+}
+
+bool Population::is_ready(const uint_fast32_t years) const {
+    return (
+      FISHING_COEF_.size() >= years
+      && NATURAL_MORTALITY_.size() >= 4u * MAX_AGE
+      && FISHING_MORTALITY_.size() >= 4u * MAX_AGE
+      && WEIGHT_FOR_AGE_.size() >= MAX_AGE
+      && MIGRATION_DESTINATION_.size() >= MAX_AGE
+    );
 }
 
 } // namespace pbf

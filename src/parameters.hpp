@@ -10,6 +10,7 @@ namespace pbf {
 */
 class Parameters {
     friend class Individual;
+    friend class Population;
   public:
     //! Constructor
     Parameters();

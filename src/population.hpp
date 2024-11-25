@@ -58,6 +58,9 @@ class SubPopulation {
 /*! @brief Population class
 */
 class Population {
+    //! No individual lives longer than this.
+    constexpr static inline int_fast32_t MAX_AGE = 80;
+
   public:
     //! Constructor
     Population(const size_t initial_size, std::random_device::result_type seed,
@@ -95,9 +98,13 @@ class Population {
 
     //! Evaluate survival.
     void survive(int_fast32_t season);
+    //! Finite death rate per quarter year: \f$ d = 1 - \exp(- M - eF) \f$
+    double death_rate(const int_fast32_t age, const int_fast32_t season) const;
 
     //! Evaluate migration. Merge #SubPopulation::juveniles to #SubPopulation::adults.
     void migrate();
+    //! Generate random number for new location.
+    uint_fast32_t destination(int_fast32_t age, uint_fast32_t loc);
 
     //! Sample individuals.
     void sample(SubPopulation& subpops, size_t n_adults, size_t n_juveniles);
@@ -113,6 +120,17 @@ class Population {
     //! For male selection
     std::vector<double> weights(const std::vector<ShPtrIndividual>&) const;
 
+    //! Call all the init* functions
+    void propagate_params(const Parameters&);
+    //! Prepare #MIGRATION_DESTINATION_
+    void init_migration(const Parameters&);
+    //! Prepare #NATURAL_MORTALITY_, #FISHING_MORTALITY_, #FISHING_COEF_
+    void init_mortality(const Parameters&);
+    //! Prepare #WEIGHT_FOR_AGE_
+    void init_weight(const Parameters&);
+    //! Test if dependent variables are ready.
+    bool is_ready(const uint_fast32_t years) const;
+
     //!
     std::vector<SubPopulation> subpopulations_{};
 
@@ -127,6 +145,20 @@ class Population {
     //! \f$k \in (0, \infty)\f$ for overdispersion in reproduce().
     //! Equivalent to Poisson when \f$k \to \infty\f$ (or \f$k<0\f$ for convience).
     const double k_nbinom_{};
+
+    //! elongated version of #Parameters::natural_mortality
+    std::vector<double> NATURAL_MORTALITY_{};
+    //! elongated version of #Parameters::fishing_mortality
+    std::vector<double> FISHING_MORTALITY_{};
+    //! Fluctuation of fishing mortality by year
+    std::vector<double> FISHING_COEF_{};
+    //! year version of #Parameters::weight_for_age
+    std::vector<double> WEIGHT_FOR_AGE_{};
+    //! Alias for readability
+    using PairDestDist=std::pair<uint_fast32_t, std::discrete_distribution<uint_fast32_t>>;
+    //! Discrete distributions for migration
+    std::vector<std::vector<PairDestDist>> MIGRATION_DESTINATION_{};
+
     //!@}
     //! Current time.
     int_fast32_t year_{0};
