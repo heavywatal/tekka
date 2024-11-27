@@ -4,7 +4,7 @@
 */
 #include "program.hpp"
 #include "population.hpp"
-#include "individual.hpp"
+#include "parameters.hpp"
 #include "config.hpp"
 
 #include <wtl/chrono.hpp>
@@ -19,15 +19,13 @@
 
 namespace pbf {
 
-//! Global variables mapper of command-line arguments
-nlohmann::json VM;
-
 //! Options description for general purpose
 inline clipp::group general_options(nlohmann::json* vm) {
     return (
       clippson::option(vm, {"h", "help"}, false, "Print this help"),
       clippson::option(vm, {"version"}, false, "Print version"),
       clippson::option(vm, {"v", "verbose"}, false, "Verbose output"),
+      clippson::option(vm, {"i", "infile"}, std::string{}, "config file in json format"),
       clippson::option(vm, {"default"}, false, "Print default parameters in json")
     ).doc("General:");
 }
@@ -45,18 +43,15 @@ inline clipp::group general_options(nlohmann::json* vm) {
     `-i,--infile`                 | -
     `-o,--outdir`                 | -
 */
-inline clipp::group program_options(nlohmann::json* vm) {
-    const std::string OUT_DIR = wtl::strftime("thunnus_%Y%m%d_%H%M%S");
-    const int seed = static_cast<int>(std::random_device{}()); // 32-bit signed integer for R
+inline clipp::group program_options(Parameters& params) {
     return (
-      clippson::option(vm, {"O", "origin"}, 0.2, "Initial population size relative to K"),
-      clippson::option(vm, {"y", "years"}, 100, "Duration of simulation"),
-      clippson::option(vm, {"l", "last"}, 3, "Sample last _ years"),
-      clippson::option(vm, {"sa", "sample_size_adult"}, std::vector<size_t>{10u, 10u}, "per location"),
-      clippson::option(vm, {"sj", "sample_size_juvenile"}, std::vector<size_t>{10u, 10u}, "per location"),
-      clippson::option(vm, {"i", "infile"}, std::string(""), "config file in json format"),
-      clippson::option(vm, {"o", "outdir"}, OUT_DIR),
-      clippson::option(vm, {"seed"}, seed)
+      clippson::option({"O", "origin"}, &params.origin, "Initial population size relative to K"),
+      clippson::option({"y", "years"}, &params.years, "Duration of simulation"),
+      clippson::option({"l", "last"}, &params.last, "Sample last _ years"),
+      clippson::option({"sa", "sample_size_adult"}, &params.sample_size_adult, "per location"),
+      clippson::option({"sj", "sample_size_juvenile"}, &params.sample_size_juvenile, "per location"),
+      clippson::option({"o", "outdir"}, &params.outdir),
+      clippson::option({"seed"}, &params.seed)
     ).doc("Program:");
 }
 
@@ -69,30 +64,51 @@ inline clipp::group program_options(nlohmann::json* vm) {
     `-K,--carrying_capacity` | \f$K\f$  | Population::carrying_capacity_
     `-k,--overdispersion`    | \f$k\f$  | Population::k_nbinom_
 */
-inline clipp::group reproduction_options(nlohmann::json* vm) {
+inline clipp::group reproduction_options(Parameters& params) {
     return (
-      clippson::option(vm, {"r", "recruitment"}, 2.0),
-      clippson::option(vm, {"K", "carrying_capacity"}, 1e3),
-      clippson::option(vm, {"k", "overdispersion"}, -1.0,
+      clippson::option({"r", "recruitment"}, &params.recruitment),
+      clippson::option({"K", "carrying_capacity"}, &params.carrying_capacity),
+      clippson::option({"k", "overdispersion"}, &params.overdispersion,
         "k ∈ (0, ∞); equivalent to Poisson when k→∞ (or k<0 for convience)"
       )
     ).doc("Reproduction:");
 }
 
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(Parameters,
+  natural_mortality, fishing_mortality, fishing_coef, weight_for_age, migration_matrices,
+  origin, years, last, sample_size_adult, sample_size_juvenile, outdir, seed, carrying_capacity, recruitment, overdispersion
+);
+
 Program::~Program() = default;
 
-Program::Program(const std::vector<std::string>& arguments)
-: command_args_(arguments), population_(nullptr) {
+Program::Program(const std::vector<std::string>& arguments) {
     std::ios::sync_with_stdio(false);
     std::cin.tie(0);
     std::cout.precision(15);
     std::cerr.precision(6);
 
     nlohmann::json vm_local;
+    clippson::parse(general_options(&vm_local), arguments);
+    if (vm_local.at("version")) {
+        std::cout << PROJECT_VERSION << "\n";
+        throw exit_success();
+    }
+    Parameters params;
+    if (vm_local.at("default")) {
+        nlohmann::json obj{params};
+        std::cout << obj << "\n";
+        throw exit_success();
+    }
+    if (const std::string infile = vm_local.at("infile"); !infile.empty()) {
+        std::ifstream ifs{infile};
+        nlohmann::json obj;
+        ifs >> obj;
+        obj.get_to(params);
+    }
     auto cli = (
       general_options(&vm_local),
-      program_options(&VM),
-      reproduction_options(&VM)
+      program_options(params),
+      reproduction_options(params)
     );
     clippson::parse(cli, arguments);
     if (vm_local.at("help")) {
@@ -101,50 +117,22 @@ Program::Program(const std::vector<std::string>& arguments)
         std::cout << clipp::documentation(cli, fmt) << "\n";
         throw exit_success();
     }
-    if (vm_local.at("version")) {
-        std::cout << PROJECT_VERSION << "\n";
-        throw exit_success();
-    }
-    Parameters params;
-    if (vm_local.at("default")) {
-        params.write(std::cout);
-        throw exit_success();
-    }
-    const std::string infile = VM.at("infile");
-    if (!infile.empty()) {
-        std::ifstream ifs(infile);
-        params.read(ifs);
-    }
-    config_ = VM.dump(2) + "\n";
+    outdir_ = params.outdir;
+    config_ = nlohmann::json{params}.dump() + "\n";
     if (vm_local.at("verbose")) {
         std::cerr << wtl::iso8601datetime() << std::endl;
         std::cerr << config_ << std::endl;
-        params.write(std::cerr) << std::endl;
     }
-    const double K = VM.at("carrying_capacity");
-    const double O = VM.at("origin");
-    population_ = std::make_unique<Population>(
-        static_cast<size_t>(K * O),
-        VM.at("seed"),
-        params,
-        VM.at("years"),
-        K,
-        VM.at("recruitment"),
-        VM.at("overdispersion")
-    );
+    population_ = std::make_unique<Population>(params);
 }
 
 void Program::run() {
-    population_->run(
-        VM.at("sample_size_adult"),
-        VM.at("sample_size_juvenile"),
-        VM.at("last")
-    );
+    population_->run();
 }
 
 void Program::write() const {
     namespace fs = std::filesystem;
-    const auto outdir = fs::path(VM.at("outdir"));
+    const auto outdir = fs::path(outdir_);
     if (!outdir.empty()) {
         fs::create_directory(outdir);
         std::ofstream{outdir / "config.json"} << config_;
@@ -161,7 +149,10 @@ void Program::write() const {
     }
 }
 
-Parameters::Parameters() {
+Parameters::Parameters():
+  outdir{wtl::strftime("thunnus_%Y%m%d_%H%M%S")},
+  seed{static_cast<int32_t>(std::random_device{}())} // 32-bit signed integer for R
+  {
     std::istringstream iss(default_values);
     read(iss);
 }

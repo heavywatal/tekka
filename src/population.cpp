@@ -49,18 +49,11 @@ inline uint_fast32_t sub_sat(const uint_fast32_t x, const uint_fast32_t y) {
 } // anonymous namespace
 
 
-Population::Population(const size_t initial_size, std::random_device::result_type seed,
-  const Parameters& params,
-  const int_fast32_t simulating_duration,
-  const double carrying_capacity,
-  const double recruitment_coef,
-  const double negative_binom_k)
-: subpopulations_(4u),
-  simulating_duration_{simulating_duration},
-  carrying_capacity_{carrying_capacity},
-  recruitment_coef_{recruitment_coef},
-  k_nbinom_{negative_binom_k},
-  engine_{std::make_unique<URBG>(seed)} {
+Population::Population(const Parameters& params)
+: params_{params},
+  subpopulations_(4u),
+  engine_{std::make_unique<URBG>(params_.seed)} {
+    const size_t initial_size = params_.origin * params_.carrying_capacity;
     auto& subpop0 = subpopulations_[0u];
     subpop0[Sex::F].reserve(initial_size);
     subpop0[Sex::M].reserve(initial_size);
@@ -71,21 +64,19 @@ Population::Population(const size_t initial_size, std::random_device::result_typ
     for (size_t i=half; i<initial_size; ++i) {
         subpop0[Sex::M].emplace_back(std::make_shared<Individual>());
     }
-    if (!is_ready(simulating_duration)) {
-        propagate_params(params);
+    if (!is_ready()) {
+        propagate_params();
     }
 }
 
 Population::~Population() = default;
 
-void Population::run(const std::vector<size_t>& sample_size_adult,
-                     const std::vector<size_t>& sample_size_juvenile,
-                     const int_fast32_t recording_duration) {
-    const auto num_sample_locs = std::max(sample_size_adult.size(), sample_size_juvenile.size());
-    auto recording_start = simulating_duration_ - recording_duration;
-    init_demography(simulating_duration_ + 1);
+void Population::run() {
+    const auto num_sample_locs = std::max(params_.sample_size_adult.size(), params_.sample_size_juvenile.size());
+    auto recording_start = params_.years - params_.last;
+    init_demography(params_.years + 1);
     record_demography(3);
-    for (year_ = 1; year_ <= simulating_duration_; ++year_) {
+    for (year_ = 1; year_ <= params_.years; ++year_) {
         reproduce();
         if (year_ == 1) subpopulations_[0u].clear();
         for (int_fast32_t q = 0; q < 4; ++q) {
@@ -94,7 +85,7 @@ void Population::run(const std::vector<size_t>& sample_size_adult,
         }
         if (year_ > recording_start) {
             for (uint_fast32_t loc = 0; loc < num_sample_locs; ++loc) {
-                sample(subpopulations_[loc], sample_size_adult[loc], sample_size_juvenile[loc]);
+                sample(subpopulations_[loc], params_.sample_size_adult[loc], params_.sample_size_juvenile[loc]);
             }
         }
         migrate();
@@ -144,8 +135,8 @@ void Population::reproduce() {
 
 void Population::reproduce(const uint_fast32_t location, const size_t popsize) {
     const auto N = static_cast<double>(popsize);
-    if (N > carrying_capacity_) return;
-    const double rec_rate = recruitment_coef_ * (1.0 - N / carrying_capacity_);
+    if (N > params_.carrying_capacity) return;
+    const double rec_rate = params_.recruitment * (1.0 - N / params_.carrying_capacity);
     auto& subpop = subpopulations_[location];
     const auto& females = subpop[Sex::F];
     const auto& males = subpop[Sex::M];
@@ -161,7 +152,7 @@ void Population::reproduce(const uint_fast32_t location, const size_t popsize) {
     auto& demography_year = subpop.demography[year_];
     for (const auto& mother: females) {
         const double rec_mean = rec_rate * WEIGHT_FOR_AGE_[mother->age(year_)];
-        uint_fast32_t rec = rnbinom<uint_fast32_t>(k_nbinom_, rec_mean, *engine_);
+        uint_fast32_t rec = rnbinom<uint_fast32_t>(params_.overdispersion, rec_mean, *engine_);
         for (int_fast32_t q = 0; q < 4; ++q) {
             demography_year[q][0u] += rec;
             rec -= std::binomial_distribution<uint_fast32_t>(rec, d[q])(*engine_);
@@ -341,17 +332,17 @@ std::ostream& operator<<(std::ostream& ost, const Population& pop) {
     return pop.write(ost);
 }
 
-void Population::propagate_params(const Parameters& params) {
-    init_mortality(params);
-    init_migration(params);
-    init_weight(params);
+void Population::propagate_params() {
+    init_mortality();
+    init_migration();
+    init_weight();
 }
 
-void Population::init_migration(const Parameters& params) {
+void Population::init_migration() {
     using dist_t = PairDestDist::second_type;
     MIGRATION_DESTINATION_.clear();
     MIGRATION_DESTINATION_.reserve(MAX_AGE);
-    for (const auto& matrix: params.migration_matrices) {
+    for (const auto& matrix: params_.migration_matrices) {
         std::vector<PairDestDist> pairs;
         pairs.reserve(matrix.size());
         for (const auto& row: matrix) {
@@ -362,29 +353,29 @@ void Population::init_migration(const Parameters& params) {
     elongate(MIGRATION_DESTINATION_, MAX_AGE);
 }
 
-void Population::init_mortality(const Parameters& params) {
-    copy_elongate(params.natural_mortality, NATURAL_MORTALITY_, 4u * MAX_AGE);
-    copy_elongate(params.fishing_mortality, FISHING_MORTALITY_, 4u * MAX_AGE);
+void Population::init_mortality() {
+    copy_elongate(params_.natural_mortality, NATURAL_MORTALITY_, 4u * MAX_AGE);
+    copy_elongate(params_.fishing_mortality, FISHING_MORTALITY_, 4u * MAX_AGE);
     NATURAL_MORTALITY_.back() = 1e9;
-    const auto fc_size = static_cast<uint_fast32_t>(params.fishing_coef.size());
-    const auto offset = sub_sat(fc_size, simulating_duration_);
-    FISHING_COEF_.assign(simulating_duration_, 1.0);
-    std::copy_backward(params.fishing_coef.begin() + offset, params.fishing_coef.end(),
+    const auto fc_size = static_cast<uint_fast32_t>(params_.fishing_coef.size());
+    const auto offset = sub_sat(fc_size, params_.years);
+    FISHING_COEF_.assign(params_.years, 1.0);
+    std::copy_backward(params_.fishing_coef.begin() + offset, params_.fishing_coef.end(),
                        FISHING_COEF_.end());
 }
 
-void Population::init_weight(const Parameters& params) {
+void Population::init_weight() {
     WEIGHT_FOR_AGE_.reserve(MAX_AGE);
-    WEIGHT_FOR_AGE_.resize(params.weight_for_age.size() / 4u);
+    WEIGHT_FOR_AGE_.resize(params_.weight_for_age.size() / 4u);
     for (size_t year=0; year<WEIGHT_FOR_AGE_.size(); ++year) {
-        WEIGHT_FOR_AGE_[year] = params.weight_for_age[4u * year];
+        WEIGHT_FOR_AGE_[year] = params_.weight_for_age[4u * year];
     }
     elongate(WEIGHT_FOR_AGE_, MAX_AGE);
 }
 
-bool Population::is_ready(const uint_fast32_t years) const {
+bool Population::is_ready() const {
     return (
-      FISHING_COEF_.size() >= years
+      FISHING_COEF_.size() >= static_cast<size_t>(params_.years)
       && NATURAL_MORTALITY_.size() >= 4u * MAX_AGE
       && FISHING_MORTALITY_.size() >= 4u * MAX_AGE
       && WEIGHT_FOR_AGE_.size() >= MAX_AGE

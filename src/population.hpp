@@ -63,18 +63,11 @@ class Population {
 
   public:
     //! Constructor
-    Population(const size_t initial_size, std::random_device::result_type seed,
-               const Parameters& = Parameters{},
-               const int_fast32_t simulating_duration = 10,
-               const double carrying_capacity = 1e3,
-               const double recruitment_coef = 2.0,
-               const double negative_binom_k = -1.0);
+    Population(const Parameters&);
     ~Population();
 
     //! Main iteration
-    void run(const std::vector<size_t>& sample_size_adult={1u, 1u},
-             const std::vector<size_t>& sample_size_juvenile={1u,1u},
-             const int_fast32_t recording_duration=1);
+    void run();
 
     //! Construct and write tree from #SubPopulation::samples.
     //! Serial IDs are assigned to sampled individuals.
@@ -121,30 +114,20 @@ class Population {
     std::vector<double> weights(const std::vector<ShPtrIndividual>&) const;
 
     //! Call all the init* functions
-    void propagate_params(const Parameters&);
+    void propagate_params();
     //! Prepare #MIGRATION_DESTINATION_
-    void init_migration(const Parameters&);
+    void init_migration();
     //! Prepare #NATURAL_MORTALITY_, #FISHING_MORTALITY_, #FISHING_COEF_
-    void init_mortality(const Parameters&);
+    void init_mortality();
     //! Prepare #WEIGHT_FOR_AGE_
-    void init_weight(const Parameters&);
+    void init_weight();
     //! Test if dependent variables are ready.
-    bool is_ready(const uint_fast32_t years) const;
-
-    //!
-    std::vector<SubPopulation> subpopulations_{};
+    bool is_ready() const;
 
     //! @ingroup params
     //!@{
 
-    const int_fast32_t simulating_duration_{};
-    //! \f$K\f$: carrying capacity used in reproduce()
-    const double carrying_capacity_{};
-    //! \f$r\f$: coefficient used in reproduce()
-    const double recruitment_coef_{};
-    //! \f$k \in (0, \infty)\f$ for overdispersion in reproduce().
-    //! Equivalent to Poisson when \f$k \to \infty\f$ (or \f$k<0\f$ for convience).
-    const double k_nbinom_{};
+    Parameters params_;
 
     //! elongated version of #Parameters::natural_mortality
     std::vector<double> NATURAL_MORTALITY_{};
@@ -160,6 +143,9 @@ class Population {
     std::vector<std::vector<PairDestDist>> MIGRATION_DESTINATION_{};
 
     //!@}
+
+    //!
+    std::vector<SubPopulation> subpopulations_{};
     //! Current time.
     int_fast32_t year_{0};
     //! Uniform Random Bit Generator

@@ -1,9 +1,9 @@
 #include "population.hpp"
-
-#include <random>
+#include "parameters.hpp"
 
 int main() {
-    pbf::Population pop(200u, std::random_device{}());
+    pbf::Parameters params;
+    pbf::Population pop(params);
     pop.run();
     return 0;
 }

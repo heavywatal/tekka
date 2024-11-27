@@ -34,10 +34,10 @@ class Program {
     void write() const;
 
   private:
-    //! Command-line arguments
-    std::vector<std::string> command_args_{};
     //! Written to "config.json"
     std::string config_{};
+    //! Output directory
+    std::string outdir_{};
     //! Population instance
     std::unique_ptr<Population> population_{nullptr};
 };
