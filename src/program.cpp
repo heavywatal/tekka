@@ -24,9 +24,9 @@ inline clipp::group general_options(nlohmann::json* vm) {
     return (
       clippson::option(vm, {"h", "help"}, false, "Print this help"),
       clippson::option(vm, {"version"}, false, "Print version"),
+      clippson::option(vm, {"default"}, false, "Print default parameters in json"),
       clippson::option(vm, {"v", "verbose"}, false, "Verbose output"),
-      clippson::option(vm, {"i", "infile"}, std::string{}, "config file in json format"),
-      clippson::option(vm, {"default"}, false, "Print default parameters in json")
+      clippson::option(vm, {"i", "infile"}, std::string{}, "config file in json format")
     ).doc("General:");
 }
 
@@ -35,24 +35,18 @@ inline clipp::group general_options(nlohmann::json* vm) {
 
     Command line option           | Symbol
     ----------------------------- | -------
-    `-O,--origin`                 | -
-    `-y,--years`                  | -
-    `-l,--last`                   | -
-    `--sa,--sample_size_adult`    | -
-    `--sj,--sample_size_juvenile` | -
     `-i,--infile`                 | -
     `-o,--outdir`                 | -
+    `-y,--years`                  | -
+    `-O,--origin`                 | -
 */
 inline clipp::group program_options(Parameters& params) {
     return (
-      clippson::option({"O", "origin"}, &params.origin, "Initial population size relative to K"),
-      clippson::option({"y", "years"}, &params.years, "Duration of simulation"),
-      clippson::option({"l", "last"}, &params.last, "Sample last _ years"),
-      clippson::option({"sa", "sample_size_adult"}, &params.sample_size_adult, "per location"),
-      clippson::option({"sj", "sample_size_juvenile"}, &params.sample_size_juvenile, "per location"),
+      clippson::option({"seed"}, &params.seed),
       clippson::option({"o", "outdir"}, &params.outdir),
-      clippson::option({"seed"}, &params.seed)
-    ).doc("Program:");
+      clippson::option({"y", "years"}, &params.years, "Duration of simulation"),
+      clippson::option({"O", "origin"}, &params.origin, "Initial population size relative to K")
+    ).doc("Initialization:");
 }
 
 //! Reproduction options
@@ -60,18 +54,35 @@ inline clipp::group program_options(Parameters& params) {
 
     Command line option      | Symbol   | Variable
     ------------------------ | -------- | -------------------------------
-    `-r,--recruitment`       | \f$r\f$  | Population::recruitment_coef_
     `-K,--carrying_capacity` | \f$K\f$  | Population::carrying_capacity_
     `-k,--overdispersion`    | \f$k\f$  | Population::k_nbinom_
+    `-r,--recruitment`       | \f$r\f$  | Population::recruitment_coef_
 */
 inline clipp::group reproduction_options(Parameters& params) {
     return (
-      clippson::option({"r", "recruitment"}, &params.recruitment),
       clippson::option({"K", "carrying_capacity"}, &params.carrying_capacity),
       clippson::option({"k", "overdispersion"}, &params.overdispersion,
         "k ∈ (0, ∞); equivalent to Poisson when k→∞ (or k<0 for convience)"
-      )
+      ),
+      clippson::option({"r", "recruitment"}, &params.recruitment)
     ).doc("Reproduction:");
+}
+
+//! Sampling options
+/*! @ingroup params
+
+    Command line option           | Symbol
+    ----------------------------- | -------
+    `-l,--last`                   | -
+    `--sa,--sample_size_adult`    | -
+    `--sj,--sample_size_juvenile` | -
+*/
+inline clipp::group sampling_options(Parameters& params) {
+    return (
+      clippson::option({"l", "last"}, &params.last, "Sample last _ years"),
+      clippson::option({"sa", "sample_size_adult"}, &params.sample_size_adult, "per location"),
+      clippson::option({"sj", "sample_size_juvenile"}, &params.sample_size_juvenile, "per location")
+    ).doc("Sampling:");
 }
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(Parameters,
@@ -108,7 +119,8 @@ Program::Program(const std::vector<std::string>& arguments) {
     auto cli = (
       general_options(&vm_local),
       program_options(params),
-      reproduction_options(params)
+      reproduction_options(params),
+      sampling_options(params)
     );
     clippson::parse(cli, arguments);
     if (vm_local.at("help")) {
