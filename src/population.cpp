@@ -129,18 +129,14 @@ void Population::reproduce() {
         popsize += subpopulations_[loc].size();
     }
     for (uint_fast32_t loc=0u; loc<num_breeding_places; ++loc) {
-        reproduce(loc, popsize);
+        reproduce(subpopulations_[loc], popsize);
     }
 }
 
-void Population::reproduce(const uint_fast32_t location, const size_t popsize) {
-    const auto N = static_cast<double>(popsize);
-    if (N > params_.carrying_capacity) return;
-    const double rec_rate = params_.recruitment * (1.0 - N / params_.carrying_capacity);
-    auto& subpop = subpopulations_[location];
+void Population::reproduce(SubPopulation& subpop, const size_t popsize) {
     const auto& females = subpop[Sex::F];
     const auto& males = subpop[Sex::M];
-    if (females.size() == 0u || males.size() == 0u) return;
+    if (females.empty() || males.empty()) return;
     const std::vector<double> vw = weights(males);
     std::discrete_distribution<uint_fast32_t> mate_distr(vw.begin(), vw.end());
     std::vector<double> d(4u);
@@ -150,18 +146,33 @@ void Population::reproduce(const uint_fast32_t location, const size_t popsize) {
     auto& juveniles = subpop.juveniles;
     juveniles.reserve(subpop.size());
     auto& demography_year = subpop.demography[year_];
-    for (const auto& mother: females) {
-        const double rec_mean = rec_rate * WEIGHT_FOR_AGE_[mother->age(year_)];
-        uint_fast32_t rec = rnbinom<uint_fast32_t>(params_.overdispersion, rec_mean, *engine_);
+    const auto litter_sizes = litter_sizes_logistic(females, popsize);
+    for (size_t i = 0u; i < litter_sizes.size(); ++i) {
+        auto rec = litter_sizes[i];
         for (int_fast32_t q = 0; q < 4; ++q) {
             demography_year[q][0u] += rec;
             rec -= std::binomial_distribution<uint_fast32_t>(rec, d[q])(*engine_);
         }
-        for (uint_fast32_t j=0; j<rec; ++j) {
+        auto& mother = females[i];
+        for (decltype(rec) j = 0; j < rec; ++j) {
             const auto& father = males[mate_distr(*engine_)];
             juveniles.emplace_back(std::make_shared<Individual>(father, mother, year_));
         }
     }
+}
+
+std::vector<uint_fast32_t>
+Population::litter_sizes_logistic(const std::vector<ShPtrIndividual>& females, const size_t popsize) {
+    const auto N = static_cast<double>(popsize);
+    if (N > params_.carrying_capacity) return {};
+    const double rec_rate = params_.recruitment * (1.0 - N / params_.carrying_capacity);
+    std::vector<uint_fast32_t> res;
+    res.reserve(females.size());
+    for (const auto& mother: females) {
+        const double rec_mean = rec_rate * WEIGHT_FOR_AGE_[mother->age(year_)];
+        res.push_back(rnbinom<uint_fast32_t>(params_.overdispersion, rec_mean, *engine_));
+    }
+    return res;
 }
 
 std::vector<double> Population::weights(const std::vector<ShPtrIndividual>& individuals) const {

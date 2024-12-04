@@ -87,7 +87,10 @@ class Population {
     //! The expected number of children for each adult is proportional to its weight.
     //! All the females are evaluated for recruitment,
     //! whereas males are stochastically chosen.
-    void reproduce(uint_fast32_t location, size_t popsize);
+    void reproduce(SubPopulation&, size_t popsize);
+    //! Calculate stochastic litter sizes proportional to female weight
+    std::vector<uint_fast32_t>
+    litter_sizes_logistic(const std::vector<ShPtrIndividual>& females, size_t popsize);
 
     //! Evaluate survival.
     void survive(int_fast32_t season);
