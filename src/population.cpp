@@ -134,7 +134,7 @@ void Population::reproduce() {
 void Population::reproduce_lognormal() {
     constexpr uint_fast32_t num_breeding_places = 2u;
     std::lognormal_distribution lognormal{std::log(params_.med_recruitment), params_.sigma_recruitment};
-    const size_t recruitment = lognormal(*engine_);
+    const size_t recruitment = params_.sigma_recruitment ? lognormal(*engine_) : params_.med_recruitment;
     std::vector<double> subtotal_weights(num_breeding_places);
     std::vector<std::vector<double>> female_weights(num_breeding_places);
     for (uint_fast32_t loc=0u; loc<num_breeding_places; ++loc) {
