@@ -99,7 +99,9 @@ Program::Program(const std::vector<std::string>& arguments) {
     std::cerr.precision(6);
 
     nlohmann::json vm_local;
-    clippson::parse(general_options(&vm_local), arguments);
+    try {
+        clippson::parse(general_options(&vm_local), arguments);
+    } catch (std::invalid_argument&) {}
     if (vm_local.at("version")) {
         std::cout << PROJECT_VERSION << "\n";
         throw exit_success();
