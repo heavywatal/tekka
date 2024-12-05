@@ -82,12 +82,16 @@ class Population {
   private:
     //! give birth to children
     void reproduce();
-
-    //! Append new individuals to #SubPopulation::juveniles at `location`.
+    //! Reproduce according to constant lognormal distribution.
+    //! Total recruitment is calculated first, and then split it.
+    void reproduce_lognormal();
+    //! Reproduce according to population size and carrying capacity.
+    void reproduce_logistic();
+    //! Append new individuals to #SubPopulation::juveniles.
     //! The expected number of children for each adult is proportional to its weight.
     //! All the females are evaluated for recruitment,
     //! whereas males are stochastically chosen.
-    void reproduce(SubPopulation&, size_t popsize);
+    void reproduce_impl(SubPopulation&, const std::vector<uint_fast32_t>& litter_sizes);
     //! Calculate stochastic litter sizes proportional to female weight
     std::vector<uint_fast32_t>
     litter_sizes_logistic(const std::vector<ShPtrIndividual>& females, size_t popsize);

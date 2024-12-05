@@ -9,6 +9,7 @@
 #include <pcglite/pcglite.hpp>
 
 #include <algorithm>
+#include <cmath>
 
 namespace pbf {
 
@@ -123,17 +124,48 @@ rnbinom(double k, double mu, URBG& engine) {
 } // anonymous namespace
 
 void Population::reproduce() {
+    if (params_.med_recruitment > 0.0) {
+        reproduce_lognormal();
+    } else {
+        reproduce_logistic();
+    }
+}
+
+void Population::reproduce_lognormal() {
+    constexpr uint_fast32_t num_breeding_places = 2u;
+    std::lognormal_distribution lognormal{std::log(params_.med_recruitment), params_.sigma_recruitment};
+    const size_t recruitment = lognormal(*engine_);
+    std::vector<double> subtotal_weights(num_breeding_places);
+    std::vector<std::vector<double>> female_weights(num_breeding_places);
+    for (uint_fast32_t loc=0u; loc<num_breeding_places; ++loc) {
+        const auto& females = subpopulations_[loc][Sex::F];
+        female_weights[loc] = weights(females);
+        subtotal_weights[loc] = std::reduce(female_weights[loc].begin(), female_weights[loc].end());
+    }
+    wtl::multinomial_distribution multinomial(subtotal_weights.begin(), subtotal_weights.end());
+    const auto recruitment_sub = multinomial(*engine_, recruitment);
+    for (uint_fast32_t loc=0u; loc<num_breeding_places; ++loc) {
+        auto& subpop = subpopulations_[loc];
+        auto& wl = female_weights[loc];
+        wtl::multinomial_distribution<uint_fast32_t> multinomial{wl.begin(), wl.end()};
+        reproduce_impl(subpop, multinomial(*engine_, recruitment_sub[loc]));
+    }
+}
+
+void Population::reproduce_logistic() {
     constexpr uint_fast32_t num_breeding_places = 2u;
     size_t popsize = 0;
     for (uint_fast32_t loc=0u; loc<num_breeding_places; ++loc) {
         popsize += subpopulations_[loc].size();
     }
     for (uint_fast32_t loc=0u; loc<num_breeding_places; ++loc) {
-        reproduce(subpopulations_[loc], popsize);
+        auto& subpop = subpopulations_[loc];
+        const auto& females = subpop[Sex::F];
+        reproduce_impl(subpop, litter_sizes_logistic(females, popsize));
     }
 }
 
-void Population::reproduce(SubPopulation& subpop, const size_t popsize) {
+void Population::reproduce_impl(SubPopulation& subpop, const std::vector<uint_fast32_t>& litter_sizes) {
     const auto& females = subpop[Sex::F];
     const auto& males = subpop[Sex::M];
     if (females.empty() || males.empty()) return;
@@ -146,7 +178,6 @@ void Population::reproduce(SubPopulation& subpop, const size_t popsize) {
     auto& juveniles = subpop.juveniles;
     juveniles.reserve(subpop.size());
     auto& demography_year = subpop.demography[year_];
-    const auto litter_sizes = litter_sizes_logistic(females, popsize);
     for (size_t i = 0u; i < litter_sizes.size(); ++i) {
         auto rec = litter_sizes[i];
         for (int_fast32_t q = 0; q < 4; ++q) {

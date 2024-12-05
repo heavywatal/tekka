@@ -60,6 +60,8 @@ inline clipp::group program_options(Parameters& params) {
 */
 inline clipp::group reproduction_options(Parameters& params) {
     return (
+      clippson::option({"R", "med_recruitment"}, &params.med_recruitment),
+      clippson::option({"S", "sigma_recruitment"}, &params.sigma_recruitment),
       clippson::option({"K", "carrying_capacity"}, &params.carrying_capacity),
       clippson::option({"k", "overdispersion"}, &params.overdispersion,
         "k ∈ (0, ∞); equivalent to Poisson when k→∞ (or k<0 for convience)"

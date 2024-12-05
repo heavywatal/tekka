@@ -32,6 +32,11 @@ struct Parameters {
     std::string outdir{};
     //! RNG seed; 32-bit signed integer for R
     int32_t seed{0};
+
+    //! \f$\operatorname{med}(R) = \exp(\mu_{R})\f$ for lognormal distribution
+    double med_recruitment{0.0};
+    //! \f$\sigma_{R}\f$ for lognormal distribution
+    double sigma_recruitment{1.0};
     //! \f$K\f$: carrying capacity used in Population::reproduce()
     double carrying_capacity{1e3};
     //! \f$r\f$: coefficient used in Population::reproduce()
