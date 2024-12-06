@@ -109,8 +109,8 @@ class Population {
     //! Sample individuals.
     void sample(SubPopulation& subpops, size_t n_adults, size_t n_juveniles);
     //! Implementation of sample().
-    void sample(std::vector<ShPtrIndividual>& src,
-                std::vector<ShPtrIndividual>& dst, size_t n);
+    size_t sample(std::vector<ShPtrIndividual>& src,
+                  std::vector<ShPtrIndividual>& dst, size_t n);
 
     //! Initialize #SubPopulation::demography
     void init_demography(int_fast32_t duration);

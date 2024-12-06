@@ -286,20 +286,20 @@ uint_fast32_t Population::destination(int_fast32_t age, uint_fast32_t loc) {
 
 void Population::sample(SubPopulation& subpop, size_t num_adults, size_t num_juveniles) {
     std::binomial_distribution<size_t> binom(num_adults, 0.5);
-    auto num_males = binom(*engine_);
+    auto num_males = sample(subpop[Sex::M], subpop.samples[year_], binom(*engine_));
     sample(subpop[Sex::F], subpop.samples[year_], num_adults - num_males);
-    sample(subpop[Sex::M], subpop.samples[year_], num_males);
     sample(subpop.juveniles, subpop.samples[year_], num_juveniles);
 }
 
-void Population::sample(std::vector<ShPtrIndividual>& src,
+size_t Population::sample(std::vector<ShPtrIndividual>& src,
                         std::vector<ShPtrIndividual>& dst, size_t n) {
     if (n > src.size()) {
         std::cerr << "WARNING:Population::sample(): n > src.size() ("
                   << n << " > " << src.size() << ")\n";
         for (auto& p: src) dst.emplace_back(std::move(p));
+        n = src.size();
         src.clear();
-        return;
+        return n;
     }
     for (size_t i = 0u; i < n; ++i) {
         std::uniform_int_distribution<size_t> uniform(0u, src.size() - 1u);
@@ -308,6 +308,7 @@ void Population::sample(std::vector<ShPtrIndividual>& src,
         p = std::move(src.back());
         src.pop_back();
     }
+    return n;
 }
 
 std::ostream& Population::write_sample_family(std::ostream& ost) const {
