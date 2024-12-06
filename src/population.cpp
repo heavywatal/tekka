@@ -54,20 +54,19 @@ Population::Population(const Parameters& params)
 : params_{params},
   subpopulations_(4u),
   engine_{std::make_unique<URBG>(params_.seed)} {
-    const size_t initial_size = params_.origin * params_.carrying_capacity;
-    auto& subpop0 = subpopulations_[0u];
-    subpop0[Sex::F].reserve(initial_size);
-    subpop0[Sex::M].reserve(initial_size);
-    const size_t half = initial_size / 2UL;
-    for (size_t i=0; i<half; ++i) {
-        subpop0[Sex::F].emplace_back(std::make_shared<Individual>());
-    }
-    for (size_t i=half; i<initial_size; ++i) {
-        subpop0[Sex::M].emplace_back(std::make_shared<Individual>());
-    }
     if (!is_ready()) {
         propagate_params();
     }
+    init_demography(params_.years + 1);
+    const uint_fast32_t initial_size = params_.origin ? params_.origin :
+      (params_.med_recruitment ? params_.med_recruitment : params_.carrying_capacity);
+    auto& subpop0 = subpopulations_[0u];
+    auto origin = std::make_shared<Individual>();
+    subpop0[Sex::F].assign({origin});
+    subpop0[Sex::M].assign({origin});
+    reproduce_impl(subpop0, {initial_size});
+    subpop0.clear();
+    migrate();
 }
 
 Population::~Population() = default;
@@ -75,11 +74,8 @@ Population::~Population() = default;
 void Population::run() {
     const auto num_sample_locs = std::max(params_.sample_size_adult.size(), params_.sample_size_juvenile.size());
     auto recording_start = params_.years - params_.last;
-    init_demography(params_.years + 1);
-    record_demography(3);
     for (year_ = 1; year_ <= params_.years; ++year_) {
         reproduce();
-        if (year_ == 1) subpopulations_[0u].clear();
         for (int_fast32_t q = 0; q < 4; ++q) {
           record_demography(q);
           survive(q);

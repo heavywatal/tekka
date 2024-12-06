@@ -18,8 +18,9 @@ struct Parameters {
     //! Write json-only variables to stream
     std::ostream& write(std::ostream&) const;
 
-    //! Initial population size relative to K
-    double origin{0.2};
+    //! Initial number of juveniles at location 0 in season 0 in year 0.
+    //! It falls back to \f$\operatorname{med}(R)\f$ or \f$K\f$ if 0.
+    size_t origin{0u};
     //! Duration of simulation
     int years{100};
     //! Sample last _ years

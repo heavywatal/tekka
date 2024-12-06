@@ -45,7 +45,8 @@ inline clipp::group program_options(Parameters& params) {
       clippson::option({"seed"}, &params.seed),
       clippson::option({"o", "outdir"}, &params.outdir),
       clippson::option({"y", "years"}, &params.years, "Duration of simulation"),
-      clippson::option({"O", "origin"}, &params.origin, "Initial population size relative to K")
+      clippson::option({"O", "origin"}, &params.origin,
+        "Initial number of juveniles at location 0 in season 0 in year 0; falls back to -R or -K.")
     ).doc("Initialization:");
 }
 
