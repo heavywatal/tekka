@@ -10,6 +10,8 @@
 
 #include <algorithm>
 #include <cmath>
+#include <sstream>
+#include <stdexcept>
 
 namespace pbf {
 
@@ -212,6 +214,7 @@ std::vector<double> Population::weights(const std::vector<ShPtrIndividual>& indi
 }
 
 void Population::survive(const int_fast32_t season) {
+    size_t total_n{0};
     for (auto& subpop: subpopulations_) {
       for (auto& individuals: subpop.adults) {
         size_t n = individuals.size();
@@ -224,7 +227,13 @@ void Population::survive(const int_fast32_t season) {
                 --i;
             }
         }
+        total_n += n;
       }
+    }
+    if (total_n == 0u) {
+        std::ostringstream oss{"runtime_error:", std::ios_base::ate};
+        oss << "extinction in " << year_ << "-q" << season;
+        throw std::runtime_error(oss.str());
     }
 }
 
