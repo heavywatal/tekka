@@ -22,7 +22,7 @@ struct Parameters {
     //! It falls back to \f$\operatorname{med}(R)\f$ or \f$K\f$ if 0.
     size_t origin{0u};
     //! Duration of simulation
-    int years{100};
+    int years{80};
     //! Sample last _ years
     int last{3};
     //! per location
@@ -39,7 +39,7 @@ struct Parameters {
     //! \f$\sigma_{R}\f$ for lognormal distribution
     double sigma_recruitment{1.0};
     //! \f$K\f$: carrying capacity used in Population::reproduce()
-    double carrying_capacity{1e3};
+    double carrying_capacity{2e3};
     //! \f$r\f$: coefficient used in Population::reproduce()
     double recruitment{2.0};
     //! \f$k \in (0, \infty)\f$ for overdispersion in Population::reproduce().
