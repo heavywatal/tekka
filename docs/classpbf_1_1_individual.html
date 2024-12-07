@@ -76,11 +76,7 @@ $(function(){ initResizable(false); });
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
-<a href="#pub-static-attribs">Static Public Attributes</a> &#124;
-<a href="#pri-types">Private Types</a> &#124;
-<a href="#pri-static-methods">Static Private Member Functions</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
-<a href="#pri-static-attribs">Static Private Attributes</a> &#124;
 <a href="#friends">Friends</a> &#124;
 <a href="classpbf_1_1_individual-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">pbf::Individual Class Reference</div></div>
@@ -94,33 +90,24 @@ $(function(){ initResizable(false); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a0c420968ce1eece0042c96dc66ded420" id="r_a0c420968ce1eece0042c96dc66ded420"><td class="memItemLeft" align="right" valign="top"><a id="a0c420968ce1eece0042c96dc66ded420" name="a0c420968ce1eece0042c96dc66ded420"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Individual</b> ()=delete</td></tr>
-<tr class="memdesc:a0c420968ce1eece0042c96dc66ded420"><td class="mdescLeft">&#160;</td><td class="mdescRight">Alias. <br /></td></tr>
-<tr class="separator:a0c420968ce1eece0042c96dc66ded420"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a05960aaa9552fddf411a183b19308034" id="r_a05960aaa9552fddf411a183b19308034"><td class="memItemLeft" align="right" valign="top"><a id="a05960aaa9552fddf411a183b19308034" name="a05960aaa9552fddf411a183b19308034"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Individual</b> (bool <a class="el" href="#a9a4c573b0194752a2850e4a78ff95814">is_male</a>) noexcept</td></tr>
-<tr class="memdesc:a05960aaa9552fddf411a183b19308034"><td class="mdescLeft">&#160;</td><td class="mdescRight">for initial population <br /></td></tr>
-<tr class="separator:a05960aaa9552fddf411a183b19308034"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3bf64b1087765d92e62a512d8aa37310" id="r_a3bf64b1087765d92e62a512d8aa37310"><td class="memItemLeft" align="right" valign="top"><a id="a3bf64b1087765d92e62a512d8aa37310" name="a3bf64b1087765d92e62a512d8aa37310"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Individual</b> (const std::shared_ptr&lt; <a class="el" href="classpbf_1_1_individual.html">Individual</a> &gt; &amp;father, const std::shared_ptr&lt; <a class="el" href="classpbf_1_1_individual.html">Individual</a> &gt; &amp;mother, int_fast32_t year, bool <a class="el" href="#a9a4c573b0194752a2850e4a78ff95814">is_male</a>) noexcept</td></tr>
-<tr class="memdesc:a3bf64b1087765d92e62a512d8aa37310"><td class="mdescLeft">&#160;</td><td class="mdescRight">for sexual reproduction <br /></td></tr>
-<tr class="separator:a3bf64b1087765d92e62a512d8aa37310"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1136d0921a9d3ea102dafc22db27cc61" id="r_a1136d0921a9d3ea102dafc22db27cc61"><td class="memItemLeft" align="right" valign="top"><a id="a1136d0921a9d3ea102dafc22db27cc61" name="a1136d0921a9d3ea102dafc22db27cc61"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Individual</b> ()=default</td></tr>
+<tr class="memdesc:a1136d0921a9d3ea102dafc22db27cc61"><td class="mdescLeft">&#160;</td><td class="mdescRight">The origin without parents for <a class="el" href="classpbf_1_1_population.html" title="Main class that implements simulation.">Population</a> initialization. <br /></td></tr>
+<tr class="separator:a1136d0921a9d3ea102dafc22db27cc61"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a86a2c8a1b1b2dfb16ccb0faa02767b56" id="r_a86a2c8a1b1b2dfb16ccb0faa02767b56"><td class="memItemLeft" align="right" valign="top"><a id="a86a2c8a1b1b2dfb16ccb0faa02767b56" name="a86a2c8a1b1b2dfb16ccb0faa02767b56"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Individual</b> (std::shared_ptr&lt; <a class="el" href="classpbf_1_1_individual.html">Individual</a> &gt; father, std::shared_ptr&lt; <a class="el" href="classpbf_1_1_individual.html">Individual</a> &gt; mother, int_fast32_t year) noexcept</td></tr>
+<tr class="memdesc:a86a2c8a1b1b2dfb16ccb0faa02767b56"><td class="mdescLeft">&#160;</td><td class="mdescRight">for sexual reproduction <br /></td></tr>
+<tr class="separator:a86a2c8a1b1b2dfb16ccb0faa02767b56"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a88bca55c81220db6624bba986c28eed0" id="r_a88bca55c81220db6624bba986c28eed0"><td class="memItemLeft" align="right" valign="top"><a id="a88bca55c81220db6624bba986c28eed0" name="a88bca55c81220db6624bba986c28eed0"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>Individual</b> (const <a class="el" href="classpbf_1_1_individual.html">Individual</a> &amp;)=delete</td></tr>
 <tr class="separator:a88bca55c81220db6624bba986c28eed0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a18fdec828f90528c2200979a9aca8e0c" id="r_a18fdec828f90528c2200979a9aca8e0c"><td class="memItemLeft" align="right" valign="top"><a id="a18fdec828f90528c2200979a9aca8e0c" name="a18fdec828f90528c2200979a9aca8e0c"></a>
-double&#160;</td><td class="memItemRight" valign="bottom"><b>death_rate</b> (const int_fast32_t year, const int_fast32_t season) const</td></tr>
-<tr class="memdesc:a18fdec828f90528c2200979a9aca8e0c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finite death rate per quarter year: \( d = 1 - \exp(- M - eF) \). <br /></td></tr>
-<tr class="separator:a18fdec828f90528c2200979a9aca8e0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2b91f6115e6165a3ed57b8d4d4132904" id="r_a2b91f6115e6165a3ed57b8d4d4132904"><td class="memItemLeft" align="right" valign="top"><a id="a2b91f6115e6165a3ed57b8d4d4132904" name="a2b91f6115e6165a3ed57b8d4d4132904"></a>
-uint_fast32_t&#160;</td><td class="memItemRight" valign="bottom"><b>migrate</b> (uint_fast32_t loc, int_fast32_t year, URBG &amp;)</td></tr>
-<tr class="memdesc:a2b91f6115e6165a3ed57b8d4d4132904"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate random number for new location. <br /></td></tr>
-<tr class="separator:a2b91f6115e6165a3ed57b8d4d4132904"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:affe57b47f63fc67870d9541792106e6c" id="r_affe57b47f63fc67870d9541792106e6c"><td class="memItemLeft" align="right" valign="top"><a id="affe57b47f63fc67870d9541792106e6c" name="affe57b47f63fc67870d9541792106e6c"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>trace_back</b> (std::ostream &amp;ost, std::unordered_map&lt; const <a class="el" href="classpbf_1_1_individual.html">Individual</a> *, uint_fast32_t &gt; *ids, uint_fast32_t loc, int_fast32_t year) const</td></tr>
-<tr class="memdesc:affe57b47f63fc67870d9541792106e6c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write ancestors recursively. <br /></td></tr>
-<tr class="separator:affe57b47f63fc67870d9541792106e6c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4ed523bfc115ab28b24e417a7182ab87" id="r_a4ed523bfc115ab28b24e417a7182ab87"><td class="memItemLeft" align="right" valign="top"><a id="a4ed523bfc115ab28b24e417a7182ab87" name="a4ed523bfc115ab28b24e417a7182ab87"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Individual</b> (<a class="el" href="classpbf_1_1_individual.html">Individual</a> &amp;&amp;)=delete</td></tr>
+<tr class="separator:a4ed523bfc115ab28b24e417a7182ab87"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a84fb18d221686e4490478fe71c787ea8" id="r_a84fb18d221686e4490478fe71c787ea8"><td class="memItemLeft" align="right" valign="top"><a id="a84fb18d221686e4490478fe71c787ea8" name="a84fb18d221686e4490478fe71c787ea8"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>trace_back</b> (std::ostream &amp;ost, std::unordered_map&lt; const <a class="el" href="classpbf_1_1_individual.html">Individual</a> *, uint_fast32_t &gt; &amp;ids, uint_fast32_t loc, int_fast32_t year) const</td></tr>
+<tr class="memdesc:a84fb18d221686e4490478fe71c787ea8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write ancestors recursively. <br /></td></tr>
+<tr class="separator:a84fb18d221686e4490478fe71c787ea8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4bcff6598aada476e113c8edf9d1e061" id="r_a4bcff6598aada476e113c8edf9d1e061"><td class="memItemLeft" align="right" valign="top"><a id="a4bcff6598aada476e113c8edf9d1e061" name="a4bcff6598aada476e113c8edf9d1e061"></a>
 std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>write</b> (std::ostream &amp;) const</td></tr>
 <tr class="memdesc:a4bcff6598aada476e113c8edf9d1e061"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write all the data members in TSV. <br /></td></tr>
@@ -129,109 +116,36 @@ std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>write</
 std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>write</b> (std::ostream &amp;, const std::unordered_map&lt; const <a class="el" href="classpbf_1_1_individual.html">Individual</a> *, uint_fast32_t &gt; &amp;) const</td></tr>
 <tr class="memdesc:a8bd9c43dd326f258a90c26a5433882be"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write all the data members in TSV with translated IDs. <br /></td></tr>
 <tr class="separator:a8bd9c43dd326f258a90c26a5433882be"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr><td colspan="2"><div class="groupHeader">Getter functions</div></td></tr>
 <tr class="memitem:a6ae080ef15f556f6cc838a55b45687b5" id="r_a6ae080ef15f556f6cc838a55b45687b5"><td class="memItemLeft" align="right" valign="top"><a id="a6ae080ef15f556f6cc838a55b45687b5" name="a6ae080ef15f556f6cc838a55b45687b5"></a>
 int_fast32_t&#160;</td><td class="memItemRight" valign="bottom"><b>age</b> (const int_fast32_t year) const noexcept</td></tr>
 <tr class="memdesc:a6ae080ef15f556f6cc838a55b45687b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Age in the given year. <br /></td></tr>
 <tr class="separator:a6ae080ef15f556f6cc838a55b45687b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad4343fe57d3841bd59607e6440976e8d" id="r_ad4343fe57d3841bd59607e6440976e8d"><td class="memItemLeft" align="right" valign="top"><a id="ad4343fe57d3841bd59607e6440976e8d" name="ad4343fe57d3841bd59607e6440976e8d"></a>
-double&#160;</td><td class="memItemRight" valign="bottom"><b>weight</b> (int_fast32_t year) const noexcept</td></tr>
-<tr class="memdesc:ad4343fe57d3841bd59607e6440976e8d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Weight for year age. <br /></td></tr>
-<tr class="separator:ad4343fe57d3841bd59607e6440976e8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9a4c573b0194752a2850e4a78ff95814" id="r_a9a4c573b0194752a2850e4a78ff95814"><td class="memItemLeft" align="right" valign="top"><a id="a9a4c573b0194752a2850e4a78ff95814" name="a9a4c573b0194752a2850e4a78ff95814"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>is_male</b> () const noexcept</td></tr>
-<tr class="memdesc:a9a4c573b0194752a2850e4a78ff95814"><td class="mdescLeft">&#160;</td><td class="mdescRight">Just returns <a class="el" href="#a988aba396448c925d6a3257ed76fccc0" title="Sex.">is_male_</a>. <br /></td></tr>
-<tr class="separator:a9a4c573b0194752a2850e4a78ff95814"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
 <tr class="memitem:aab5f463f7cdf8bd63252bfaf486ace02" id="r_aab5f463f7cdf8bd63252bfaf486ace02"><td class="memItemLeft" align="right" valign="top"><a id="aab5f463f7cdf8bd63252bfaf486ace02" name="aab5f463f7cdf8bd63252bfaf486ace02"></a>
 static std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>write_trace_back_header</b> (std::ostream &amp;)</td></tr>
-<tr class="memdesc:aab5f463f7cdf8bd63252bfaf486ace02"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write column names for <a class="el" href="#affe57b47f63fc67870d9541792106e6c" title="Write ancestors recursively.">trace_back()</a> <br /></td></tr>
+<tr class="memdesc:aab5f463f7cdf8bd63252bfaf486ace02"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write column names for <a class="el" href="#a84fb18d221686e4490478fe71c787ea8" title="Write ancestors recursively.">trace_back()</a> <br /></td></tr>
 <tr class="separator:aab5f463f7cdf8bd63252bfaf486ace02"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a136b1eeaac0e9cd1effd9e04c6b54051" id="r_a136b1eeaac0e9cd1effd9e04c6b54051"><td class="memItemLeft" align="right" valign="top"><a id="a136b1eeaac0e9cd1effd9e04c6b54051" name="a136b1eeaac0e9cd1effd9e04c6b54051"></a>
 static std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>write_names</b> (std::ostream &amp;)</td></tr>
 <tr class="memdesc:a136b1eeaac0e9cd1effd9e04c6b54051"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write column names for <a class="el" href="#a4bcff6598aada476e113c8edf9d1e061" title="Write all the data members in TSV.">write()</a> <br /></td></tr>
 <tr class="separator:a136b1eeaac0e9cd1effd9e04c6b54051"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa67f3c2428548f1cf72dd526775a6df0" id="r_aa67f3c2428548f1cf72dd526775a6df0"><td class="memItemLeft" align="right" valign="top"><a id="aa67f3c2428548f1cf72dd526775a6df0" name="aa67f3c2428548f1cf72dd526775a6df0"></a>
-static void&#160;</td><td class="memItemRight" valign="bottom"><b>set_dependent_static</b> (const uint_fast32_t years)</td></tr>
-<tr class="memdesc:aa67f3c2428548f1cf72dd526775a6df0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set static variables that depend on others. <br /></td></tr>
-<tr class="separator:aa67f3c2428548f1cf72dd526775a6df0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa2de0ae92ed336933c4fb3ffc12936d2" id="r_aa2de0ae92ed336933c4fb3ffc12936d2"><td class="memItemLeft" align="right" valign="top"><a id="aa2de0ae92ed336933c4fb3ffc12936d2" name="aa2de0ae92ed336933c4fb3ffc12936d2"></a>
-static bool&#160;</td><td class="memItemRight" valign="bottom"><b>is_ready</b> (const uint_fast32_t years)</td></tr>
-<tr class="memdesc:aa2de0ae92ed336933c4fb3ffc12936d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test if static variables are ready. <br /></td></tr>
-<tr class="separator:aa2de0ae92ed336933c4fb3ffc12936d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6edeb30ad5a8cac2668be65e7ef357ad" id="r_a6edeb30ad5a8cac2668be65e7ef357ad"><td class="memItemLeft" align="right" valign="top"><a id="a6edeb30ad5a8cac2668be65e7ef357ad" name="a6edeb30ad5a8cac2668be65e7ef357ad"></a>
-static double&#160;</td><td class="memItemRight" valign="bottom"><b>DEATH_RATE</b> (const int_fast32_t q_age, const int_fast32_t year)</td></tr>
-<tr class="memdesc:a6edeb30ad5a8cac2668be65e7ef357ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finite death rate per quarter year. <br /></td></tr>
-<tr class="separator:a6edeb30ad5a8cac2668be65e7ef357ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-attribs" name="pub-static-attribs"></a>
-Static Public Attributes</h2></td></tr>
-<tr class="memitem:a83f4539840dd382bd25a9af0286c3b2a" id="r_a83f4539840dd382bd25a9af0286c3b2a"><td class="memItemLeft" align="right" valign="top"><a id="a83f4539840dd382bd25a9af0286c3b2a" name="a83f4539840dd382bd25a9af0286c3b2a"></a>
-static constexpr int_fast32_t&#160;</td><td class="memItemRight" valign="bottom"><b>MAX_AGE</b> = 80</td></tr>
-<tr class="memdesc:a83f4539840dd382bd25a9af0286c3b2a"><td class="mdescLeft">&#160;</td><td class="mdescRight">No individual lives longer than this. <br /></td></tr>
-<tr class="separator:a83f4539840dd382bd25a9af0286c3b2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2341fb797aee7d777573e816ce16cf8c" id="r_a2341fb797aee7d777573e816ce16cf8c"><td class="memItemLeft" align="right" valign="top"><a id="a2341fb797aee7d777573e816ce16cf8c" name="a2341fb797aee7d777573e816ce16cf8c"></a>
-static <a class="el" href="classpbf_1_1_individual_json.html">IndividualJson</a>&#160;</td><td class="memItemRight" valign="bottom"><b>JSON</b></td></tr>
-<tr class="memdesc:a2341fb797aee7d777573e816ce16cf8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parameters shared among instances (JSON file). <br /></td></tr>
-<tr class="separator:a2341fb797aee7d777573e816ce16cf8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-types" name="pri-types"></a>
-Private Types</h2></td></tr>
-<tr class="memitem:ae373b639b25bde26b99838e3b1ae59e3" id="r_ae373b639b25bde26b99838e3b1ae59e3"><td class="memItemLeft" align="right" valign="top"><a id="ae373b639b25bde26b99838e3b1ae59e3" name="ae373b639b25bde26b99838e3b1ae59e3"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>PairDestDist</b> = std::pair&lt;int_fast32_t, std::discrete_distribution&lt;uint_fast32_t&gt;&gt;</td></tr>
-<tr class="memdesc:ae373b639b25bde26b99838e3b1ae59e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Alias for readability. <br /></td></tr>
-<tr class="separator:ae373b639b25bde26b99838e3b1ae59e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-static-methods" name="pri-static-methods"></a>
-Static Private Member Functions</h2></td></tr>
-<tr class="memitem:a551571715964c2d67e7570b87bdbaa1d" id="r_a551571715964c2d67e7570b87bdbaa1d"><td class="memItemLeft" align="right" valign="top"><a id="a551571715964c2d67e7570b87bdbaa1d" name="a551571715964c2d67e7570b87bdbaa1d"></a>
-static void&#160;</td><td class="memItemRight" valign="bottom"><b>set_static_migration</b> ()</td></tr>
-<tr class="memdesc:a551571715964c2d67e7570b87bdbaa1d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prepare <a class="el" href="#a4f324ddd22e484b3197f7efc6cb1e3ee" title="Discrete distributions for migration.">MIGRATION_DESTINATION_</a>. <br /></td></tr>
-<tr class="separator:a551571715964c2d67e7570b87bdbaa1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abab97ca4eb0dad9150e41d3a32c73e66" id="r_abab97ca4eb0dad9150e41d3a32c73e66"><td class="memItemLeft" align="right" valign="top"><a id="abab97ca4eb0dad9150e41d3a32c73e66" name="abab97ca4eb0dad9150e41d3a32c73e66"></a>
-static void&#160;</td><td class="memItemRight" valign="bottom"><b>set_static_mortality</b> ()</td></tr>
-<tr class="memdesc:abab97ca4eb0dad9150e41d3a32c73e66"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prepare mortality vectors. <br /></td></tr>
-<tr class="separator:abab97ca4eb0dad9150e41d3a32c73e66"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a63ccc7c46562c9734a5ed23b9809b438" id="r_a63ccc7c46562c9734a5ed23b9809b438"><td class="memItemLeft" align="right" valign="top"><a id="a63ccc7c46562c9734a5ed23b9809b438" name="a63ccc7c46562c9734a5ed23b9809b438"></a>
-static void&#160;</td><td class="memItemRight" valign="bottom"><b>set_static_weight</b> ()</td></tr>
-<tr class="memdesc:a63ccc7c46562c9734a5ed23b9809b438"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prepare <a class="el" href="#aca4f83542d9f53ca6101c28a4a2d149c" title="year version of IndividualJson::weight_for_age">WEIGHT_FOR_AGE_</a>. <br /></td></tr>
-<tr class="separator:a63ccc7c46562c9734a5ed23b9809b438"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
 <tr class="memitem:abb67e8c338b5fe8d71158b0b1c0aed50" id="r_abb67e8c338b5fe8d71158b0b1c0aed50"><td class="memItemLeft" align="right" valign="top"><a id="abb67e8c338b5fe8d71158b0b1c0aed50" name="abb67e8c338b5fe8d71158b0b1c0aed50"></a>
-const std::shared_ptr&lt; <a class="el" href="classpbf_1_1_individual.html">Individual</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>father_</b> = nullptr</td></tr>
+const std::shared_ptr&lt; <a class="el" href="classpbf_1_1_individual.html">Individual</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>father_</b> {nullptr}</td></tr>
 <tr class="memdesc:abb67e8c338b5fe8d71158b0b1c0aed50"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to father. <br /></td></tr>
 <tr class="separator:abb67e8c338b5fe8d71158b0b1c0aed50"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a553d960db8d455cee9b799bb9dd69cdf" id="r_a553d960db8d455cee9b799bb9dd69cdf"><td class="memItemLeft" align="right" valign="top"><a id="a553d960db8d455cee9b799bb9dd69cdf" name="a553d960db8d455cee9b799bb9dd69cdf"></a>
-const std::shared_ptr&lt; <a class="el" href="classpbf_1_1_individual.html">Individual</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>mother_</b> = nullptr</td></tr>
+const std::shared_ptr&lt; <a class="el" href="classpbf_1_1_individual.html">Individual</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>mother_</b> {nullptr}</td></tr>
 <tr class="memdesc:a553d960db8d455cee9b799bb9dd69cdf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to mother. <br /></td></tr>
 <tr class="separator:a553d960db8d455cee9b799bb9dd69cdf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a82f636085f4840619caa69dcd7ccfc6d" id="r_a82f636085f4840619caa69dcd7ccfc6d"><td class="memItemLeft" align="right" valign="top"><a id="a82f636085f4840619caa69dcd7ccfc6d" name="a82f636085f4840619caa69dcd7ccfc6d"></a>
-int_fast32_t&#160;</td><td class="memItemRight" valign="bottom"><b>birth_year_</b> = -4</td></tr>
+int_fast32_t&#160;</td><td class="memItemRight" valign="bottom"><b>birth_year_</b> {-4}</td></tr>
 <tr class="memdesc:a82f636085f4840619caa69dcd7ccfc6d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Year of birth. <br /></td></tr>
 <tr class="separator:a82f636085f4840619caa69dcd7ccfc6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a988aba396448c925d6a3257ed76fccc0" id="r_a988aba396448c925d6a3257ed76fccc0"><td class="memItemLeft" align="right" valign="top"><a id="a988aba396448c925d6a3257ed76fccc0" name="a988aba396448c925d6a3257ed76fccc0"></a>
-const bool&#160;</td><td class="memItemRight" valign="bottom"><b>is_male_</b></td></tr>
-<tr class="memdesc:a988aba396448c925d6a3257ed76fccc0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sex. <br /></td></tr>
-<tr class="separator:a988aba396448c925d6a3257ed76fccc0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-static-attribs" name="pri-static-attribs"></a>
-Static Private Attributes</h2></td></tr>
-<tr class="memitem:a1db0439a988fb98aab2f79cf8252a3e9" id="r_a1db0439a988fb98aab2f79cf8252a3e9"><td class="memItemLeft" align="right" valign="top"><a id="a1db0439a988fb98aab2f79cf8252a3e9" name="a1db0439a988fb98aab2f79cf8252a3e9"></a>
-static std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>FISHING_COEF_</b></td></tr>
-<tr class="memdesc:a1db0439a988fb98aab2f79cf8252a3e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fluctuation of fishing mortality by year. <br /></td></tr>
-<tr class="separator:a1db0439a988fb98aab2f79cf8252a3e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aca4f83542d9f53ca6101c28a4a2d149c" id="r_aca4f83542d9f53ca6101c28a4a2d149c"><td class="memItemLeft" align="right" valign="top"><a id="aca4f83542d9f53ca6101c28a4a2d149c" name="aca4f83542d9f53ca6101c28a4a2d149c"></a>
-static std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>WEIGHT_FOR_AGE_</b></td></tr>
-<tr class="memdesc:aca4f83542d9f53ca6101c28a4a2d149c"><td class="mdescLeft">&#160;</td><td class="mdescRight">year version of <a class="el" href="group__params.html#ga8fd0298b1617d568eef749ba56367a0b" title="Weight in kg for quarter age.">IndividualJson::weight_for_age</a> <br /></td></tr>
-<tr class="separator:aca4f83542d9f53ca6101c28a4a2d149c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4f324ddd22e484b3197f7efc6cb1e3ee" id="r_a4f324ddd22e484b3197f7efc6cb1e3ee"><td class="memItemLeft" align="right" valign="top"><a id="a4f324ddd22e484b3197f7efc6cb1e3ee" name="a4f324ddd22e484b3197f7efc6cb1e3ee"></a>
-static std::vector&lt; std::vector&lt; <a class="el" href="#ae373b639b25bde26b99838e3b1ae59e3">PairDestDist</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>MIGRATION_DESTINATION_</b></td></tr>
-<tr class="memdesc:a4f324ddd22e484b3197f7efc6cb1e3ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Discrete distributions for migration. <br /></td></tr>
-<tr class="separator:a4f324ddd22e484b3197f7efc6cb1e3ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="friends" name="friends"></a>
 Friends</h2></td></tr>

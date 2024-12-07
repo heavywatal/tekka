@@ -74,8 +74,7 @@ $(function(){ initResizable(false); });
 <div id="doc-content">
 <div class="header">
   <div class="summary">
-<a href="#func-members">Functions</a> &#124;
-<a href="#var-members">Variables</a>  </div>
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">program.cpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -84,13 +83,15 @@ $(function(){ initResizable(false); });
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;<a class="el" href="program_8hpp_source.html">program.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="population_8hpp_source.html">population.hpp</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="individual_8hpp_source.html">individual.hpp</a>&quot;</code><br />
+<code>#include &quot;parameters.hpp&quot;</code><br />
 <code>#include &quot;config.hpp&quot;</code><br />
 <code>#include &lt;wtl/chrono.hpp&gt;</code><br />
 <code>#include &lt;wtl/debug.hpp&gt;</code><br />
+<code>#include &lt;wtl/zlib.hpp&gt;</code><br />
 <code>#include &lt;clippson/clippson.hpp&gt;</code><br />
 <code>#include &lt;filesystem&gt;</code><br />
 <code>#include &lt;fstream&gt;</code><br />
+<code>#include &lt;sstream&gt;</code><br />
 <code>#include &lt;cstdlib&gt;</code><br />
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
@@ -99,19 +100,15 @@ Functions</h2></td></tr>
 clipp::group&#160;</td><td class="memItemRight" valign="bottom"><b>pbf::general_options</b> (nlohmann::json *vm)</td></tr>
 <tr class="memdesc:a7c5caafec1f0668c903724f4bd805b1a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Options description for general purpose. <br /></td></tr>
 <tr class="separator:a7c5caafec1f0668c903724f4bd805b1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga9671bce0c356ee9cfc314f1ef0ed017e" id="r_ga9671bce0c356ee9cfc314f1ef0ed017e"><td class="memItemLeft" align="right" valign="top">clipp::group&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__params.html#ga9671bce0c356ee9cfc314f1ef0ed017e">pbf::program_options</a> (nlohmann::json *vm)</td></tr>
-<tr class="memdesc:ga9671bce0c356ee9cfc314f1ef0ed017e"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classpbf_1_1_program.html" title="Program class.">Program</a> options.  <br /></td></tr>
-<tr class="separator:ga9671bce0c356ee9cfc314f1ef0ed017e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaabaa71de22ffcf5e0cd2c747bd833ec6" id="r_gaabaa71de22ffcf5e0cd2c747bd833ec6"><td class="memItemLeft" align="right" valign="top">clipp::group&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__params.html#gaabaa71de22ffcf5e0cd2c747bd833ec6">pbf::reproduction_options</a> (nlohmann::json *vm)</td></tr>
-<tr class="memdesc:gaabaa71de22ffcf5e0cd2c747bd833ec6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reproduction options.  <br /></td></tr>
-<tr class="separator:gaabaa71de22ffcf5e0cd2c747bd833ec6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
-Variables</h2></td></tr>
-<tr class="memitem:a579bfb4a8850e924d0bf7e5b5d507738" id="r_a579bfb4a8850e924d0bf7e5b5d507738"><td class="memItemLeft" align="right" valign="top"><a id="a579bfb4a8850e924d0bf7e5b5d507738" name="a579bfb4a8850e924d0bf7e5b5d507738"></a>
-nlohmann::json&#160;</td><td class="memItemRight" valign="bottom"><b>pbf::VM</b></td></tr>
-<tr class="memdesc:a579bfb4a8850e924d0bf7e5b5d507738"><td class="mdescLeft">&#160;</td><td class="mdescRight">Global variables mapper of command-line arguments. <br /></td></tr>
-<tr class="separator:a579bfb4a8850e924d0bf7e5b5d507738"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaafbbc6e9a57cdc684a00425cfec34d87" id="r_gaafbbc6e9a57cdc684a00425cfec34d87"><td class="memItemLeft" align="right" valign="top">clipp::group&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__params.html#gaafbbc6e9a57cdc684a00425cfec34d87">pbf::program_options</a> (<a class="el" href="structpbf_1_1_parameters.html">Parameters</a> &amp;params)</td></tr>
+<tr class="memdesc:gaafbbc6e9a57cdc684a00425cfec34d87"><td class="mdescLeft">&#160;</td><td class="mdescRight">Global options for simulation.  <br /></td></tr>
+<tr class="separator:gaafbbc6e9a57cdc684a00425cfec34d87"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga7f1acbb522e3035ebf071de8bfa1d561" id="r_ga7f1acbb522e3035ebf071de8bfa1d561"><td class="memItemLeft" align="right" valign="top">clipp::group&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__params.html#ga7f1acbb522e3035ebf071de8bfa1d561">pbf::reproduction_options</a> (<a class="el" href="structpbf_1_1_parameters.html">Parameters</a> &amp;params)</td></tr>
+<tr class="memdesc:ga7f1acbb522e3035ebf071de8bfa1d561"><td class="mdescLeft">&#160;</td><td class="mdescRight">Options for <a class="el" href="classpbf_1_1_population.html#a06875166f8643742c374805c13375f93" title="give birth to children">Population::reproduce</a>.  <br /></td></tr>
+<tr class="separator:ga7f1acbb522e3035ebf071de8bfa1d561"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga7f21d65a30573cb1315a35e81d19f4d0" id="r_ga7f21d65a30573cb1315a35e81d19f4d0"><td class="memItemLeft" align="right" valign="top">clipp::group&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__params.html#ga7f21d65a30573cb1315a35e81d19f4d0">pbf::sampling_options</a> (<a class="el" href="structpbf_1_1_parameters.html">Parameters</a> &amp;params)</td></tr>
+<tr class="memdesc:ga7f21d65a30573cb1315a35e81d19f4d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Options for <a class="el" href="classpbf_1_1_population.html#aa44553f9bc030955a297b9bea7775e83" title="Move individuals to SubPopulation::samples.">Population::sample</a>.  <br /></td></tr>
+<tr class="separator:ga7f21d65a30573cb1315a35e81d19f4d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Implementation of Program class. </p>

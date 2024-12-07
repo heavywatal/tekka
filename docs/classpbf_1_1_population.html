@@ -77,36 +77,37 @@ $(function(){ initResizable(false); });
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pri-methods">Private Member Functions</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
+<a href="#pri-static-attribs">Static Private Attributes</a> &#124;
 <a href="#friends">Friends</a> &#124;
 <a href="classpbf_1_1_population-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">pbf::Population Class Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
-<p><a class="el" href="classpbf_1_1_population.html" title="Population class.">Population</a> class.  
+<p>Main class that implements simulation.  
  <a href="#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="population_8hpp_source.html">population.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a8fa5e228336a46c1fca44ac731aa8210" id="r_a8fa5e228336a46c1fca44ac731aa8210"><td class="memItemLeft" align="right" valign="top"><a id="a8fa5e228336a46c1fca44ac731aa8210" name="a8fa5e228336a46c1fca44ac731aa8210"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Population</b> (const size_t initial_size, std::random_device::result_type seed, const double carrying_capacity=1e3, const double recruitment_coef=2.0, const double negative_binom_k=-1.0)</td></tr>
-<tr class="memdesc:a8fa5e228336a46c1fca44ac731aa8210"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor. <br /></td></tr>
-<tr class="separator:a8fa5e228336a46c1fca44ac731aa8210"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac11d0e1ff8862e502dad97255396756e" id="r_ac11d0e1ff8862e502dad97255396756e"><td class="memItemLeft" align="right" valign="top"><a id="ac11d0e1ff8862e502dad97255396756e" name="ac11d0e1ff8862e502dad97255396756e"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>run</b> (const int_fast32_t simulating_duration, const std::vector&lt; size_t &gt; &amp;sample_size_adult={1u, 1u}, const std::vector&lt; size_t &gt; &amp;sample_size_juvenile={1u, 1u}, const int_fast32_t recording_duration=1)</td></tr>
-<tr class="memdesc:ac11d0e1ff8862e502dad97255396756e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Main iteration. <br /></td></tr>
-<tr class="separator:ac11d0e1ff8862e502dad97255396756e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a24b9138807971da000d33d5a538ea192" id="r_a24b9138807971da000d33d5a538ea192"><td class="memItemLeft" align="right" valign="top"><a id="a24b9138807971da000d33d5a538ea192" name="a24b9138807971da000d33d5a538ea192"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Population</b> (const <a class="el" href="structpbf_1_1_parameters.html">Parameters</a> &amp;)</td></tr>
+<tr class="memdesc:a24b9138807971da000d33d5a538ea192"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor. <br /></td></tr>
+<tr class="separator:a24b9138807971da000d33d5a538ea192"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abb244c2aa8657a731a7b33ab3b1951e6" id="r_abb244c2aa8657a731a7b33ab3b1951e6"><td class="memItemLeft" align="right" valign="top"><a id="abb244c2aa8657a731a7b33ab3b1951e6" name="abb244c2aa8657a731a7b33ab3b1951e6"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>run</b> ()</td></tr>
+<tr class="memdesc:abb244c2aa8657a731a7b33ab3b1951e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Main iteration. <br /></td></tr>
+<tr class="separator:abb244c2aa8657a731a7b33ab3b1951e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab3d038801571367cf27a6cc3741aef5c" id="r_ab3d038801571367cf27a6cc3741aef5c"><td class="memItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab3d038801571367cf27a6cc3741aef5c">write_sample_family</a> (std::ostream &amp;ost) const</td></tr>
 <tr class="separator:ab3d038801571367cf27a6cc3741aef5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acd5e2ac92cb2189d2dddeb005e15059e" id="r_acd5e2ac92cb2189d2dddeb005e15059e"><td class="memItemLeft" align="right" valign="top"><a id="acd5e2ac92cb2189d2dddeb005e15059e" name="acd5e2ac92cb2189d2dddeb005e15059e"></a>
 std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>write_demography</b> (std::ostream &amp;) const</td></tr>
-<tr class="memdesc:acd5e2ac92cb2189d2dddeb005e15059e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write <a class="el" href="#ab1246141d73cc4ed64f45b3ca8f9ecb2" title="(year, season) =&gt; [[count for each age] for each location]">demography_</a>. <br /></td></tr>
+<tr class="memdesc:acd5e2ac92cb2189d2dddeb005e15059e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write <a class="el" href="classpbf_1_1_sub_population.html#af3ab97d299c9eb9fee9603e2e1547395" title="[[[count for each age] for season] for year]">SubPopulation::demography</a>. <br /></td></tr>
 <tr class="separator:acd5e2ac92cb2189d2dddeb005e15059e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aac38fcf7bbe3427f8debdd6cf0ddcee9" id="r_aac38fcf7bbe3427f8debdd6cf0ddcee9"><td class="memItemLeft" align="right" valign="top"><a id="aac38fcf7bbe3427f8debdd6cf0ddcee9" name="aac38fcf7bbe3427f8debdd6cf0ddcee9"></a>
 std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>write</b> (std::ostream &amp;) const</td></tr>
-<tr class="memdesc:aac38fcf7bbe3427f8debdd6cf0ddcee9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write <a class="el" href="#a8379b289ad30d672343942ff471ae7f3" title="Individual array for each subpopulation.">subpopulations_</a> and <a class="el" href="#aad658866beeafed077d224b27a54bb0c">juveniles_subpops_</a> for debugging. <br /></td></tr>
+<tr class="memdesc:aac38fcf7bbe3427f8debdd6cf0ddcee9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write <a class="el" href="#a4057c3d22f79ac621aa9b25a9c02f88e" title="Array of SubPopulation.">subpopulations_</a> for debugging. <br /></td></tr>
 <tr class="separator:aac38fcf7bbe3427f8debdd6cf0ddcee9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-methods" name="pri-methods"></a>
@@ -115,70 +116,96 @@ Private Member Functions</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>reproduce</b> ()</td></tr>
 <tr class="memdesc:a06875166f8643742c374805c13375f93"><td class="mdescLeft">&#160;</td><td class="mdescRight">give birth to children <br /></td></tr>
 <tr class="separator:a06875166f8643742c374805c13375f93"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3265510b556f638ac664e271177631e1" id="r_a3265510b556f638ac664e271177631e1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3265510b556f638ac664e271177631e1">reproduce</a> (uint_fast32_t location, size_t popsize)</td></tr>
-<tr class="separator:a3265510b556f638ac664e271177631e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5fabd28ec581ad7a101a1c58e8d02b8c" id="r_a5fabd28ec581ad7a101a1c58e8d02b8c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5fabd28ec581ad7a101a1c58e8d02b8c">reproduce_lognormal</a> ()</td></tr>
+<tr class="separator:a5fabd28ec581ad7a101a1c58e8d02b8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad1876bc487819ec5e140254ec651da24" id="r_ad1876bc487819ec5e140254ec651da24"><td class="memItemLeft" align="right" valign="top"><a id="ad1876bc487819ec5e140254ec651da24" name="ad1876bc487819ec5e140254ec651da24"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>reproduce_logistic</b> ()</td></tr>
+<tr class="memdesc:ad1876bc487819ec5e140254ec651da24"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reproduce according to population size and carrying capacity. <br /></td></tr>
+<tr class="separator:ad1876bc487819ec5e140254ec651da24"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5c077ae022cf03a7e3f9e5e8e7155325" id="r_a5c077ae022cf03a7e3f9e5e8e7155325"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5c077ae022cf03a7e3f9e5e8e7155325">reproduce_impl</a> (<a class="el" href="classpbf_1_1_sub_population.html">SubPopulation</a> &amp;, const std::vector&lt; uint_fast32_t &gt; &amp;litter_sizes)</td></tr>
+<tr class="separator:a5c077ae022cf03a7e3f9e5e8e7155325"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4bb37ec687bf46bafd83751c2d54f5a3" id="r_a4bb37ec687bf46bafd83751c2d54f5a3"><td class="memItemLeft" align="right" valign="top"><a id="a4bb37ec687bf46bafd83751c2d54f5a3" name="a4bb37ec687bf46bafd83751c2d54f5a3"></a>
+std::vector&lt; uint_fast32_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>litter_sizes_logistic</b> (const std::vector&lt; ShPtrIndividual &gt; &amp;females, size_t popsize)</td></tr>
+<tr class="memdesc:a4bb37ec687bf46bafd83751c2d54f5a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate stochastic litter sizes proportional to female weight. <br /></td></tr>
+<tr class="separator:a4bb37ec687bf46bafd83751c2d54f5a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aae584286d99523e7df6d1f610e331918" id="r_aae584286d99523e7df6d1f610e331918"><td class="memItemLeft" align="right" valign="top"><a id="aae584286d99523e7df6d1f610e331918" name="aae584286d99523e7df6d1f610e331918"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>survive</b> (int_fast32_t season)</td></tr>
 <tr class="memdesc:aae584286d99523e7df6d1f610e331918"><td class="mdescLeft">&#160;</td><td class="mdescRight">Evaluate survival. <br /></td></tr>
 <tr class="separator:aae584286d99523e7df6d1f610e331918"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a536e1a087a117e7d62a8c0a53cb28411" id="r_a536e1a087a117e7d62a8c0a53cb28411"><td class="memItemLeft" align="right" valign="top"><a id="a536e1a087a117e7d62a8c0a53cb28411" name="a536e1a087a117e7d62a8c0a53cb28411"></a>
+double&#160;</td><td class="memItemRight" valign="bottom"><b>death_rate</b> (const int_fast32_t age, const int_fast32_t season) const</td></tr>
+<tr class="memdesc:a536e1a087a117e7d62a8c0a53cb28411"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finite death rate per quarter year: \( d = 1 - \exp(- M - eF) \). <br /></td></tr>
+<tr class="separator:a536e1a087a117e7d62a8c0a53cb28411"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9488ca17eefb54af69ebfd43c2103d6f" id="r_a9488ca17eefb54af69ebfd43c2103d6f"><td class="memItemLeft" align="right" valign="top"><a id="a9488ca17eefb54af69ebfd43c2103d6f" name="a9488ca17eefb54af69ebfd43c2103d6f"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>migrate</b> ()</td></tr>
-<tr class="memdesc:a9488ca17eefb54af69ebfd43c2103d6f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Evaluate migration. Individuals in <a class="el" href="#aad658866beeafed077d224b27a54bb0c">juveniles_subpops_</a> moves to <a class="el" href="#a8379b289ad30d672343942ff471ae7f3" title="Individual array for each subpopulation.">subpopulations_</a>. <br /></td></tr>
+<tr class="memdesc:a9488ca17eefb54af69ebfd43c2103d6f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Evaluate migration. Merge <a class="el" href="classpbf_1_1_sub_population.html#a6d8e22e1708c90cf729ff790a81c446f" title="First-year individuals separated for Population::sample().">SubPopulation::juveniles</a> to <a class="el" href="classpbf_1_1_sub_population.html#a7375938f95b65d89df3b876ced4c501c">SubPopulation::adults</a>. <br /></td></tr>
 <tr class="separator:a9488ca17eefb54af69ebfd43c2103d6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae9604f211cb222f64098dfcab8934249" id="r_ae9604f211cb222f64098dfcab8934249"><td class="memItemLeft" align="right" valign="top"><a id="ae9604f211cb222f64098dfcab8934249" name="ae9604f211cb222f64098dfcab8934249"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>sample</b> (std::vector&lt; std::vector&lt; std::shared_ptr&lt; <a class="el" href="classpbf_1_1_individual.html">Individual</a> &gt; &gt; &gt; *subpops, const std::vector&lt; size_t &gt; &amp;sample_sizes)</td></tr>
-<tr class="memdesc:ae9604f211cb222f64098dfcab8934249"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sample individuals. <br /></td></tr>
-<tr class="separator:ae9604f211cb222f64098dfcab8934249"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab0fb9523fecc57053d9ea81b64f62cdf" id="r_ab0fb9523fecc57053d9ea81b64f62cdf"><td class="memItemLeft" align="right" valign="top"><a id="ab0fb9523fecc57053d9ea81b64f62cdf" name="ab0fb9523fecc57053d9ea81b64f62cdf"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>append_demography</b> (int_fast32_t season)</td></tr>
-<tr class="memdesc:ab0fb9523fecc57053d9ea81b64f62cdf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Append current state to <a class="el" href="#ab1246141d73cc4ed64f45b3ca8f9ecb2" title="(year, season) =&gt; [[count for each age] for each location]">demography_</a>. <br /></td></tr>
-<tr class="separator:ab0fb9523fecc57053d9ea81b64f62cdf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afebee65eeb99956d594b7a0818c61487" id="r_afebee65eeb99956d594b7a0818c61487"><td class="memItemLeft" align="right" valign="top"><a id="afebee65eeb99956d594b7a0818c61487" name="afebee65eeb99956d594b7a0818c61487"></a>
-std::vector&lt; std::vector&lt; uint_fast32_t &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>count</b> (int_fast32_t season) const</td></tr>
-<tr class="memdesc:afebee65eeb99956d594b7a0818c61487"><td class="mdescLeft">&#160;</td><td class="mdescRight">Count individuals for each location and age. <br /></td></tr>
-<tr class="separator:afebee65eeb99956d594b7a0818c61487"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab1ed94ea512ebc306b126db39f04f732" id="r_ab1ed94ea512ebc306b126db39f04f732"><td class="memItemLeft" align="right" valign="top"><a id="ab1ed94ea512ebc306b126db39f04f732" name="ab1ed94ea512ebc306b126db39f04f732"></a>
-size_t&#160;</td><td class="memItemRight" valign="bottom"><b>num_subpops</b> () const noexcept</td></tr>
-<tr class="memdesc:ab1ed94ea512ebc306b126db39f04f732"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return size of <a class="el" href="#a8379b289ad30d672343942ff471ae7f3" title="Individual array for each subpopulation.">subpopulations_</a>. <br /></td></tr>
-<tr class="separator:ab1ed94ea512ebc306b126db39f04f732"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a485d79b568a1954fe6a49e308c762d70" id="r_a485d79b568a1954fe6a49e308c762d70"><td class="memItemLeft" align="right" valign="top"><a id="a485d79b568a1954fe6a49e308c762d70" name="a485d79b568a1954fe6a49e308c762d70"></a>
+uint_fast32_t&#160;</td><td class="memItemRight" valign="bottom"><b>destination</b> (int_fast32_t age, uint_fast32_t loc)</td></tr>
+<tr class="memdesc:a485d79b568a1954fe6a49e308c762d70"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate random number for new location. <br /></td></tr>
+<tr class="separator:a485d79b568a1954fe6a49e308c762d70"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa44553f9bc030955a297b9bea7775e83" id="r_aa44553f9bc030955a297b9bea7775e83"><td class="memItemLeft" align="right" valign="top"><a id="aa44553f9bc030955a297b9bea7775e83" name="aa44553f9bc030955a297b9bea7775e83"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>sample</b> (<a class="el" href="classpbf_1_1_sub_population.html">SubPopulation</a> &amp;subpops, size_t n_adults, size_t n_juveniles)</td></tr>
+<tr class="memdesc:aa44553f9bc030955a297b9bea7775e83"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move individuals to <a class="el" href="classpbf_1_1_sub_population.html#a94546153342c17a398359deea0fffdac" title="Samples: {capture_year =&gt; individuals}.">SubPopulation::samples</a>. <br /></td></tr>
+<tr class="separator:aa44553f9bc030955a297b9bea7775e83"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6de62dc14fe391cd026d308fcbc20366" id="r_a6de62dc14fe391cd026d308fcbc20366"><td class="memItemLeft" align="right" valign="top"><a id="a6de62dc14fe391cd026d308fcbc20366" name="a6de62dc14fe391cd026d308fcbc20366"></a>
+size_t&#160;</td><td class="memItemRight" valign="bottom"><b>sample</b> (std::vector&lt; ShPtrIndividual &gt; &amp;src, std::vector&lt; ShPtrIndividual &gt; &amp;dst, size_t n)</td></tr>
+<tr class="memdesc:a6de62dc14fe391cd026d308fcbc20366"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of <a class="el" href="#aa44553f9bc030955a297b9bea7775e83" title="Move individuals to SubPopulation::samples.">sample()</a>. <br /></td></tr>
+<tr class="separator:a6de62dc14fe391cd026d308fcbc20366"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa2a7eb27ea6dac3a3e4aafcd3089c0b4" id="r_aa2a7eb27ea6dac3a3e4aafcd3089c0b4"><td class="memItemLeft" align="right" valign="top"><a id="aa2a7eb27ea6dac3a3e4aafcd3089c0b4" name="aa2a7eb27ea6dac3a3e4aafcd3089c0b4"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>init_demography</b> (int_fast32_t duration)</td></tr>
+<tr class="memdesc:aa2a7eb27ea6dac3a3e4aafcd3089c0b4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize <a class="el" href="classpbf_1_1_sub_population.html#af3ab97d299c9eb9fee9603e2e1547395" title="[[[count for each age] for season] for year]">SubPopulation::demography</a>. <br /></td></tr>
+<tr class="separator:aa2a7eb27ea6dac3a3e4aafcd3089c0b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:add9926daa6def9e0fc502ce26e5e0df5" id="r_add9926daa6def9e0fc502ce26e5e0df5"><td class="memItemLeft" align="right" valign="top"><a id="add9926daa6def9e0fc502ce26e5e0df5" name="add9926daa6def9e0fc502ce26e5e0df5"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>record_demography</b> (int_fast32_t season)</td></tr>
+<tr class="memdesc:add9926daa6def9e0fc502ce26e5e0df5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Record current state to <a class="el" href="classpbf_1_1_sub_population.html#af3ab97d299c9eb9fee9603e2e1547395" title="[[[count for each age] for season] for year]">SubPopulation::demography</a>. <br /></td></tr>
+<tr class="separator:add9926daa6def9e0fc502ce26e5e0df5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9886bdc5f1d4a619750195680b13b99a" id="r_a9886bdc5f1d4a619750195680b13b99a"><td class="memItemLeft" align="right" valign="top"><a id="a9886bdc5f1d4a619750195680b13b99a" name="a9886bdc5f1d4a619750195680b13b99a"></a>
+std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>weights</b> (const std::vector&lt; ShPtrIndividual &gt; &amp;) const</td></tr>
+<tr class="memdesc:a9886bdc5f1d4a619750195680b13b99a"><td class="mdescLeft">&#160;</td><td class="mdescRight">For male selection. <br /></td></tr>
+<tr class="separator:a9886bdc5f1d4a619750195680b13b99a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab10d257553e53ffd12f17749728a165e" id="r_ab10d257553e53ffd12f17749728a165e"><td class="memItemLeft" align="right" valign="top"><a id="ab10d257553e53ffd12f17749728a165e" name="ab10d257553e53ffd12f17749728a165e"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>propagate_params</b> ()</td></tr>
+<tr class="memdesc:ab10d257553e53ffd12f17749728a165e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Call all the init* functions. <br /></td></tr>
+<tr class="separator:ab10d257553e53ffd12f17749728a165e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a28a22269aa8afa2b215778b1ed6bd12e" id="r_a28a22269aa8afa2b215778b1ed6bd12e"><td class="memItemLeft" align="right" valign="top"><a id="a28a22269aa8afa2b215778b1ed6bd12e" name="a28a22269aa8afa2b215778b1ed6bd12e"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>init_migration</b> ()</td></tr>
+<tr class="memdesc:a28a22269aa8afa2b215778b1ed6bd12e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prepare <a class="el" href="#ace96ecbfca7dcc1ae2b00b894c43acac" title="Discrete distributions for migration.">MIGRATION_DESTINATION_</a>. <br /></td></tr>
+<tr class="separator:a28a22269aa8afa2b215778b1ed6bd12e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a64010f351b465a7e763d8978dbdcd1d9" id="r_a64010f351b465a7e763d8978dbdcd1d9"><td class="memItemLeft" align="right" valign="top"><a id="a64010f351b465a7e763d8978dbdcd1d9" name="a64010f351b465a7e763d8978dbdcd1d9"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>init_mortality</b> ()</td></tr>
+<tr class="memdesc:a64010f351b465a7e763d8978dbdcd1d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prepare <a class="el" href="#a073bfb8714a8a8eba9aa252036ddd9c6" title="elongated version of Parameters::natural_mortality">NATURAL_MORTALITY_</a>, <a class="el" href="#a08da28925a9f15781dd1009d3c530e81" title="elongated version of Parameters::fishing_mortality">FISHING_MORTALITY_</a>, <a class="el" href="#a7b27c1d0b18178837ef0784117817dff" title="Fluctuation of fishing mortality by year.">FISHING_COEF_</a>. <br /></td></tr>
+<tr class="separator:a64010f351b465a7e763d8978dbdcd1d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a19accbf0ff714821e2903ef450480398" id="r_a19accbf0ff714821e2903ef450480398"><td class="memItemLeft" align="right" valign="top"><a id="a19accbf0ff714821e2903ef450480398" name="a19accbf0ff714821e2903ef450480398"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>init_weight</b> ()</td></tr>
+<tr class="memdesc:a19accbf0ff714821e2903ef450480398"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prepare <a class="el" href="#a48f47d5717fc9f8f614efc8b1690b0b3" title="year version of Parameters::weight_for_age">WEIGHT_FOR_AGE_</a>. <br /></td></tr>
+<tr class="separator:a19accbf0ff714821e2903ef450480398"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad70ebb5cded99c654ae53d7a31bfa303" id="r_ad70ebb5cded99c654ae53d7a31bfa303"><td class="memItemLeft" align="right" valign="top"><a id="ad70ebb5cded99c654ae53d7a31bfa303" name="ad70ebb5cded99c654ae53d7a31bfa303"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>is_ready</b> () const</td></tr>
+<tr class="memdesc:ad70ebb5cded99c654ae53d7a31bfa303"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test if dependent variables are ready. <br /></td></tr>
+<tr class="separator:ad70ebb5cded99c654ae53d7a31bfa303"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:a8379b289ad30d672343942ff471ae7f3" id="r_a8379b289ad30d672343942ff471ae7f3"><td class="memItemLeft" align="right" valign="top"><a id="a8379b289ad30d672343942ff471ae7f3" name="a8379b289ad30d672343942ff471ae7f3"></a>
-std::vector&lt; std::vector&lt; std::shared_ptr&lt; <a class="el" href="classpbf_1_1_individual.html">Individual</a> &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>subpopulations_</b></td></tr>
-<tr class="memdesc:a8379b289ad30d672343942ff471ae7f3"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classpbf_1_1_individual.html" title="Individual class.">Individual</a> array for each subpopulation. <br /></td></tr>
-<tr class="separator:a8379b289ad30d672343942ff471ae7f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aad658866beeafed077d224b27a54bb0c" id="r_aad658866beeafed077d224b27a54bb0c"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::vector&lt; std::shared_ptr&lt; <a class="el" href="classpbf_1_1_individual.html">Individual</a> &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aad658866beeafed077d224b27a54bb0c">juveniles_subpops_</a></td></tr>
-<tr class="separator:aad658866beeafed077d224b27a54bb0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a50686d2d2f59e8685c87cdf74ad1b704" id="r_a50686d2d2f59e8685c87cdf74ad1b704"><td class="memItemLeft" align="right" valign="top"><a id="a50686d2d2f59e8685c87cdf74ad1b704" name="a50686d2d2f59e8685c87cdf74ad1b704"></a>
-std::vector&lt; std::vector&lt; uint_fast32_t &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>juveniles_demography_</b> = {}</td></tr>
-<tr class="memdesc:a50686d2d2f59e8685c87cdf74ad1b704"><td class="mdescLeft">&#160;</td><td class="mdescRight">Counts of juveniles of the year: [[number for each location] for each season]. <br /></td></tr>
-<tr class="separator:a50686d2d2f59e8685c87cdf74ad1b704"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acc7374ca5cf7f0bbc44b8d5bd6fb7ad7" id="r_acc7374ca5cf7f0bbc44b8d5bd6fb7ad7"><td class="memItemLeft" align="right" valign="top"><a id="acc7374ca5cf7f0bbc44b8d5bd6fb7ad7" name="acc7374ca5cf7f0bbc44b8d5bd6fb7ad7"></a>
-std::vector&lt; std::map&lt; int_fast32_t, std::vector&lt; std::shared_ptr&lt; <a class="el" href="classpbf_1_1_individual.html">Individual</a> &gt; &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>loc_year_samples_</b> = {}</td></tr>
-<tr class="memdesc:acc7374ca5cf7f0bbc44b8d5bd6fb7ad7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Samples: [{capture_year =&gt; individuals} for each location]. <br /></td></tr>
-<tr class="separator:acc7374ca5cf7f0bbc44b8d5bd6fb7ad7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab1246141d73cc4ed64f45b3ca8f9ecb2" id="r_ab1246141d73cc4ed64f45b3ca8f9ecb2"><td class="memItemLeft" align="right" valign="top"><a id="ab1246141d73cc4ed64f45b3ca8f9ecb2" name="ab1246141d73cc4ed64f45b3ca8f9ecb2"></a>
-std::map&lt; std::pair&lt; int_fast32_t, int_fast32_t &gt;, std::vector&lt; std::vector&lt; uint_fast32_t &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>demography_</b> = {}</td></tr>
-<tr class="memdesc:ab1246141d73cc4ed64f45b3ca8f9ecb2"><td class="mdescLeft">&#160;</td><td class="mdescRight">(year, season) =&gt; [[count for each age] for each location] <br /></td></tr>
-<tr class="separator:ab1246141d73cc4ed64f45b3ca8f9ecb2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa2c5067e2d4860504e1c1f87c5b4908f" id="r_aa2c5067e2d4860504e1c1f87c5b4908f"><td class="memItemLeft" align="right" valign="top">int_fast32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa2c5067e2d4860504e1c1f87c5b4908f">year_</a> = 0</td></tr>
+<tr class="memitem:a4057c3d22f79ac621aa9b25a9c02f88e" id="r_a4057c3d22f79ac621aa9b25a9c02f88e"><td class="memItemLeft" align="right" valign="top"><a id="a4057c3d22f79ac621aa9b25a9c02f88e" name="a4057c3d22f79ac621aa9b25a9c02f88e"></a>
+std::vector&lt; <a class="el" href="classpbf_1_1_sub_population.html">SubPopulation</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>subpopulations_</b> {}</td></tr>
+<tr class="memdesc:a4057c3d22f79ac621aa9b25a9c02f88e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Array of <a class="el" href="classpbf_1_1_sub_population.html" title="Component of Population.">SubPopulation</a>. <br /></td></tr>
+<tr class="separator:a4057c3d22f79ac621aa9b25a9c02f88e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa2c5067e2d4860504e1c1f87c5b4908f" id="r_aa2c5067e2d4860504e1c1f87c5b4908f"><td class="memItemLeft" align="right" valign="top"><a id="aa2c5067e2d4860504e1c1f87c5b4908f" name="aa2c5067e2d4860504e1c1f87c5b4908f"></a>
+int_fast32_t&#160;</td><td class="memItemRight" valign="bottom"><b>year_</b> {0}</td></tr>
+<tr class="memdesc:aa2c5067e2d4860504e1c1f87c5b4908f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current time. <br /></td></tr>
 <tr class="separator:aa2c5067e2d4860504e1c1f87c5b4908f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3eeccb575c5fe9115dc3ec03cb970ccb" id="r_a3eeccb575c5fe9115dc3ec03cb970ccb"><td class="memItemLeft" align="right" valign="top"><a id="a3eeccb575c5fe9115dc3ec03cb970ccb" name="a3eeccb575c5fe9115dc3ec03cb970ccb"></a>
-std::unique_ptr&lt; URBG &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>engine_</b></td></tr>
+std::unique_ptr&lt; URBG &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>engine_</b> {nullptr}</td></tr>
 <tr class="memdesc:a3eeccb575c5fe9115dc3ec03cb970ccb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Uniform Random Bit Generator. <br /></td></tr>
 <tr class="separator:a3eeccb575c5fe9115dc3ec03cb970ccb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr><td colspan="2"><div class="groupHeader"></div></td></tr>
-<tr class="memitem:gaa50c36997d9df3e12f976fb48ea7e5d0" id="r_gaa50c36997d9df3e12f976fb48ea7e5d0"><td class="memItemLeft" align="right" valign="top">
-const double&#160;</td><td class="memItemRight" valign="bottom"><b>carrying_capacity_</b></td></tr>
-<tr class="memdesc:gaa50c36997d9df3e12f976fb48ea7e5d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">\(K\): carrying capacity used in <a class="el" href="#a06875166f8643742c374805c13375f93" title="give birth to children">reproduce()</a> <br /></td></tr>
-<tr class="separator:gaa50c36997d9df3e12f976fb48ea7e5d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga21ab4341abe444f098d420cc5d57eb27" id="r_ga21ab4341abe444f098d420cc5d57eb27"><td class="memItemLeft" align="right" valign="top">
-const double&#160;</td><td class="memItemRight" valign="bottom"><b>recruitment_coef_</b></td></tr>
-<tr class="memdesc:ga21ab4341abe444f098d420cc5d57eb27"><td class="mdescLeft">&#160;</td><td class="mdescRight">\(r\): coefficient used in <a class="el" href="#a06875166f8643742c374805c13375f93" title="give birth to children">reproduce()</a> <br /></td></tr>
-<tr class="separator:ga21ab4341abe444f098d420cc5d57eb27"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga5f7f3361fa3318f902af0cd896cd5395" id="r_ga5f7f3361fa3318f902af0cd896cd5395"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__params.html#ga5f7f3361fa3318f902af0cd896cd5395">k_nbinom_</a></td></tr>
-<tr class="separator:ga5f7f3361fa3318f902af0cd896cd5395"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-static-attribs" name="pri-static-attribs"></a>
+Static Private Attributes</h2></td></tr>
+<tr class="memitem:a054e9955b5cc5c01450c5268cb894c7f" id="r_a054e9955b5cc5c01450c5268cb894c7f"><td class="memItemLeft" align="right" valign="top"><a id="a054e9955b5cc5c01450c5268cb894c7f" name="a054e9955b5cc5c01450c5268cb894c7f"></a>
+static constexpr int_fast32_t&#160;</td><td class="memItemRight" valign="bottom"><b>MAX_AGE</b> = 80</td></tr>
+<tr class="memdesc:a054e9955b5cc5c01450c5268cb894c7f"><td class="mdescLeft">&#160;</td><td class="mdescRight">No individual lives longer than this. <br /></td></tr>
+<tr class="separator:a054e9955b5cc5c01450c5268cb894c7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="friends" name="friends"></a>
 Friends</h2></td></tr>
@@ -186,12 +213,40 @@ Friends</h2></td></tr>
 std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator&lt;&lt;</b> (std::ostream &amp;ost, const <a class="el" href="classpbf_1_1_population.html">Population</a> &amp;pop)</td></tr>
 <tr class="memdesc:aecd5171736f7f07938419e3cfbe88860"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shortcut for Population::write(ost) <br /></td></tr>
 <tr class="separator:aecd5171736f7f07938419e3cfbe88860"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5c1154cc70392b400951cc67da084bde" id="r_a5c1154cc70392b400951cc67da084bde"><td class="memItemLeft" align="right" valign="top"><a id="a5c1154cc70392b400951cc67da084bde" name="a5c1154cc70392b400951cc67da084bde"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>PairDestDist</b> = std::pair&lt;uint_fast32_t, std::discrete_distribution&lt;uint_fast32_t&gt;&gt;</td></tr>
+<tr class="memdesc:a5c1154cc70392b400951cc67da084bde"><td class="mdescLeft">&#160;</td><td class="mdescRight">Alias for readability. <br /></td></tr>
+<tr class="separator:a5c1154cc70392b400951cc67da084bde"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga8a34f84ba427cc311f61bd66de98ffe4" id="r_ga8a34f84ba427cc311f61bd66de98ffe4"><td class="memItemLeft" align="right" valign="top">
+<a class="el" href="structpbf_1_1_parameters.html">Parameters</a>&#160;</td><td class="memItemRight" valign="bottom"><b>params_</b></td></tr>
+<tr class="memdesc:ga8a34f84ba427cc311f61bd66de98ffe4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Store the values from command line and json. <br /></td></tr>
+<tr class="separator:ga8a34f84ba427cc311f61bd66de98ffe4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a073bfb8714a8a8eba9aa252036ddd9c6" id="r_a073bfb8714a8a8eba9aa252036ddd9c6"><td class="memItemLeft" align="right" valign="top"><a id="a073bfb8714a8a8eba9aa252036ddd9c6" name="a073bfb8714a8a8eba9aa252036ddd9c6"></a>
+std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>NATURAL_MORTALITY_</b> {}</td></tr>
+<tr class="memdesc:a073bfb8714a8a8eba9aa252036ddd9c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">elongated version of <a class="el" href="structpbf_1_1_parameters.html#a36a3ba4e18917410a3a5c925af125cbd" title="Array of  for quarter age: instantaneous mortality due to natural causes.">Parameters::natural_mortality</a> <br /></td></tr>
+<tr class="separator:a073bfb8714a8a8eba9aa252036ddd9c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a08da28925a9f15781dd1009d3c530e81" id="r_a08da28925a9f15781dd1009d3c530e81"><td class="memItemLeft" align="right" valign="top"><a id="a08da28925a9f15781dd1009d3c530e81" name="a08da28925a9f15781dd1009d3c530e81"></a>
+std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>FISHING_MORTALITY_</b> {}</td></tr>
+<tr class="memdesc:a08da28925a9f15781dd1009d3c530e81"><td class="mdescLeft">&#160;</td><td class="mdescRight">elongated version of <a class="el" href="structpbf_1_1_parameters.html#aa0e4ec0154b9aa96bfb264b76e8ec7b2" title="Array of  for quarter age: instantaneous mortality due to fishing activities.">Parameters::fishing_mortality</a> <br /></td></tr>
+<tr class="separator:a08da28925a9f15781dd1009d3c530e81"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7b27c1d0b18178837ef0784117817dff" id="r_a7b27c1d0b18178837ef0784117817dff"><td class="memItemLeft" align="right" valign="top"><a id="a7b27c1d0b18178837ef0784117817dff" name="a7b27c1d0b18178837ef0784117817dff"></a>
+std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>FISHING_COEF_</b> {}</td></tr>
+<tr class="memdesc:a7b27c1d0b18178837ef0784117817dff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fluctuation of fishing mortality by year. <br /></td></tr>
+<tr class="separator:a7b27c1d0b18178837ef0784117817dff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a48f47d5717fc9f8f614efc8b1690b0b3" id="r_a48f47d5717fc9f8f614efc8b1690b0b3"><td class="memItemLeft" align="right" valign="top"><a id="a48f47d5717fc9f8f614efc8b1690b0b3" name="a48f47d5717fc9f8f614efc8b1690b0b3"></a>
+std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>WEIGHT_FOR_AGE_</b> {}</td></tr>
+<tr class="memdesc:a48f47d5717fc9f8f614efc8b1690b0b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">year version of <a class="el" href="structpbf_1_1_parameters.html#a64d6f61065874614b7d52a3dee86ee0f" title="Weight in kg for quarter age.">Parameters::weight_for_age</a> <br /></td></tr>
+<tr class="separator:a48f47d5717fc9f8f614efc8b1690b0b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ace96ecbfca7dcc1ae2b00b894c43acac" id="r_ace96ecbfca7dcc1ae2b00b894c43acac"><td class="memItemLeft" align="right" valign="top"><a id="ace96ecbfca7dcc1ae2b00b894c43acac" name="ace96ecbfca7dcc1ae2b00b894c43acac"></a>
+std::vector&lt; std::vector&lt; <a class="el" href="#a5c1154cc70392b400951cc67da084bde">PairDestDist</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>MIGRATION_DESTINATION_</b> {}</td></tr>
+<tr class="memdesc:ace96ecbfca7dcc1ae2b00b894c43acac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Discrete distributions for migration. <br /></td></tr>
+<tr class="separator:ace96ecbfca7dcc1ae2b00b894c43acac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p><a class="el" href="classpbf_1_1_population.html" title="Population class.">Population</a> class. </p>
+<div class="textblock"><p>Main class that implements simulation. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a3265510b556f638ac664e271177631e1" name="a3265510b556f638ac664e271177631e1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3265510b556f638ac664e271177631e1">&#9670;&#160;</a></span>reproduce()</h2>
+<a id="a5c077ae022cf03a7e3f9e5e8e7155325" name="a5c077ae022cf03a7e3f9e5e8e7155325"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5c077ae022cf03a7e3f9e5e8e7155325">&#9670;&#160;</a></span>reproduce_impl()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -200,14 +255,14 @@ std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operato
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void pbf::Population::reproduce </td>
+          <td class="memname">void pbf::Population::reproduce_impl </td>
           <td>(</td>
-          <td class="paramtype">uint_fast32_t</td>          <td class="paramname"><span class="paramname"><em>location</em></span>, </td>
+          <td class="paramtype"><a class="el" href="classpbf_1_1_sub_population.html">SubPopulation</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>subpop</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>popsize</em></span>&#160;)</td>
+          <td class="paramtype">const std::vector&lt; uint_fast32_t &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>litter_sizes</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -216,7 +271,33 @@ std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operato
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Append new individuals to <a class="el" href="#aad658866beeafed077d224b27a54bb0c">juveniles_subpops_</a> at <code>location</code>. The expected number of children for each adult is proportional to its weight. All the females are evaluated for recruitment, whereas males are stochastically chosen. </p>
+<p>Append new individuals to <a class="el" href="classpbf_1_1_sub_population.html#a6d8e22e1708c90cf729ff790a81c446f" title="First-year individuals separated for Population::sample().">SubPopulation::juveniles</a>. The expected number of children for each adult is proportional to its weight. All the females are evaluated for recruitment, whereas males are stochastically chosen. </p>
+
+</div>
+</div>
+<a id="a5fabd28ec581ad7a101a1c58e8d02b8c" name="a5fabd28ec581ad7a101a1c58e8d02b8c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5fabd28ec581ad7a101a1c58e8d02b8c">&#9670;&#160;</a></span>reproduce_lognormal()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void pbf::Population::reproduce_lognormal </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Reproduce according to constant lognormal distribution. Total recruitment is calculated first, and then split it. </p>
 
 </div>
 </div>
@@ -234,54 +315,7 @@ std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operato
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Construct and write tree from <a class="el" href="#acc7374ca5cf7f0bbc44b8d5bd6fb7ad7" title="Samples: [{capture_year =&gt; individuals} for each location].">loc_year_samples_</a>. Serial IDs are assigned to sampled individuals. IDs larger than sample size are assigned to unsampled ancestors. </p>
-
-</div>
-</div>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a id="aad658866beeafed077d224b27a54bb0c" name="aad658866beeafed077d224b27a54bb0c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aad658866beeafed077d224b27a54bb0c">&#9670;&#160;</a></span>juveniles_subpops_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt;std::vector&lt;std::shared_ptr&lt;<a class="el" href="classpbf_1_1_individual.html">Individual</a>&gt; &gt; &gt; pbf::Population::juveniles_subpops_</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>First-year individuals separated for <a class="el" href="#ae9604f211cb222f64098dfcab8934249" title="Sample individuals.">sample()</a>. Note that it becomes empty in <a class="el" href="#a9488ca17eefb54af69ebfd43c2103d6f" title="Evaluate migration. Individuals in juveniles_subpops_ moves to subpopulations_.">migrate()</a>. </p>
-
-</div>
-</div>
-<a id="aa2c5067e2d4860504e1c1f87c5b4908f" name="aa2c5067e2d4860504e1c1f87c5b4908f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa2c5067e2d4860504e1c1f87c5b4908f">&#9670;&#160;</a></span>year_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">int_fast32_t pbf::Population::year_ = 0</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Current time. </p>
+<p>Construct and write tree from <a class="el" href="classpbf_1_1_sub_population.html#a94546153342c17a398359deea0fffdac" title="Samples: {capture_year =&gt; individuals}.">SubPopulation::samples</a>. Serial IDs are assigned to sampled individuals. IDs larger than sample size are assigned to unsampled ancestors. </p>
 
 </div>
 </div>
