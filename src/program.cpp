@@ -30,15 +30,16 @@ inline clipp::group general_options(nlohmann::json* vm) {
     ).doc("General:");
 }
 
-//! Program options
+//! Global options for simulation
 /*! @ingroup params
 
-    Command line option           | Symbol
-    ----------------------------- | -------
-    `-i,--infile`                 | -
-    `-o,--outdir`                 | -
-    `-y,--years`                  | -
-    `-O,--origin`                 | -
+    Command line option  | Variable
+    -------------------- | ------------------
+    `--seed`             | Parameters::seed
+    `-i,--infile`        | -
+    `-o,--outdir`        | Parameters::outdir
+    `-y,--years`         | Parameters::years
+    `-O,--origin`        | Parameters::origin
 */
 inline clipp::group program_options(Parameters& params) {
     return (
@@ -50,14 +51,16 @@ inline clipp::group program_options(Parameters& params) {
     ).doc("Initialization:");
 }
 
-//! Reproduction options
+//! Options for Population::reproduce
 /*! @ingroup params
 
     Command line option      | Symbol   | Variable
     ------------------------ | -------- | -------------------------------
-    `-K,--carrying_capacity` | \f$K\f$  | Population::carrying_capacity_
-    `-k,--overdispersion`    | \f$k\f$  | Population::k_nbinom_
-    `-r,--recruitment`       | \f$r\f$  | Population::recruitment_coef_
+    `-R,--med_recruitment`   | \f$\operatorname{med}(R)\f$  | Parameters::med_recruitment
+    `-S,--sigma_recruitment` | \f$\sigma_{R}\f$  | Parameters::sigma_recruitment
+    `-K,--carrying_capacity` | \f$K\f$  | Parameters::carrying_capacity
+    `-k,--overdispersion`    | \f$k\f$  | Parameters::overdispersion
+    `-r,--recruitment`       | \f$r\f$  | Parameters::recruitment
 */
 inline clipp::group reproduction_options(Parameters& params) {
     return (
@@ -71,14 +74,14 @@ inline clipp::group reproduction_options(Parameters& params) {
     ).doc("Reproduction:");
 }
 
-//! Sampling options
+//! Options for Population::sample
 /*! @ingroup params
 
-    Command line option           | Symbol
-    ----------------------------- | -------
-    `-l,--last`                   | -
-    `--sa,--sample_size_adult`    | -
-    `--sj,--sample_size_juvenile` | -
+    Command line option           | Variable
+    ----------------------------- | --------------------------------
+    `-l,--last`                   | Parameters::last
+    `--sa,--sample_size_adult`    | Parameters::sample_size_adult
+    `--sj,--sample_size_juvenile` | Parameters::sample_size_juvenile
 */
 inline clipp::group sampling_options(Parameters& params) {
     return (
@@ -88,10 +91,14 @@ inline clipp::group sampling_options(Parameters& params) {
     ).doc("Sampling:");
 }
 
+//! @cond
+
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(Parameters,
   natural_mortality, fishing_mortality, fishing_coef, weight_for_age, migration_matrices,
   origin, years, last, sample_size_adult, sample_size_juvenile, outdir, seed, carrying_capacity, recruitment, overdispersion
 );
+
+//! @endcond
 
 Program::~Program() = default;
 

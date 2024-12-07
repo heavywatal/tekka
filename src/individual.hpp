@@ -16,7 +16,7 @@ namespace pbf {
 */
 class Individual {
   public:
-    //! for initial population
+    //! The origin without parents for Population initialization
     Individual() = default;
     //! for sexual reproduction
     Individual(std::shared_ptr<Individual> father,

@@ -46,7 +46,7 @@ struct Parameters {
     //! Equivalent to Poisson when \f$k \to \infty\f$ (or \f$k<0\f$ for convience).
     double overdispersion{-1.0};
 
-    //! @ingroup only-json
+    //! @name Configurable only via JSON
     //!@{
 
     //! Alias for readability

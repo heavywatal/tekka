@@ -17,11 +17,16 @@
 
 namespace pcglite {
   template <class UIntType> class permuted_congruential_engine;
+
+  //! Forward declaration of random number generator
   using pcg64 = permuted_congruential_engine<uint64_t>;
 }
 
 namespace pbf {
 
+//! @cond
+
+//! Type alias of random number generator
 using URBG = pcglite::pcg64;
 
 class Individual;
@@ -29,25 +34,32 @@ using ShPtrIndividual = std::shared_ptr<Individual>;
 
 enum class Sex { F, M };
 
+//! @endcond
+
+//! Component of Population
 class SubPopulation {
   public:
+    //! Getter of #adults.
     std::vector<ShPtrIndividual>& operator[](Sex x) {
         return adults[static_cast<uint_fast8_t>(x)];
     }
+    //! Getter of #adults.
     const std::vector<ShPtrIndividual>& operator[](Sex x) const {
         return adults[static_cast<uint_fast8_t>(x)];
     }
+    //! The number of #adults.
     size_t size() const {
         return adults[0].size() + adults[1].size();
     }
+    //! Remove all #adults.
     void clear() {
         adults[0].clear();
         adults[1].clear();
     }
-    //! Individual array for each subpopulation
+    //! Array of shared pointers to Individual's.
+    //! Females and males are separately stored for #Population::reproduce().
     std::array<std::vector<ShPtrIndividual>, 2> adults{};
-    //! First-year individuals separated for #sample().
-    //! Note that it becomes empty in #migrate().
+    //! First-year individuals separated for #Population::sample().
     std::vector<ShPtrIndividual> juveniles{};
     //! Samples: {capture_year => individuals}
     std::map<int_fast32_t, std::vector<ShPtrIndividual>> samples{};
@@ -55,8 +67,7 @@ class SubPopulation {
     std::vector<std::array<std::vector<uint_fast32_t>, 4>> demography{};
 };
 
-/*! @brief Population class
-*/
+//! Main class that implements simulation
 class Population {
     //! No individual lives longer than this.
     constexpr static inline int_fast32_t MAX_AGE = 80;
@@ -106,7 +117,7 @@ class Population {
     //! Generate random number for new location.
     uint_fast32_t destination(int_fast32_t age, uint_fast32_t loc);
 
-    //! Sample individuals.
+    //! Move individuals to SubPopulation::samples.
     void sample(SubPopulation& subpops, size_t n_adults, size_t n_juveniles);
     //! Implementation of sample().
     size_t sample(std::vector<ShPtrIndividual>& src,
@@ -134,6 +145,7 @@ class Population {
     //! @ingroup params
     //!@{
 
+    //! Store the values from command line and json.
     Parameters params_;
 
     //! elongated version of #Parameters::natural_mortality
@@ -151,7 +163,7 @@ class Population {
 
     //!@}
 
-    //!
+    //! Array of SubPopulation.
     std::vector<SubPopulation> subpopulations_{};
     //! Current time.
     int_fast32_t year_{0};
