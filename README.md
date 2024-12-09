@@ -44,3 +44,11 @@ cmake --build build -j 2
 cmake --install build
 PATH=${DESTINATION}/bin:$PATH
 ```
+
+## Usage
+
+```sh
+tekka --help
+```
+
+All the parameters are described also in [Parameters](https://heavywatal.github.io/tekka/group__parameters.html) page.
