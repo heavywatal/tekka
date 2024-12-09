@@ -1,7 +1,3 @@
-/*! @file program.cpp
-    @brief Implementation of Program class
-    @defgroup params Parameters
-*/
 #include "program.hpp"
 #include "population.hpp"
 #include "parameters.hpp"
@@ -31,7 +27,7 @@ inline clipp::group general_options(nlohmann::json* vm) {
 }
 
 //! Global options for simulation
-/*! @ingroup params
+/*! @ingroup parameters
 
     Command line option  | Variable
     -------------------- | ------------------
@@ -52,7 +48,7 @@ inline clipp::group program_options(Parameters& params) {
 }
 
 //! Options for Population::reproduce
-/*! @ingroup params
+/*! @ingroup parameters
 
     Command line option      | Symbol   | Variable
     ------------------------ | -------- | -------------------------------
@@ -75,7 +71,7 @@ inline clipp::group reproduction_options(Parameters& params) {
 }
 
 //! Options for Population::sample
-/*! @ingroup params
+/*! @ingroup parameters
 
     Command line option           | Variable
     ----------------------------- | --------------------------------
@@ -174,8 +170,8 @@ void Program::write() const {
 }
 
 Parameters::Parameters():
-  outdir{wtl::strftime("thunnus_%Y%m%d_%H%M%S")},
-  seed{static_cast<int32_t>(std::random_device{}())} // 32-bit signed integer for R
+  seed{static_cast<int32_t>(std::random_device{}())}, // 32-bit signed integer for R
+  outdir{wtl::strftime("thunnus_%Y%m%d_%H%M%S")}
   {
     std::istringstream iss(default_values);
     read(iss);

@@ -7,9 +7,14 @@
 
 namespace pbf {
 
+//! @defgroup parameters Parameters
+//! List of commandline options.
+//! Tables are at the bottom of the page.
+//!
+//! The longer ones can be used as keys in JSON config file,
+//! e.g., `{"years": 80}` for `-y,--years` option.
+
 //! @brief Parameters for Population class
-/*! @ingroup params
-*/
 struct Parameters {
     //! Constructor
     Parameters();
@@ -18,21 +23,25 @@ struct Parameters {
     //! Write json-only variables to stream
     std::ostream& write(std::ostream&) const;
 
+//! @addtogroup parameters
+//! @{
+
+    //! @name Global
+    //!@{
+
+    //! RNG seed; 32-bit signed integer for R
+    int32_t seed{0};
+    //! Output directory
+    std::string outdir{};
+    //! Duration of simulation
+    int years{80};
     //! Initial number of juveniles at location 0 in season 0 in year 0.
     //! It falls back to \f$\operatorname{med}(R)\f$ or \f$K\f$ if 0.
     size_t origin{0u};
-    //! Duration of simulation
-    int years{80};
-    //! Sample last _ years
-    int last{3};
-    //! per location
-    std::vector<size_t> sample_size_adult{10u, 10u};
-    //! per location
-    std::vector<size_t> sample_size_juvenile{10u, 10u};
-    //! Output directory
-    std::string outdir{};
-    //! RNG seed; 32-bit signed integer for R
-    int32_t seed{0};
+    //!@}
+
+    //! @name Reproduction
+    //!@{
 
     //! \f$\operatorname{med}(R) = \exp(\mu_{R})\f$ for lognormal distribution
     double med_recruitment{0.0};
@@ -45,6 +54,18 @@ struct Parameters {
     //! \f$k \in (0, \infty)\f$ for overdispersion in Population::reproduce().
     //! Equivalent to Poisson when \f$k \to \infty\f$ (or \f$k<0\f$ for convience).
     double overdispersion{-1.0};
+    //!@}
+
+    //! @name Sampling
+    //!@{
+
+    //! Sample last _ years
+    int last{3};
+    //! per location
+    std::vector<size_t> sample_size_adult{10u, 10u};
+    //! per location
+    std::vector<size_t> sample_size_juvenile{10u, 10u};
+    //!@}
 
     //! @name Configurable only via JSON
     //!@{
@@ -56,13 +77,16 @@ struct Parameters {
     //! Array of \f$F\f$ for quarter age: instantaneous mortality due to fishing activities
     std::vector<double> fishing_mortality{};
     //! Array of \f$e\f$ by year: coefficient of fishing mortality.
-    //! The last part is used for the last years if its length differs from `--years` option.
+    //! The last element is used for the last years if its length differs from #years.
     std::vector<double> fishing_coef{};
     //! Weight in kg for quarter age
     std::vector<double> weight_for_age{};
-    //! Transition matrix for migration
+    //! Transition matrix for Population::migrate()
     std::vector<RowMatrix> migration_matrices{};
     //!@}
+
+//!@}
+
 };
 
 } // namespace pbf

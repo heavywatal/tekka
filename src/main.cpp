@@ -1,12 +1,9 @@
-/*! @file main.cpp
-    @brief Only defines tiny main()
-*/
 #include "program.hpp"
 
 #include <iostream>
 #include <exception>
 
-//! Just instantiate and run Program
+//! Just instantiate and run pbf::Program
 int main(int argc, char* argv[]) {
     std::vector<std::string> arguments(argv + 1, argv + argc);
     try {

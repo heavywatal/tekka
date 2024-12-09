@@ -1,6 +1,3 @@
-/*! @file population.cpp
-    @brief Implementation of Population class
-*/
 #include "population.hpp"
 #include "individual.hpp"
 

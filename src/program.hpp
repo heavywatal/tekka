@@ -1,6 +1,3 @@
-/*! @file program.hpp
-    @brief Interface of Program class
-*/
 #pragma once
 #ifndef PBT_PROGRAM_HPP_
 #define PBT_PROGRAM_HPP_
@@ -21,7 +18,7 @@ class exit_success: public std::logic_error {
 };
 //! @endcond
 
-/*! @brief Program class
+/*! @brief Handle command line arguments and a Population instance
 */
 class Program {
   public:

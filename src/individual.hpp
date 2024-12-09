@@ -1,6 +1,3 @@
-/*! @file individual.hpp
-    @brief Interface of Individual class
-*/
 #pragma once
 #ifndef PBT_INDIVIDUAL_HPP_
 #define PBT_INDIVIDUAL_HPP_
@@ -12,7 +9,7 @@
 
 namespace pbf {
 
-/*! @brief Individual class
+/*! @brief Component of SubPopulation
 */
 class Individual {
   public:

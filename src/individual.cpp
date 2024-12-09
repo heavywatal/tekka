@@ -1,6 +1,3 @@
-/*! @file individual.cpp
-    @brief Implementation of Individual class
-*/
 #include "individual.hpp"
 
 #include <wtl/debug.hpp>

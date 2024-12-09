@@ -1,6 +1,3 @@
-/*! @file population.hpp
-    @brief Interface of Population class
-*/
 #pragma once
 #ifndef PBT_POPULATION_HPP_
 #define PBT_POPULATION_HPP_
@@ -15,12 +12,13 @@
 #include <memory>
 #include <random>
 
+//! @cond
 namespace pcglite {
   template <class UIntType> class permuted_congruential_engine;
 
-  //! Forward declaration of random number generator
   using pcg64 = permuted_congruential_engine<uint64_t>;
 }
+//! @endcond
 
 namespace pbf {
 
@@ -36,7 +34,7 @@ enum class Sex { F, M };
 
 //! @endcond
 
-//! Component of Population
+//! Component of Population; Container of Individual
 class SubPopulation {
   public:
     //! Getter of #adults.
@@ -142,9 +140,6 @@ class Population {
     //! Test if dependent variables are ready.
     bool is_ready() const;
 
-    //! @ingroup params
-    //!@{
-
     //! Store the values from command line and json.
     Parameters params_;
 
@@ -152,16 +147,14 @@ class Population {
     std::vector<double> NATURAL_MORTALITY_{};
     //! elongated version of #Parameters::fishing_mortality
     std::vector<double> FISHING_MORTALITY_{};
-    //! Fluctuation of fishing mortality by year
+    //! elongated version of #Parameters::fishing_coef
     std::vector<double> FISHING_COEF_{};
     //! year version of #Parameters::weight_for_age
     std::vector<double> WEIGHT_FOR_AGE_{};
     //! Alias for readability
     using PairDestDist=std::pair<uint_fast32_t, std::discrete_distribution<uint_fast32_t>>;
-    //! Discrete distributions for migration
+    //! Discrete distributions for #migrate()
     std::vector<std::vector<PairDestDist>> MIGRATION_DESTINATION_{};
-
-    //!@}
 
     //! Array of SubPopulation.
     std::vector<SubPopulation> subpopulations_{};
