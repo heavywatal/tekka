@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 project(tekka
-  VERSION 0.7.7
+  VERSION 0.8.0
   LANGUAGES CXX)
 
 cmake_policy(SET CMP0169 OLD) # 3.28
