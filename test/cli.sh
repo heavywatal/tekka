@@ -1,6 +1,9 @@
 set -eux
 TMP_OUT=tekka_cli.sh
 
+./tekka --help
+./tekka --version
+
 ./tekka -o $TMP_OUT
 rm -r $TMP_OUT
 
