@@ -130,13 +130,16 @@ void Population::reproduce_lognormal() {
     constexpr uint_fast32_t num_breeding_places = 2u;
     std::lognormal_distribution lognormal{std::log(params_.med_recruitment), params_.sigma_recruitment};
     const size_t recruitment = params_.sigma_recruitment ? lognormal(*engine_) : params_.med_recruitment;
+    size_t num_mothers = 0u;
     std::vector<double> subtotal_weights(num_breeding_places);
     std::vector<std::vector<double>> female_weights(num_breeding_places);
     for (uint_fast32_t loc=0u; loc<num_breeding_places; ++loc) {
         const auto& females = subpopulations_[loc][Sex::F];
+        num_mothers += females.size();
         female_weights[loc] = weights(females);
         subtotal_weights[loc] = std::reduce(female_weights[loc].begin(), female_weights[loc].end());
     }
+    if (num_mothers == 0u) return;
     wtl::multinomial_distribution multinomial(subtotal_weights.begin(), subtotal_weights.end());
     const auto recruitment_sub = multinomial(*engine_, recruitment);
     for (uint_fast32_t loc=0u; loc<num_breeding_places; ++loc) {
