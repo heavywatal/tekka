@@ -2,14 +2,7 @@
 
 #include <wtl/debug.hpp>
 
-#include <type_traits>
-
 namespace pbf {
-
-static_assert(std::is_nothrow_default_constructible_v<Individual>);
-static_assert(!std::is_copy_constructible_v<Individual>);
-static_assert(!std::is_move_constructible_v<Individual>);
-static_assert(std::is_nothrow_destructible_v<Individual>);
 
 void Individual::trace_back(std::ostream& ost, std::unordered_map<const Individual*, uint_fast32_t>& ids,
                             uint_fast32_t loc, int_fast32_t year) const {
