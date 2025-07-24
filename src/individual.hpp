@@ -27,12 +27,12 @@ class Individual {
     ~Individual() = default;
 
     //! Write ancestors recursively.
-    void trace_back(std::ostream& ost, std::unordered_map<const Individual*, uint_fast32_t>& ids,
-                    uint_fast32_t loc, int_fast32_t year) const;
+    void trace_back(std::ostream& ost, std::unordered_map<const Individual*, int_fast32_t>& ids,
+                    int_fast32_t loc, int_fast32_t year) const;
     //! Write all the data members in TSV
     std::ostream& write(std::ostream&) const;
     //! Write all the data members in TSV with translated IDs
-    std::ostream& write(std::ostream&, const std::unordered_map<const Individual*, uint_fast32_t>&) const;
+    std::ostream& write(std::ostream&, const std::unordered_map<const Individual*, int_fast32_t>&) const;
     //! Write column names for trace_back()
     static std::ostream& write_trace_back_header(std::ostream&);
     //! Write column names for write()

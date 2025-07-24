@@ -62,7 +62,7 @@ class SubPopulation {
     //! Samples: {capture_year => individuals}
     std::map<int_fast32_t, std::vector<ShPtrIndividual>> samples{};
     //! [[[count for each age] for season] for year]
-    std::vector<std::array<std::vector<uint_fast32_t>, 4>> demography{};
+    std::vector<std::array<std::vector<int_fast32_t>, 4>> demography{};
 };
 
 //! Main class that implements simulation
@@ -100,10 +100,10 @@ class Population {
     //! The expected number of children for each adult is proportional to its weight.
     //! All the females are evaluated for recruitment,
     //! whereas males are stochastically chosen.
-    void reproduce_impl(SubPopulation&, const std::vector<uint_fast32_t>& litter_sizes);
+    void reproduce_impl(SubPopulation&, const std::vector<int_fast32_t>& litter_sizes);
     //! Calculate stochastic litter sizes proportional to female weight
-    std::vector<uint_fast32_t>
-    litter_sizes_logistic(const std::vector<ShPtrIndividual>& females, size_t popsize);
+    std::vector<int_fast32_t>
+    litter_sizes_logistic(const std::vector<ShPtrIndividual>& females, int_fast32_t popsize);
 
     //! Evaluate survival.
     void survive(int_fast32_t season);
@@ -113,13 +113,13 @@ class Population {
     //! Evaluate migration. Merge #SubPopulation::juveniles to #SubPopulation::adults.
     void migrate();
     //! Generate random number for new location.
-    uint_fast32_t destination(int_fast32_t age, uint_fast32_t loc);
+    int_fast32_t destination(int_fast32_t age, int_fast32_t loc);
 
     //! Move individuals to SubPopulation::samples.
-    void sample(SubPopulation& subpops, size_t n_adults, size_t n_juveniles);
+    void sample(SubPopulation& subpops, int_fast32_t n_adults, int_fast32_t n_juveniles);
     //! Implementation of sample().
-    size_t sample(std::vector<ShPtrIndividual>& src,
-                  std::vector<ShPtrIndividual>& dst, size_t n);
+    int_fast32_t sample(std::vector<ShPtrIndividual>& src,
+                        std::vector<ShPtrIndividual>& dst, int_fast32_t n);
 
     //! Initialize #SubPopulation::demography
     void init_demography(int_fast32_t duration);
@@ -152,7 +152,7 @@ class Population {
     //! year version of #Parameters::weight_for_age
     std::vector<double> WEIGHT_FOR_AGE_{};
     //! Alias for readability
-    using PairDestDist=std::pair<uint_fast32_t, std::discrete_distribution<uint_fast32_t>>;
+    using PairDestDist=std::pair<int_fast32_t, std::discrete_distribution<int_fast32_t>>;
     //! Discrete distributions for #migrate()
     std::vector<std::vector<PairDestDist>> MIGRATION_DESTINATION_{};
 

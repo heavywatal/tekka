@@ -34,10 +34,10 @@ struct Parameters {
     //! Output directory
     std::string outdir{};
     //! Duration of simulation
-    int years{80};
+    int_fast32_t years{80};
     //! Initial number of juveniles at location 0 in season 0 in year 0.
     //! It falls back to \f$\operatorname{med}(R)\f$ or \f$K\f$ if 0.
-    size_t origin{0u};
+    int_fast32_t origin{0};
     //!@}
 
     //! @name Reproduction
@@ -60,11 +60,11 @@ struct Parameters {
     //!@{
 
     //! Sample last _ years
-    int last{3};
+    int_fast32_t last{3};
     //! per location
-    std::vector<size_t> sample_size_adult{10u, 10u};
+    std::vector<int_fast32_t> sample_size_adult{10, 10};
     //! per location
-    std::vector<size_t> sample_size_juvenile{10u, 10u};
+    std::vector<int_fast32_t> sample_size_juvenile{10, 10};
     //!@}
 
     //! @name Configurable only via JSON

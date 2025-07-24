@@ -61,7 +61,7 @@ add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 add_subdirectory(src)
 
 target_compile_options(${PROJECT_NAME} PUBLIC
-  -Wall -Wextra -pedantic
+  -Wall -Wextra -pedantic -Wsign-conversion
   $<$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},x86_64>:-march=native>
   $<$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},arm64>:-march=armv8.4-a>
 )

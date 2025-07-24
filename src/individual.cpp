@@ -4,9 +4,9 @@
 
 namespace pbf {
 
-void Individual::trace_back(std::ostream& ost, std::unordered_map<const Individual*, uint_fast32_t>& ids,
-                            uint_fast32_t loc, int_fast32_t year) const {
-    if (!ids.emplace(this, static_cast<uint_fast32_t>(ids.size())).second && (year == 0)) return;
+void Individual::trace_back(std::ostream& ost, std::unordered_map<const Individual*, int_fast32_t>& ids,
+                            int_fast32_t loc, int_fast32_t year) const {
+    if (!ids.emplace(this, static_cast<int_fast32_t>(ids.size())).second && (year == 0)) return;
     if (father_) father_->trace_back(ost, ids, loc, 0);
     if (mother_) mother_->trace_back(ost, ids, loc, 0);
     write(ost, ids);
@@ -35,7 +35,7 @@ std::ostream& Individual::write(std::ostream& ost) const {
                << birth_year_;
 }
 
-std::ostream& Individual::write(std::ostream& ost, const std::unordered_map<const Individual*, uint_fast32_t>& ids) const {
+std::ostream& Individual::write(std::ostream& ost, const std::unordered_map<const Individual*, int_fast32_t>& ids) const {
     return ost << ids.at(this) << "\t"
                << ids.at(father_.get()) << "\t"
                << ids.at(mother_.get()) << "\t"
