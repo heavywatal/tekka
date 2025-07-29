@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.21)
 project(tekka
-  VERSION 0.8.1
+  VERSION 0.8.2
   LANGUAGES CXX)
 
 cmake_policy(SET CMP0169 OLD) # 3.28
@@ -53,7 +53,7 @@ function(find_package_or_fetch package tag repo)
 endfunction()
 
 find_package_or_fetch(wtl v0.10.0 heavywatal/cxxwtl)
-find_package_or_fetch(clippson v0.8.8 heavywatal/clippson)
+find_package_or_fetch(clippson v0.8.9 heavywatal/clippson)
 find_package_or_fetch(pcglite v0.2.1 heavywatal/pcglite)
 
 add_library(${PROJECT_NAME} STATIC)
