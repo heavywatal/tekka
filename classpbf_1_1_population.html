@@ -84,9 +84,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a24b9138807971da000d33d5a538ea192" id="r_a24b9138807971da000d33d5a538ea192"><td class="memItemLeft" align="right" valign="top"><a id="a24b9138807971da000d33d5a538ea192" name="a24b9138807971da000d33d5a538ea192"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>Population</b> (const <a class="el" href="structpbf_1_1_parameters.html">Parameters</a> &amp;)</td></tr>
 <tr class="memdesc:a24b9138807971da000d33d5a538ea192"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor. <br /></td></tr>
-<tr class="memitem:abb244c2aa8657a731a7b33ab3b1951e6" id="r_abb244c2aa8657a731a7b33ab3b1951e6"><td class="memItemLeft" align="right" valign="top"><a id="abb244c2aa8657a731a7b33ab3b1951e6" name="abb244c2aa8657a731a7b33ab3b1951e6"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>run</b> ()</td></tr>
-<tr class="memdesc:abb244c2aa8657a731a7b33ab3b1951e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Main iteration. <br /></td></tr>
+<tr class="memitem:abb244c2aa8657a731a7b33ab3b1951e6" id="r_abb244c2aa8657a731a7b33ab3b1951e6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abb244c2aa8657a731a7b33ab3b1951e6">run</a> ()</td></tr>
+<tr class="memdesc:abb244c2aa8657a731a7b33ab3b1951e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">The main loop of simulation.  <br /></td></tr>
 <tr class="memitem:ab3d038801571367cf27a6cc3741aef5c" id="r_ab3d038801571367cf27a6cc3741aef5c"><td class="memItemLeft" align="right" valign="top"><a id="ab3d038801571367cf27a6cc3741aef5c" name="ab3d038801571367cf27a6cc3741aef5c"></a>
 std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>write_sample_family</b> (std::ostream &amp;ost) const</td></tr>
 <tr class="memdesc:ab3d038801571367cf27a6cc3741aef5c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct and write tree from <a class="el" href="classpbf_1_1_sub_population.html#a94546153342c17a398359deea0fffdac" title="Samples: {capture_year =&gt; individuals}.">SubPopulation::samples</a>. Serial IDs are assigned to sampled individuals. IDs larger than sample size are assigned to unsampled ancestors. <br /></td></tr>
@@ -107,7 +106,7 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>PairDestDist</b> = s
 Private Member Functions</h2></td></tr>
 <tr class="memitem:a06875166f8643742c374805c13375f93" id="r_a06875166f8643742c374805c13375f93"><td class="memItemLeft" align="right" valign="top"><a id="a06875166f8643742c374805c13375f93" name="a06875166f8643742c374805c13375f93"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>reproduce</b> ()</td></tr>
-<tr class="memdesc:a06875166f8643742c374805c13375f93"><td class="mdescLeft">&#160;</td><td class="mdescRight">give birth to children <br /></td></tr>
+<tr class="memdesc:a06875166f8643742c374805c13375f93"><td class="mdescLeft">&#160;</td><td class="mdescRight">Call <a class="el" href="#ae03ab5a5c92ce0e66260b5b3fbbfd75b" title="Append new individuals to SubPopulation::juveniles. The expected number of children for each adult is...">reproduce_impl()</a> via <a class="el" href="#a5fabd28ec581ad7a101a1c58e8d02b8c" title="Reproduce according to constant lognormal distribution. Total recruitment is calculated first,...">reproduce_lognormal()</a> or <a class="el" href="#ad1876bc487819ec5e140254ec651da24" title="Reproduce according to population size and carrying capacity.">reproduce_logistic()</a> depending on <a class="el" href="group__parameters.html#ga058967b5ec2a4421b18db6e3fad90861" title="for lognormal distribution">Parameters::med_recruitment</a>. Currently, the breeding places are hardcoded to subpopulations 0 and 1. <br /></td></tr>
 <tr class="memitem:a5fabd28ec581ad7a101a1c58e8d02b8c" id="r_a5fabd28ec581ad7a101a1c58e8d02b8c"><td class="memItemLeft" align="right" valign="top"><a id="a5fabd28ec581ad7a101a1c58e8d02b8c" name="a5fabd28ec581ad7a101a1c58e8d02b8c"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>reproduce_lognormal</b> ()</td></tr>
 <tr class="memdesc:a5fabd28ec581ad7a101a1c58e8d02b8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reproduce according to constant lognormal distribution. Total recruitment is calculated first, and then split it. <br /></td></tr>
@@ -116,13 +115,13 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>reproduce_logistic</b
 <tr class="memdesc:ad1876bc487819ec5e140254ec651da24"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reproduce according to population size and carrying capacity. <br /></td></tr>
 <tr class="memitem:ae03ab5a5c92ce0e66260b5b3fbbfd75b" id="r_ae03ab5a5c92ce0e66260b5b3fbbfd75b"><td class="memItemLeft" align="right" valign="top"><a id="ae03ab5a5c92ce0e66260b5b3fbbfd75b" name="ae03ab5a5c92ce0e66260b5b3fbbfd75b"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>reproduce_impl</b> (<a class="el" href="classpbf_1_1_sub_population.html">SubPopulation</a> &amp;, const std::vector&lt; int_fast32_t &gt; &amp;litter_sizes)</td></tr>
-<tr class="memdesc:ae03ab5a5c92ce0e66260b5b3fbbfd75b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Append new individuals to <a class="el" href="classpbf_1_1_sub_population.html#a6d8e22e1708c90cf729ff790a81c446f" title="First-year individuals separated for Population::sample().">SubPopulation::juveniles</a>. The expected number of children for each adult is proportional to its weight. All the females are evaluated for recruitment, whereas males are stochastically chosen. <br /></td></tr>
+<tr class="memdesc:ae03ab5a5c92ce0e66260b5b3fbbfd75b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Append new individuals to <a class="el" href="classpbf_1_1_sub_population.html#a6d8e22e1708c90cf729ff790a81c446f" title="First-year individuals separated for Population::sample().">SubPopulation::juveniles</a>. The expected number of children for each adult is proportional to its weight. All the females are evaluated for recruitment, whereas males are stochastically chosen. All the <a class="el" href="classpbf_1_1_sub_population.html#a7375938f95b65d89df3b876ced4c501c" title="Array of shared pointers to Individual&#39;s. Females and males are separately stored for Population::rep...">SubPopulation::adults</a> are evaluated regardless of age. <br /></td></tr>
 <tr class="memitem:a1271f24413e43a6e846769016043b3c2" id="r_a1271f24413e43a6e846769016043b3c2"><td class="memItemLeft" align="right" valign="top"><a id="a1271f24413e43a6e846769016043b3c2" name="a1271f24413e43a6e846769016043b3c2"></a>
 std::vector&lt; int_fast32_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>litter_sizes_logistic</b> (const std::vector&lt; ShPtrIndividual &gt; &amp;females, int_fast32_t popsize)</td></tr>
 <tr class="memdesc:a1271f24413e43a6e846769016043b3c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate stochastic litter sizes proportional to female weight. <br /></td></tr>
 <tr class="memitem:aae584286d99523e7df6d1f610e331918" id="r_aae584286d99523e7df6d1f610e331918"><td class="memItemLeft" align="right" valign="top"><a id="aae584286d99523e7df6d1f610e331918" name="aae584286d99523e7df6d1f610e331918"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>survive</b> (int_fast32_t season)</td></tr>
-<tr class="memdesc:aae584286d99523e7df6d1f610e331918"><td class="mdescLeft">&#160;</td><td class="mdescRight">Evaluate survival. <br /></td></tr>
+<tr class="memdesc:aae584286d99523e7df6d1f610e331918"><td class="mdescLeft">&#160;</td><td class="mdescRight">Evaluate survival using <a class="el" href="#a536e1a087a117e7d62a8c0a53cb28411" title="Finite death rate per quarter year: .">death_rate()</a>. <br /></td></tr>
 <tr class="memitem:a536e1a087a117e7d62a8c0a53cb28411" id="r_a536e1a087a117e7d62a8c0a53cb28411"><td class="memItemLeft" align="right" valign="top"><a id="a536e1a087a117e7d62a8c0a53cb28411" name="a536e1a087a117e7d62a8c0a53cb28411"></a>
 double&#160;</td><td class="memItemRight" valign="bottom"><b>death_rate</b> (const int_fast32_t age, const int_fast32_t season) const</td></tr>
 <tr class="memdesc:a536e1a087a117e7d62a8c0a53cb28411"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finite death rate per quarter year: \( d = 1 - \exp(- M - eF) \). <br /></td></tr>
@@ -134,10 +133,10 @@ int_fast32_t&#160;</td><td class="memItemRight" valign="bottom"><b>destination</
 <tr class="memdesc:a330be639e5d2dd4ee3f34c38b45f913e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate random number for new location. <br /></td></tr>
 <tr class="memitem:aacb2a4c540c304eefaa257f2be0073b7" id="r_aacb2a4c540c304eefaa257f2be0073b7"><td class="memItemLeft" align="right" valign="top"><a id="aacb2a4c540c304eefaa257f2be0073b7" name="aacb2a4c540c304eefaa257f2be0073b7"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>sample</b> (<a class="el" href="classpbf_1_1_sub_population.html">SubPopulation</a> &amp;subpops, int_fast32_t n_adults, int_fast32_t n_juveniles)</td></tr>
-<tr class="memdesc:aacb2a4c540c304eefaa257f2be0073b7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move individuals to <a class="el" href="classpbf_1_1_sub_population.html#a94546153342c17a398359deea0fffdac" title="Samples: {capture_year =&gt; individuals}.">SubPopulation::samples</a>. <br /></td></tr>
+<tr class="memdesc:aacb2a4c540c304eefaa257f2be0073b7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move individuals to <a class="el" href="classpbf_1_1_sub_population.html#a94546153342c17a398359deea0fffdac" title="Samples: {capture_year =&gt; individuals}.">SubPopulation::samples</a>. "Juveniles" are sampled from <a class="el" href="classpbf_1_1_sub_population.html#a6d8e22e1708c90cf729ff790a81c446f" title="First-year individuals separated for Population::sample().">SubPopulation::juveniles</a>, first-year individuals before migration. <br /></td></tr>
 <tr class="memitem:aabf138f83733bf783ac1d43666518540" id="r_aabf138f83733bf783ac1d43666518540"><td class="memItemLeft" align="right" valign="top"><a id="aabf138f83733bf783ac1d43666518540" name="aabf138f83733bf783ac1d43666518540"></a>
 int_fast32_t&#160;</td><td class="memItemRight" valign="bottom"><b>sample</b> (std::vector&lt; ShPtrIndividual &gt; &amp;src, std::vector&lt; ShPtrIndividual &gt; &amp;dst, int_fast32_t n)</td></tr>
-<tr class="memdesc:aabf138f83733bf783ac1d43666518540"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of <a class="el" href="#aacb2a4c540c304eefaa257f2be0073b7" title="Move individuals to SubPopulation::samples.">sample()</a>. <br /></td></tr>
+<tr class="memdesc:aabf138f83733bf783ac1d43666518540"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of <a class="el" href="#aacb2a4c540c304eefaa257f2be0073b7" title="Move individuals to SubPopulation::samples. &quot;Juveniles&quot; are sampled from SubPopulation::juveniles,...">sample()</a>. <br /></td></tr>
 <tr class="memitem:aa2a7eb27ea6dac3a3e4aafcd3089c0b4" id="r_aa2a7eb27ea6dac3a3e4aafcd3089c0b4"><td class="memItemLeft" align="right" valign="top"><a id="aa2a7eb27ea6dac3a3e4aafcd3089c0b4" name="aa2a7eb27ea6dac3a3e4aafcd3089c0b4"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>init_demography</b> (int_fast32_t duration)</td></tr>
 <tr class="memdesc:aa2a7eb27ea6dac3a3e4aafcd3089c0b4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize <a class="el" href="classpbf_1_1_sub_population.html#ad0b709947d66c2d94d5f498e03bc05f9" title="[[[count for each age] for season] for year]">SubPopulation::demography</a>. <br /></td></tr>
@@ -152,7 +151,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>propagate_params</b> 
 <tr class="memdesc:ab10d257553e53ffd12f17749728a165e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Call all the init* functions. <br /></td></tr>
 <tr class="memitem:a28a22269aa8afa2b215778b1ed6bd12e" id="r_a28a22269aa8afa2b215778b1ed6bd12e"><td class="memItemLeft" align="right" valign="top"><a id="a28a22269aa8afa2b215778b1ed6bd12e" name="a28a22269aa8afa2b215778b1ed6bd12e"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>init_migration</b> ()</td></tr>
-<tr class="memdesc:a28a22269aa8afa2b215778b1ed6bd12e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prepare <a class="el" href="#ace96ecbfca7dcc1ae2b00b894c43acac" title="Discrete distributions for migrate()">MIGRATION_DESTINATION_</a>. <br /></td></tr>
+<tr class="memdesc:a28a22269aa8afa2b215778b1ed6bd12e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prepare <a class="el" href="#ace96ecbfca7dcc1ae2b00b894c43acac" title="Discrete distributions for migrate() based on Parameters::migration_matrices.">MIGRATION_DESTINATION_</a>. <br /></td></tr>
 <tr class="memitem:a64010f351b465a7e763d8978dbdcd1d9" id="r_a64010f351b465a7e763d8978dbdcd1d9"><td class="memItemLeft" align="right" valign="top"><a id="a64010f351b465a7e763d8978dbdcd1d9" name="a64010f351b465a7e763d8978dbdcd1d9"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>init_mortality</b> ()</td></tr>
 <tr class="memdesc:a64010f351b465a7e763d8978dbdcd1d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prepare <a class="el" href="#a073bfb8714a8a8eba9aa252036ddd9c6" title="elongated version of Parameters::natural_mortality">NATURAL_MORTALITY_</a>, <a class="el" href="#a08da28925a9f15781dd1009d3c530e81" title="elongated version of Parameters::fishing_mortality">FISHING_MORTALITY_</a>, <a class="el" href="#a7b27c1d0b18178837ef0784117817dff" title="elongated version of Parameters::fishing_coef">FISHING_COEF_</a>. <br /></td></tr>
@@ -182,7 +181,7 @@ std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><
 <tr class="memdesc:a48f47d5717fc9f8f614efc8b1690b0b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">year version of <a class="el" href="group__parameters.html#ga64d6f61065874614b7d52a3dee86ee0f" title="Weight in kg for quarter age.">Parameters::weight_for_age</a> <br /></td></tr>
 <tr class="memitem:ace96ecbfca7dcc1ae2b00b894c43acac" id="r_ace96ecbfca7dcc1ae2b00b894c43acac"><td class="memItemLeft" align="right" valign="top"><a id="ace96ecbfca7dcc1ae2b00b894c43acac" name="ace96ecbfca7dcc1ae2b00b894c43acac"></a>
 std::vector&lt; std::vector&lt; <a class="el" href="#a27be2f5805319ea2ee7e02db8096aedb">PairDestDist</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>MIGRATION_DESTINATION_</b> {}</td></tr>
-<tr class="memdesc:ace96ecbfca7dcc1ae2b00b894c43acac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Discrete distributions for <a class="el" href="#a9488ca17eefb54af69ebfd43c2103d6f" title="Evaluate migration. Merge SubPopulation::juveniles to SubPopulation::adults.">migrate()</a> <br /></td></tr>
+<tr class="memdesc:ace96ecbfca7dcc1ae2b00b894c43acac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Discrete distributions for <a class="el" href="#a9488ca17eefb54af69ebfd43c2103d6f" title="Evaluate migration. Merge SubPopulation::juveniles to SubPopulation::adults.">migrate()</a> based on <a class="el" href="group__parameters.html#gad184967aa5d358c42fd9824d6d932410" title="Transition matrix for Population::migrate()">Parameters::migration_matrices</a>. <br /></td></tr>
 <tr class="memitem:a4057c3d22f79ac621aa9b25a9c02f88e" id="r_a4057c3d22f79ac621aa9b25a9c02f88e"><td class="memItemLeft" align="right" valign="top"><a id="a4057c3d22f79ac621aa9b25a9c02f88e" name="a4057c3d22f79ac621aa9b25a9c02f88e"></a>
 std::vector&lt; <a class="el" href="classpbf_1_1_sub_population.html">SubPopulation</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>subpopulations_</b> {}</td></tr>
 <tr class="memdesc:a4057c3d22f79ac621aa9b25a9c02f88e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Array of <a class="el" href="classpbf_1_1_sub_population.html" title="Component of Population; Container of Individual.">SubPopulation</a>. <br /></td></tr>
@@ -207,7 +206,33 @@ std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operato
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Main class that implements simulation. </p>
-</div><hr/>The documentation for this class was generated from the following files:<ul>
+</div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
+<a id="abb244c2aa8657a731a7b33ab3b1951e6" name="abb244c2aa8657a731a7b33ab3b1951e6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abb244c2aa8657a731a7b33ab3b1951e6">&#9670;&#160;</a></span>run()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void pbf::Population::run </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The main loop of simulation. </p>
+<ol type="1">
+<li><a class="el" href="#a06875166f8643742c374805c13375f93" title="Call reproduce_impl() via reproduce_lognormal() or reproduce_logistic() depending on Parameters::med_...">reproduce()</a></li>
+<li><a class="el" href="#add9926daa6def9e0fc502ce26e5e0df5" title="Record current state to SubPopulation::demography.">record_demography()</a> and <a class="el" href="#aae584286d99523e7df6d1f610e331918" title="Evaluate survival using death_rate().">survive()</a> for each season</li>
+<li><a class="el" href="#aacb2a4c540c304eefaa257f2be0073b7" title="Move individuals to SubPopulation::samples. &quot;Juveniles&quot; are sampled from SubPopulation::juveniles,...">sample()</a></li>
+<li><a class="el" href="#a9488ca17eefb54af69ebfd43c2103d6f" title="Evaluate migration. Merge SubPopulation::juveniles to SubPopulation::adults.">migrate()</a> </li>
+</ol>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following files:<ul>
 <li>src/<b>population.hpp</b></li>
 <li>src/<b>population.cpp</b></li>
 </ul>

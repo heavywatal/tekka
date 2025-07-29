@@ -110,13 +110,13 @@ double&#160;</td><td class="memItemRight" valign="bottom"><b>sigma_recruitment</
 <tr class="memdesc:ga5784e64332fa59489ade83944d5e4746"><td class="mdescLeft">&#160;</td><td class="mdescRight">\(\sigma_{R}\) for lognormal distribution <br /></td></tr>
 <tr class="memitem:ga7e8ef2fe1cc542f836cbc16c9893007a" id="r_ga7e8ef2fe1cc542f836cbc16c9893007a"><td class="memItemLeft" align="right" valign="top">
 double&#160;</td><td class="memItemRight" valign="bottom"><b>carrying_capacity</b> {2e3}</td></tr>
-<tr class="memdesc:ga7e8ef2fe1cc542f836cbc16c9893007a"><td class="mdescLeft">&#160;</td><td class="mdescRight">\(K\): carrying capacity used in <a class="el" href="classpbf_1_1_population.html#a06875166f8643742c374805c13375f93" title="give birth to children">Population::reproduce()</a> <br /></td></tr>
+<tr class="memdesc:ga7e8ef2fe1cc542f836cbc16c9893007a"><td class="mdescLeft">&#160;</td><td class="mdescRight">\(K\): carrying capacity used in <a class="el" href="classpbf_1_1_population.html#a06875166f8643742c374805c13375f93" title="Call reproduce_impl() via reproduce_lognormal() or reproduce_logistic() depending on Parameters::med_...">Population::reproduce()</a> <br /></td></tr>
 <tr class="memitem:gab65a4c3d6f3d304f63e0afbfd174c78e" id="r_gab65a4c3d6f3d304f63e0afbfd174c78e"><td class="memItemLeft" align="right" valign="top">
 double&#160;</td><td class="memItemRight" valign="bottom"><b>recruitment</b> {2.0}</td></tr>
-<tr class="memdesc:gab65a4c3d6f3d304f63e0afbfd174c78e"><td class="mdescLeft">&#160;</td><td class="mdescRight">\(r\): coefficient used in <a class="el" href="classpbf_1_1_population.html#a06875166f8643742c374805c13375f93" title="give birth to children">Population::reproduce()</a> <br /></td></tr>
+<tr class="memdesc:gab65a4c3d6f3d304f63e0afbfd174c78e"><td class="mdescLeft">&#160;</td><td class="mdescRight">\(r\): coefficient used in <a class="el" href="classpbf_1_1_population.html#a06875166f8643742c374805c13375f93" title="Call reproduce_impl() via reproduce_lognormal() or reproduce_logistic() depending on Parameters::med_...">Population::reproduce()</a> <br /></td></tr>
 <tr class="memitem:ga67858414a5838bf78ad5412d28fc5d82" id="r_ga67858414a5838bf78ad5412d28fc5d82"><td class="memItemLeft" align="right" valign="top">
 double&#160;</td><td class="memItemRight" valign="bottom"><b>overdispersion</b> {-1.0}</td></tr>
-<tr class="memdesc:ga67858414a5838bf78ad5412d28fc5d82"><td class="mdescLeft">&#160;</td><td class="mdescRight">\(k \in (0, \infty)\) for overdispersion in <a class="el" href="classpbf_1_1_population.html#a06875166f8643742c374805c13375f93" title="give birth to children">Population::reproduce()</a>. Equivalent to Poisson when \(k \to \infty\) (or \(k&lt;0\) for convience). <br /></td></tr>
+<tr class="memdesc:ga67858414a5838bf78ad5412d28fc5d82"><td class="mdescLeft">&#160;</td><td class="mdescRight">\(k \in (0, \infty)\) for overdispersion in <a class="el" href="classpbf_1_1_population.html#a06875166f8643742c374805c13375f93" title="Call reproduce_impl() via reproduce_lognormal() or reproduce_logistic() depending on Parameters::med_...">Population::reproduce()</a>. Equivalent to Poisson when \(k \to \infty\) (or \(k&lt;0\) for convience). <br /></td></tr>
 <tr id="pub-attribs-2" class="groupHeader"><td colspan="2"><div class="groupHeader">Sampling</div></td></tr>
 <tr class="memitem:ga9ec91271ef6e195279f5d78dae8502e9" id="r_ga9ec91271ef6e195279f5d78dae8502e9"><td class="memItemLeft" align="right" valign="top">
 int_fast32_t&#160;</td><td class="memItemRight" valign="bottom"><b>last</b> {3}</td></tr>
@@ -130,6 +130,8 @@ std::vector&lt; int_fast32_t &gt;&#160;</td><td class="memItemRight" valign="bot
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-member-group" class="groupheader"><a id="member-group" name="member-group"></a>
 Configurable only via JSON</h2></td></tr>
+<tr><td class="ititle" colspan="2"><p>See <a href="https://github.com/heavywatal/tekka/blob/master/util/parameters.json">https://github.com/heavywatal/tekka/blob/master/util/parameters.json</a> for the default values. </p>
+</td></tr>
 <tr class="memitem:gaa534bc62e0e36c54eedc8e3969409093" id="r_gaa534bc62e0e36c54eedc8e3969409093"><td class="memItemLeft" align="right" valign="top">
 using&#160;</td><td class="memItemRight" valign="bottom"><b>RowMatrix</b> = std::vector&lt;std::vector&lt;double&gt;&gt;</td></tr>
 <tr class="memdesc:gaa534bc62e0e36c54eedc8e3969409093"><td class="mdescLeft">&#160;</td><td class="mdescRight">Alias for readability. <br /></td></tr>
