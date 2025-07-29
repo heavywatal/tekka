@@ -16,11 +16,21 @@
 namespace pbf {
 
 //! Options description for general purpose
+/*! @ingroup parameters
+
+    Command line option | Description
+    ------------------- | -----------------------------------
+    `-h,--help`         | Print help
+    `--version`         | Print version
+    `--default`         | Print default values in json format
+    `-i,--infile`       | Config file in json format
+    `-v,--verbose`      | Verbose output
+*/
 inline clipp::group general_options(nlohmann::json* vm) {
     return (
       clippson::option(vm, {"h", "help"}, false, "Print this help"),
       clippson::option(vm, {"version"}, false, "Print version"),
-      clippson::option(vm, {"default"}, false, "Print default parameters in json"),
+      clippson::option(vm, {"default"}, false, "Print default values in json"),
       clippson::option(vm, {"v", "verbose"}, false, "Verbose output"),
       clippson::option(vm, {"i", "infile"}, std::string{}, "config file in json format")
     ).doc("General:");
@@ -29,13 +39,12 @@ inline clipp::group general_options(nlohmann::json* vm) {
 //! Global options for simulation
 /*! @ingroup parameters
 
-    Command line option  | Variable
-    -------------------- | ------------------
-    `--seed`             | Parameters::seed
-    `-i,--infile`        | -
-    `-o,--outdir`        | Parameters::outdir
-    `-y,--years`         | Parameters::years
-    `-O,--origin`        | Parameters::origin
+    Command line option | Variable
+    ------------------- | ------------------
+    `--seed`            | Parameters::seed
+    `-o,--outdir`       | Parameters::outdir
+    `-y,--years`        | Parameters::years
+    `-O,--origin`       | Parameters::origin
 */
 inline clipp::group program_options(Parameters& params) {
     return (

@@ -75,7 +75,11 @@ class Population {
     Population(const Parameters&);
     ~Population();
 
-    //! Main iteration
+    //! The main loop of simulation.
+    //! 1. reproduce()
+    //! 2. record_demography() and survive() for each season
+    //! 3. sample()
+    //! 4. migrate()
     void run();
 
     //! Construct and write tree from #SubPopulation::samples.
@@ -89,7 +93,9 @@ class Population {
     friend std::ostream& operator<<(std::ostream&, const Population&);
 
   private:
-    //! give birth to children
+    //! Call reproduce_impl() via reproduce_lognormal() or reproduce_logistic()
+    //! depending on #Parameters::med_recruitment.
+    //! Currently, the breeding places are hardcoded to subpopulations 0 and 1.
     void reproduce();
     //! Reproduce according to constant lognormal distribution.
     //! Total recruitment is calculated first, and then split it.
@@ -100,12 +106,13 @@ class Population {
     //! The expected number of children for each adult is proportional to its weight.
     //! All the females are evaluated for recruitment,
     //! whereas males are stochastically chosen.
+    //! All the #SubPopulation::adults are evaluated regardless of age.
     void reproduce_impl(SubPopulation&, const std::vector<int_fast32_t>& litter_sizes);
     //! Calculate stochastic litter sizes proportional to female weight
     std::vector<int_fast32_t>
     litter_sizes_logistic(const std::vector<ShPtrIndividual>& females, int_fast32_t popsize);
 
-    //! Evaluate survival.
+    //! Evaluate survival using death_rate().
     void survive(int_fast32_t season);
     //! Finite death rate per quarter year: \f$ d = 1 - \exp(- M - eF) \f$
     double death_rate(const int_fast32_t age, const int_fast32_t season) const;
@@ -116,6 +123,8 @@ class Population {
     int_fast32_t destination(int_fast32_t age, int_fast32_t loc);
 
     //! Move individuals to SubPopulation::samples.
+    //! "Juveniles" are sampled from #SubPopulation::juveniles,
+    //! first-year individuals before migration.
     void sample(SubPopulation& subpops, int_fast32_t n_adults, int_fast32_t n_juveniles);
     //! Implementation of sample().
     int_fast32_t sample(std::vector<ShPtrIndividual>& src,
@@ -153,7 +162,7 @@ class Population {
     std::vector<double> WEIGHT_FOR_AGE_{};
     //! Alias for readability
     using PairDestDist=std::pair<int_fast32_t, std::discrete_distribution<int_fast32_t>>;
-    //! Discrete distributions for #migrate()
+    //! Discrete distributions for #migrate() based on #Parameters::migration_matrices.
     std::vector<std::vector<PairDestDist>> MIGRATION_DESTINATION_{};
 
     //! Array of SubPopulation.

@@ -8,8 +8,9 @@
 namespace pbf {
 
 //! @defgroup parameters Parameters
-//! List of commandline options.
+//! List of available options.
 //! Tables are at the bottom of the page.
+//! See Population::run() to track the simulation process.
 //!
 //! The longer ones can be used as keys in JSON config file,
 //! e.g., `{"years": 80}` for `-y,--years` option.
@@ -68,6 +69,7 @@ struct Parameters {
     //!@}
 
     //! @name Configurable only via JSON
+    //! See <https://github.com/heavywatal/tekka/blob/master/util/parameters.json> for the default values.
     //!@{
 
     //! Alias for readability
