@@ -30,7 +30,9 @@ struct Parameters {
     //! @name Global
     //!@{
 
-    //! RNG seed; 32-bit signed integer for R
+    //! RNG seed.
+    //! Initialized with `std::random_device` if 0 (default).
+    //! 32-bit signed integer for R.
     int32_t seed{0};
     //! Output directory
     std::string outdir{};

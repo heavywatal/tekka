@@ -146,6 +146,9 @@ Program::Program(const std::vector<std::string>& arguments) {
         std::cout << clipp::documentation(cli, fmt) << "\n";
         throw exit_success();
     }
+    if (params.seed == 0) {
+        params.seed = static_cast<int32_t>(std::random_device{}());
+    }
     outdir_ = params.outdir;
     config_ = nlohmann::json{params}.dump() + "\n";
     if (vm_local.at("verbose")) {
@@ -179,7 +182,6 @@ void Program::write() const {
 }
 
 Parameters::Parameters():
-  seed{static_cast<int32_t>(std::random_device{}())}, // 32-bit signed integer for R
   outdir{wtl::strftime("thunnus_%Y%m%d_%H%M%S")}
   {
     std::istringstream iss(default_values);
