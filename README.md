@@ -11,7 +11,7 @@ Individual-based simulator of pacific bluefin tuna.
 
 - Unix-like environment (macOS, Linux, WSL, MinGW on MSYS2, etc.)
 - C++17 compiler (clang++ >= Apple clang 11.0, g++ >= 9.1)
-- [CMake](https://cmake.org/) (>= 3.21.0)
+- [CMake](https://cmake.org/)
 
 The following libraries are optional or automatically installed:
 
