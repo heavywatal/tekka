@@ -73,9 +73,6 @@ set_target_properties(${PROJECT_NAME}-exe PROPERTIES
 install(TARGETS ${PROJECT_NAME}-exe
   EXPORT ${PROJECT_NAME}-config
 )
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/util/parameters.json
-  DESTINATION ${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}
-)
 
 set(config_destination ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
 install(EXPORT ${PROJECT_NAME}-config

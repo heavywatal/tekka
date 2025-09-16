@@ -22,7 +22,8 @@ namespace pbf {
     ------------------- | -----------------------------------
     `-h,--help`         | Print help
     `--version`         | Print version
-    `--default`         | Print default values in json format
+    `--json`            | Print default values for large parameters
+    `--default`         | Print default values for all parameters
     `-i,--infile`       | Config file in json format
     `-v,--verbose`      | Verbose output
 */
@@ -30,7 +31,8 @@ inline clipp::group general_options(nlohmann::json* vm) {
     return (
       clippson::option(vm, {"h", "help"}, false, "Print this help"),
       clippson::option(vm, {"version"}, false, "Print version"),
-      clippson::option(vm, {"default"}, false, "Print default values in json"),
+      clippson::option(vm, {"json"}, false, "Print default values for large parameters"),
+      clippson::option(vm, {"default"}, false, "Print default values for all parameters"),
       clippson::option(vm, {"v", "verbose"}, false, "Verbose output"),
       clippson::option(vm, {"i", "infile"}, std::string{}, "config file in json format")
     ).doc("General:");
@@ -119,6 +121,10 @@ Program::Program(const std::vector<std::string>& arguments) {
     } catch (std::invalid_argument&) {}
     if (vm_local.at("version")) {
         std::cout << PROJECT_VERSION << "\n";
+        throw exit_success();
+    }
+    if (vm_local.at("json")) {
+        std::cout << default_values;
         throw exit_success();
     }
     Parameters params;
