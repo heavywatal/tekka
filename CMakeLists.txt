@@ -9,11 +9,13 @@ include(FetchContent)
 include(GNUInstallDirs)
 cmake_print_variables(CMAKE_INSTALL_PREFIX)
 
-if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE Release)
-endif()
-cmake_print_variables(CMAKE_BUILD_TYPE)
-set(CMAKE_CXX_FLAGS_DEV "-O2 -g")
+add_compile_options(
+  -Wall -Wextra -pedantic -Wsign-conversion
+  $<IF:$<BOOL:$<CONFIG>>,,-O2>
+  $<IF:$<BOOL:$<CONFIG>>,,-g>
+  $<$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},x86_64>:-march=native>
+  $<$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},arm64>:-march=armv8.4-a>
+)
 
 macro(Pkg_MakeAvailable)
   cmake_parse_arguments(arg "" "" "" ${ARGN})
@@ -53,11 +55,6 @@ add_library(${PROJECT_NAME} STATIC)
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 add_subdirectory(src)
 
-target_compile_options(${PROJECT_NAME} PUBLIC
-  -Wall -Wextra -pedantic -Wsign-conversion
-  $<$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},x86_64>:-march=native>
-  $<$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},arm64>:-march=armv8.4-a>
-)
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_EXTENSIONS OFF)
 target_include_directories(${PROJECT_NAME} PUBLIC
