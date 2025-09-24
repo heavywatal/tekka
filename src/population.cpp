@@ -183,9 +183,9 @@ void Population::reproduce_impl(SubPopulation& subpop, const std::vector<int_fas
     if (females.empty() || males.empty()) return;
     const std::vector<double> vw = weights(males);
     std::discrete_distribution<int_fast32_t> mate_distr(vw.begin(), vw.end());
-    std::vector<double> d(4u);
+    std::vector<double> d0(4u);
     for (int_fast32_t q = 0; q < 4; ++q) {
-        d[cast_u(q)] = death_rate(0, q);
+        d0[cast_u(q)] = death_rate(0, q);
     }
     auto& juveniles = subpop.juveniles;
     juveniles.reserve(subpop.size());
@@ -194,7 +194,7 @@ void Population::reproduce_impl(SubPopulation& subpop, const std::vector<int_fas
         auto rec = litter_sizes[cast_u(i)];
         for (int_fast32_t q = 0; q < 4; ++q) {
             demography_year[cast_u(q)][0u] += rec;
-            rec -= std::binomial_distribution<int_fast32_t>(rec, d[cast_u(q)])(*engine_);
+            rec -= std::binomial_distribution<int_fast32_t>(rec, d0[cast_u(q)])(*engine_);
         }
         auto& mother = females[cast_u(i)];
         for (decltype(rec) j = 0; j < rec; ++j) {

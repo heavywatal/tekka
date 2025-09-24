@@ -125,7 +125,7 @@ class Population {
     //! Move individuals to SubPopulation::samples.
     //! "Juveniles" are sampled from #SubPopulation::juveniles,
     //! first-year individuals before migration.
-    void sample(SubPopulation& subpops, int_fast32_t n_adults, int_fast32_t n_juveniles);
+    void sample(SubPopulation& subpop, int_fast32_t n_adults, int_fast32_t n_juveniles);
     //! Implementation of sample().
     int_fast32_t sample(std::vector<ShPtrIndividual>& src,
                         std::vector<ShPtrIndividual>& dst, int_fast32_t n);
