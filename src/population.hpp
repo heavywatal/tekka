@@ -57,7 +57,7 @@ class SubPopulation {
     //! Array of shared pointers to Individual's.
     //! Females and males are separately stored for #Population::reproduce().
     std::array<std::vector<ShPtrIndividual>, 2> adults{};
-    //! First-year individuals separated for #Population::sample().
+    //! First-year individuals separated for sampling.
     std::vector<ShPtrIndividual> juveniles{};
     //! Samples: {capture_year => individuals}
     std::map<int_fast32_t, std::vector<ShPtrIndividual>> samples{};
@@ -107,12 +107,22 @@ class Population {
     //! All the females are evaluated for recruitment,
     //! whereas males are stochastically chosen.
     //! All the #SubPopulation::adults are evaluated regardless of age.
-    void reproduce_impl(SubPopulation&, const std::vector<int_fast32_t>& litter_sizes);
+    //! "Juveniles" are sampled from first-year individuals died in the final season.
+    void reproduce_impl(const int_fast32_t loc, std::vector<int_fast32_t> litter_sizes);
     //! Calculate stochastic litter sizes proportional to female weight
     std::vector<int_fast32_t>
     litter_sizes_logistic(const std::vector<ShPtrIndividual>& females, int_fast32_t popsize);
 
+    //! Evaluate survival of juveniles and record deaths for sampling.
+    std::vector<double> survive_juvenile(
+      std::vector<int_fast32_t>& litter_sizes,
+      std::array<std::vector<int_fast32_t>, 4>& demography_y,
+      const int_fast32_t sample_size);
+    //! Return sample size of juveniles at location `loc` in current `year_`.
+    int_fast32_t sample_size_juvenile(int_fast32_t loc) const;
+
     //! Evaluate survival using death_rate().
+    //! "Adults" are sampled from individuals died in the final season.
     void survive(int_fast32_t season);
     //! Finite death rate per quarter year: \f$ d = 1 - \exp(- M - eF) \f$
     double death_rate(const int_fast32_t age, const int_fast32_t season) const;
@@ -121,14 +131,6 @@ class Population {
     void migrate();
     //! Generate random number for new location.
     int_fast32_t destination(int_fast32_t age, int_fast32_t loc);
-
-    //! Move individuals to SubPopulation::samples.
-    //! "Juveniles" are sampled from #SubPopulation::juveniles,
-    //! first-year individuals before migration.
-    void sample(SubPopulation& subpop, int_fast32_t n_adults, int_fast32_t n_juveniles);
-    //! Implementation of sample().
-    int_fast32_t sample(std::vector<ShPtrIndividual>& src,
-                        std::vector<ShPtrIndividual>& dst, int_fast32_t n);
 
     //! Initialize #SubPopulation::demography
     void init_demography(int_fast32_t duration);

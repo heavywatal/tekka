@@ -70,6 +70,8 @@ Population::Population(const Parameters& params)
     if (!is_ready()) {
         propagate_params();
     }
+    params_.sample_size_adult.resize(subpopulations_.size());
+    params_.sample_size_juvenile.resize(subpopulations_.size());
     init_demography(params_.years + 1);
     const int_fast32_t initial_size = params_.origin ? params_.origin :
       (params_.med_recruitment ? params_.med_recruitment : params_.carrying_capacity);
@@ -77,7 +79,7 @@ Population::Population(const Parameters& params)
     auto origin = std::make_shared<Individual>();
     subpop0[Sex::F].assign({origin});
     subpop0[Sex::M].assign({origin});
-    reproduce_impl(subpop0, {initial_size});
+    reproduce_impl(0, {initial_size});
     subpop0.clear();
     migrate();
 }
@@ -85,18 +87,11 @@ Population::Population(const Parameters& params)
 Population::~Population() = default;
 
 void Population::run() {
-    const auto num_sample_locs = std::max(ssize(params_.sample_size_adult), ssize(params_.sample_size_juvenile));
-    auto recording_start = params_.years - params_.last;
     for (year_ = 1; year_ <= params_.years; ++year_) {
         reproduce();
         for (int_fast32_t q = 0; q < 4; ++q) {
           record_demography(q);
           survive(q);
-        }
-        if (year_ > recording_start) {
-            for (int_fast32_t loc = 0; loc < num_sample_locs; ++loc) {
-                sample(subpopulations_[cast_u(loc)], params_.sample_size_adult[cast_u(loc)], params_.sample_size_juvenile[cast_u(loc)]);
-            }
         }
         migrate();
     }
@@ -157,10 +152,9 @@ void Population::reproduce_lognormal() {
     wtl::multinomial_distribution multinomial(subtotal_weights.begin(), subtotal_weights.end());
     const auto recruitment_sub = multinomial(*engine_, recruitment);
     for (int_fast32_t loc=0; loc<num_breeding_places; ++loc) {
-        auto& subpop = subpopulations_[cast_u(loc)];
         auto& wl = female_weights[cast_u(loc)];
         wtl::multinomial_distribution<int_fast32_t> multinomial{wl.begin(), wl.end()};
-        reproduce_impl(subpop, multinomial(*engine_, recruitment_sub[cast_u(loc)]));
+        reproduce_impl(loc, multinomial(*engine_, recruitment_sub[cast_u(loc)]));
     }
 }
 
@@ -172,31 +166,33 @@ void Population::reproduce_logistic() {
     }
     for (int_fast32_t loc=0; loc<num_breeding_places; ++loc) {
         auto& subpop = subpopulations_[cast_u(loc)];
-        const auto& females = subpop[Sex::F];
-        reproduce_impl(subpop, litter_sizes_logistic(females, popsize));
+        reproduce_impl(loc, litter_sizes_logistic(subpop[Sex::F], popsize));
     }
 }
 
-void Population::reproduce_impl(SubPopulation& subpop, const std::vector<int_fast32_t>& litter_sizes) {
+void Population::reproduce_impl(int_fast32_t loc, std::vector<int_fast32_t> litter_sizes) {
+    auto& subpop = subpopulations_[cast_u(loc)];
     const auto& females = subpop[Sex::F];
     const auto& males = subpop[Sex::M];
     if (females.empty() || males.empty()) return;
     const std::vector<double> vw = weights(males);
     std::discrete_distribution<int_fast32_t> mate_distr(vw.begin(), vw.end());
-    std::vector<double> d0(4u);
-    for (int_fast32_t q = 0; q < 4; ++q) {
-        d0[cast_u(q)] = death_rate(0, q);
+    const auto sample_size = sample_size_juvenile(loc);
+    const auto dead3 = survive_juvenile(litter_sizes, subpop.demography[cast_u(year_)], sample_size);
+    if (sample_size > 0) {
+      auto& samples_year = subpop.samples[year_];
+      std::discrete_distribution<int_fast32_t> mother_distr(dead3.begin(), dead3.end());
+      for (int_fast32_t i = 0; i < sample_size; ++i) {
+        const auto& mother = females[cast_u(mother_distr(*engine_))];
+        const auto& father = males[cast_u(mate_distr(*engine_))];
+        samples_year.emplace_back(std::make_shared<Individual>(father, mother, year_));
+      }
     }
     auto& juveniles = subpop.juveniles;
     juveniles.reserve(subpop.size());
-    auto& demography_year = subpop.demography[cast_u(year_)];
     for (int_fast32_t i = 0; i < ssize(litter_sizes); ++i) {
-        auto rec = litter_sizes[cast_u(i)];
-        for (int_fast32_t q = 0; q < 4; ++q) {
-            demography_year[cast_u(q)][0u] += rec;
-            rec -= std::binomial_distribution<int_fast32_t>(rec, d0[cast_u(q)])(*engine_);
-        }
         auto& mother = females[cast_u(i)];
+        auto rec = litter_sizes[cast_u(i)];
         for (decltype(rec) j = 0; j < rec; ++j) {
             const auto& father = males[cast_u(mate_distr(*engine_))];
             juveniles.emplace_back(std::make_shared<Individual>(father, mother, year_));
@@ -227,14 +223,63 @@ std::vector<double> Population::weights(const std::vector<ShPtrIndividual>& indi
     return res;
 }
 
+std::vector<double> Population::survive_juvenile(
+  std::vector<int_fast32_t>& litter_sizes,
+  std::array<std::vector<int_fast32_t>, 4>& demography_y,
+  const int_fast32_t sample_size) {
+    std::vector<double> d0(4u);
+    for (int_fast32_t q = 0; q < 4; ++q) {
+        d0[cast_u(q)] = death_rate(0, q);
+    }
+    std::vector<double> dead3(sample_size ? litter_sizes.size() : 0u);
+    for (int_fast32_t q = 0; q < 4; ++q) {
+        auto& demography_q0 = demography_y[cast_u(q)][0u];
+        for (int_fast32_t i = 0; i < ssize(litter_sizes); ++i) {
+            auto& n = litter_sizes[cast_u(i)];
+            demography_q0 += n;
+            std::binomial_distribution<int_fast32_t> distr(n, d0[cast_u(q)]);
+            const auto death = distr(*engine_);
+            n -= death;
+            if (sample_size > 0 && q == 3) dead3[cast_u(i)] = static_cast<double>(death);
+        }
+    }
+    return dead3;
+}
+
+int_fast32_t Population::sample_size_juvenile(int_fast32_t loc) const {
+    if (year_ > (params_.years - params_.last)) {
+        return params_.sample_size_juvenile[cast_u(loc)];
+    }
+    return 0;
+}
+
 void Population::survive(const int_fast32_t season) {
     int_fast32_t total_n{0};
-    for (auto& subpop: subpopulations_) {
-      for (auto& individuals: subpop.adults) {
+    const bool is_sampling_time = season == 3 && year_ > (params_.years - params_.last);
+    for (int_fast32_t loc = 0; loc < ssize(subpopulations_); ++loc) {
+      std::array<int_fast32_t, 2> sample_size_adult_loc{0, 0};
+      if (is_sampling_time) {
+        const auto ss_loc = params_.sample_size_adult[cast_u(loc)];
+        if (ss_loc > 0) {
+          std::binomial_distribution<int_fast32_t> binom(ss_loc, 0.5);
+          sample_size_adult_loc[0] = binom(*engine_);
+          sample_size_adult_loc[1] = ss_loc - sample_size_adult_loc[0];
+        }
+      }
+      int_fast32_t to_sample = 0;
+      auto& subpop = subpopulations_[cast_u(loc)];
+      for (const auto sex: {Sex::F, Sex::M}) {
+        to_sample += sample_size_adult_loc[cast_u(sex)];
+        auto& individuals = subpop[sex];
         auto n = ssize(individuals);
         for (decltype(n) i=0; i<n; ++i) {
             auto& p = individuals[cast_u(i)];
             if (wtl::generate_canonical(*engine_) < death_rate(p->age(year_), season)) {
+                // TODO: likely to sample more half-siblings than random
+                if (to_sample > 0) {
+                  subpop.samples[year_].emplace_back(std::move(p));
+                  --to_sample;
+                }
                 p = std::move(individuals.back());
                 individuals.pop_back();
                 --n;
@@ -242,6 +287,11 @@ void Population::survive(const int_fast32_t season) {
             }
         }
         total_n += n;
+      }
+      if (to_sample > 0) {
+        std::cerr << "WARNING:Population::survive():"
+                  << "y" << year_ << "-l" << loc
+                  << ": " << to_sample << " fewer samples\n";
       }
     }
     if (total_n == 0) {
@@ -296,33 +346,6 @@ void Population::migrate() {
 int_fast32_t Population::destination(int_fast32_t age, int_fast32_t loc) {
     auto& [dest, dist] = MIGRATION_DESTINATION_[cast_u(age)][cast_u(loc)];
     return (dest == std::numeric_limits<int_fast32_t>::max()) ? dist(*engine_) : dest;
-}
-
-void Population::sample(SubPopulation& subpop, int_fast32_t num_adults, int_fast32_t num_juveniles) {
-    std::binomial_distribution<int_fast32_t> binom(num_adults, 0.5);
-    auto num_males = sample(subpop[Sex::M], subpop.samples[year_], binom(*engine_));
-    sample(subpop[Sex::F], subpop.samples[year_], num_adults - num_males);
-    sample(subpop.juveniles, subpop.samples[year_], num_juveniles);
-}
-
-int_fast32_t Population::sample(std::vector<ShPtrIndividual>& src,
-                                std::vector<ShPtrIndividual>& dst, int_fast32_t n) {
-    if (n > ssize(src)) {
-        std::cerr << "WARNING:Population::sample(): n > ssize(src) ("
-                  << n << " > " << ssize(src) << ")\n";
-        for (auto& p: src) dst.emplace_back(std::move(p));
-        n = ssize(src);
-        src.clear();
-        return n;
-    }
-    for (decltype(n) i = 0; i < n; ++i) {
-        std::uniform_int_distribution<uint_fast32_t> uniform(0, ssize(src) - 1);
-        auto& p = src[uniform(*engine_)];
-        dst.emplace_back(std::move(p));
-        p = std::move(src.back());
-        src.pop_back();
-    }
-    return n;
 }
 
 std::ostream& Population::write_sample_family(std::ostream& ost) const {
