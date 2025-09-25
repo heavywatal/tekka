@@ -257,42 +257,36 @@ void Population::survive(const int_fast32_t season) {
     int_fast32_t total_n{0};
     const bool is_sampling_time = season == 3 && year_ > (params_.years - params_.last);
     for (int_fast32_t loc = 0; loc < ssize(subpopulations_); ++loc) {
-      std::array<int_fast32_t, 2> sample_size_adult_loc{0, 0};
-      if (is_sampling_time) {
-        const auto ss_loc = params_.sample_size_adult[cast_u(loc)];
-        if (ss_loc > 0) {
-          std::binomial_distribution<int_fast32_t> binom(ss_loc, 0.5);
-          sample_size_adult_loc[0] = binom(*engine_);
-          sample_size_adult_loc[1] = ss_loc - sample_size_adult_loc[0];
-        }
-      }
-      int_fast32_t to_sample = 0;
+      auto ss_loc = is_sampling_time ? params_.sample_size_adult[cast_u(loc)] : 0;
+      std::vector<ShPtrIndividual> carcasses;
+      carcasses.reserve(cast_u(ss_loc));
       auto& subpop = subpopulations_[cast_u(loc)];
       for (const auto sex: {Sex::F, Sex::M}) {
-        to_sample += sample_size_adult_loc[cast_u(sex)];
         auto& individuals = subpop[sex];
-        auto n = ssize(individuals);
-        for (decltype(n) i=0; i<n; ++i) {
+        auto sub_n = ssize(individuals);
+        for (decltype(sub_n) i=0; i<sub_n; ++i) {
             auto& p = individuals[cast_u(i)];
             if (wtl::generate_canonical(*engine_) < death_rate(p->age(year_), season)) {
-                // TODO: likely to sample more half-siblings than random
-                if (to_sample > 0) {
-                  subpop.samples[year_].emplace_back(std::move(p));
-                  --to_sample;
+                if (ss_loc > 0) {
+                    carcasses.emplace_back(std::move(p));
                 }
                 p = std::move(individuals.back());
                 individuals.pop_back();
-                --n;
+                --sub_n;
                 --i;
             }
         }
-        total_n += n;
+        total_n += sub_n;
       }
-      if (to_sample > 0) {
+      if (ss_loc == 0) continue;
+      if (ssize(carcasses) < ss_loc) {
         std::cerr << "WARNING:Population::survive():"
                   << "y" << year_ << "-l" << loc
-                  << ": " << to_sample << " fewer samples\n";
+                  << ": " << ss_loc - ssize(carcasses) << " fewer samples\n";
+        ss_loc = ssize(carcasses);
       }
+      std::sample(carcasses.begin(), carcasses.end(),
+                  std::back_inserter(subpop.samples[year_]), ss_loc, *engine_);
     }
     if (total_n == 0) {
         std::ostringstream oss{"runtime_error:", std::ios_base::ate};
@@ -310,6 +304,7 @@ double Population::death_rate(const int_fast32_t age, const int_fast32_t season)
 
 void Population::migrate() {
     for (const auto sex: {Sex::F, Sex::M}) {
+        // sizes before migration is needed for loc > 0
         std::vector<int_fast32_t> subpop_sizes;
         subpop_sizes.reserve(subpopulations_.size());
         for (const auto& subpop: subpopulations_) {
@@ -323,7 +318,7 @@ void Population::migrate() {
                 int_fast32_t dst = destination(p->age(year_), loc);
                 if (dst == loc) {++i; continue;}
                 subpopulations_[cast_u(dst)][sex].emplace_back(std::move(p));
-                if (--n)
+                if (i < --n)
                     p = std::move(individuals[cast_u(n)]);
                 if (individuals.back())
                     individuals[cast_u(n)] = std::move(individuals.back());
@@ -336,7 +331,7 @@ void Population::migrate() {
         for (auto& p: juveniles) {
             constexpr URBG::result_type half_max = URBG::max() >> 1u;
             const auto sex = engine_->operator()() < half_max ? Sex::F : Sex::M;
-            const auto dst = destination(p->age(year_), loc);
+            const auto dst = destination(0, loc);
             subpopulations_[cast_u(dst)][sex].emplace_back(std::move(p));
         }
         juveniles.clear();
