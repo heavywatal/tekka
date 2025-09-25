@@ -76,10 +76,11 @@ class Population {
     ~Population();
 
     //! The main loop of simulation.
-    //! 1. reproduce()
-    //! 2. record_demography() and survive() for each season
-    //! 3. sample()
-    //! 4. migrate()
+    //! 1. #reproduce() includes sampling from dead juveniles.
+    //! 2. for each season:
+    //!    - #record_demography()
+    //!    - #survive() includes sampling from dead adults.
+    //! 3. #migrate()
     void run();
 
     //! Construct and write tree from #SubPopulation::samples.
@@ -93,8 +94,12 @@ class Population {
     friend std::ostream& operator<<(std::ostream&, const Population&);
 
   private:
-    //! Call reproduce_impl() via reproduce_lognormal() or reproduce_logistic()
+    //! Call #reproduce_impl() via #reproduce_lognormal() or #reproduce_logistic()
     //! depending on #Parameters::med_recruitment.
+    //! The expected number of children for each adult is proportional to its weight.
+    //! All the females are evaluated for recruitment,
+    //! whereas males are stochastically chosen.
+    //! All the #SubPopulation::adults are evaluated regardless of age.
     //! Currently, the breeding places are hardcoded to subpopulations 0 and 1.
     void reproduce();
     //! Reproduce according to constant lognormal distribution.
@@ -102,18 +107,14 @@ class Population {
     void reproduce_lognormal();
     //! Reproduce according to population size and carrying capacity.
     void reproduce_logistic();
-    //! Append new individuals to #SubPopulation::juveniles.
-    //! The expected number of children for each adult is proportional to its weight.
-    //! All the females are evaluated for recruitment,
-    //! whereas males are stochastically chosen.
-    //! All the #SubPopulation::adults are evaluated regardless of age.
+    //! Call #survive_juvenile() and append survived ones to #SubPopulation::juveniles.
     //! "Juveniles" are sampled from first-year individuals died in the final season.
     void reproduce_impl(const int_fast32_t loc, std::vector<int_fast32_t> litter_sizes);
     //! Calculate stochastic litter sizes proportional to female weight
     std::vector<int_fast32_t>
     litter_sizes_logistic(const std::vector<ShPtrIndividual>& females, int_fast32_t popsize);
 
-    //! Evaluate survival of juveniles and record deaths for sampling.
+    //! Evaluate and record survival of juveniles.
     std::vector<double> survive_juvenile(
       std::vector<int_fast32_t>& litter_sizes,
       std::array<std::vector<int_fast32_t>, 4>& demography_y,
