@@ -11,7 +11,7 @@ cmake_print_variables(CMAKE_INSTALL_PREFIX)
 
 add_compile_options(
   -Wall -Wextra -Wpedantic
-  -Wconversion -Wsign-conversion -Wshadow
+  -Wshadow
   $<IF:$<BOOL:$<CONFIG>>,,-Werror>
   $<IF:$<BOOL:$<CONFIG>>,,-O2>
   $<IF:$<BOOL:$<CONFIG>>,,-g>
