@@ -10,7 +10,9 @@ include(GNUInstallDirs)
 cmake_print_variables(CMAKE_INSTALL_PREFIX)
 
 add_compile_options(
-  -Wall -Wextra -pedantic -Wsign-conversion
+  -Wall -Wextra -Wpedantic
+  -Wconversion -Wsign-conversion -Wshadow
+  $<IF:$<BOOL:$<CONFIG>>,,-Werror>
   $<IF:$<BOOL:$<CONFIG>>,,-O2>
   $<IF:$<BOOL:$<CONFIG>>,,-g>
   $<$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},x86_64>:-march=native>

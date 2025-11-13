@@ -21,10 +21,9 @@ constexpr auto ssize(const T& x) {
     return static_cast<std::make_signed_t<decltype(x.size())>>(x.size());
 }
 
-// C++26 <numeric>
 template <class T> inline
-constexpr T sub_sat(const T x, const T y) {
-    return (x > y) ? x - y : T{};
+constexpr T ramp(const T x) {
+    return x < T{} ? T{} : x;
 }
 
 template <class T> inline
@@ -74,7 +73,9 @@ Population::Population(const Parameters& params)
     params_.sample_size_juvenile.resize(subpopulations_.size());
     init_demography(params_.years + 1);
     const int_fast32_t initial_size = params_.origin ? params_.origin :
-      (params_.med_recruitment ? params_.med_recruitment : params_.carrying_capacity);
+      static_cast<int_fast32_t>(
+        params_.med_recruitment > 0.0 ? params_.med_recruitment : params_.carrying_capacity
+      );
     auto& subpop0 = subpopulations_[0u];
     auto origin = std::make_shared<Individual>();
     subpop0[Sex::F].assign({origin});
@@ -138,7 +139,9 @@ void Population::reproduce() {
 void Population::reproduce_lognormal() {
     constexpr int_fast32_t num_breeding_places = 2;
     std::lognormal_distribution lognormal{std::log(params_.med_recruitment), params_.sigma_recruitment};
-    const int_fast32_t recruitment = params_.sigma_recruitment ? lognormal(*engine_) : params_.med_recruitment;
+    const auto recruitment = static_cast<int_fast32_t>(
+      params_.sigma_recruitment > 0.0 ? lognormal(*engine_) : params_.med_recruitment
+    );
     int_fast32_t num_mothers = 0;
     std::vector<double> subtotal_weights(num_breeding_places);
     std::vector<std::vector<double>> female_weights(num_breeding_places);
@@ -149,12 +152,12 @@ void Population::reproduce_lognormal() {
         subtotal_weights[cast_u(loc)] = std::reduce(female_weights[cast_u(loc)].begin(), female_weights[cast_u(loc)].end());
     }
     if (num_mothers == 0) return;
-    wtl::multinomial_distribution multinomial(subtotal_weights.begin(), subtotal_weights.end());
-    const auto recruitment_sub = multinomial(*engine_, recruitment);
+    wtl::multinomial_distribution dist_rec(subtotal_weights.begin(), subtotal_weights.end());
+    const auto recruitment_sub = dist_rec(*engine_, recruitment);
     for (int_fast32_t loc=0; loc<num_breeding_places; ++loc) {
         auto& wl = female_weights[cast_u(loc)];
-        wtl::multinomial_distribution<int_fast32_t> multinomial{wl.begin(), wl.end()};
-        reproduce_impl(loc, multinomial(*engine_, recruitment_sub[cast_u(loc)]));
+        wtl::multinomial_distribution<int_fast32_t> dist_mothers{wl.begin(), wl.end()};
+        reproduce_impl(loc, dist_mothers(*engine_, recruitment_sub[cast_u(loc)]));
     }
 }
 
@@ -283,7 +286,7 @@ void Population::survive(const int_fast32_t season) {
         std::cerr << "WARNING:Population::survive():"
                   << "y" << year_ << "-l" << loc
                   << ": " << ss_loc - ssize(carcasses) << " fewer samples\n";
-        ss_loc = ssize(carcasses);
+        ss_loc = static_cast<int_fast32_t>(ssize(carcasses));
       }
       std::sample(carcasses.begin(), carcasses.end(),
                   std::back_inserter(subpop.samples[year_]), ss_loc, *engine_);
@@ -305,7 +308,7 @@ double Population::death_rate(const int_fast32_t age, const int_fast32_t season)
 void Population::migrate() {
     for (const auto sex: {Sex::F, Sex::M}) {
         // sizes before migration is needed for loc > 0
-        std::vector<int_fast32_t> subpop_sizes;
+        std::vector<ptrdiff_t> subpop_sizes;
         subpop_sizes.reserve(subpopulations_.size());
         for (const auto& subpop: subpopulations_) {
             subpop_sizes.push_back(ssize(subpop[sex]));
@@ -437,8 +440,8 @@ void Population::init_mortality() {
     copy_elongate(params_.natural_mortality, NATURAL_MORTALITY_, 4 * MAX_AGE);
     copy_elongate(params_.fishing_mortality, FISHING_MORTALITY_, 4 * MAX_AGE);
     NATURAL_MORTALITY_.back() = 1e9;
-    const decltype(params_.years) fc_size = ssize(params_.fishing_coef);
-    const auto offset = sub_sat(fc_size, params_.years);
+    const auto fc_size = ssize(params_.fishing_coef);
+    const auto offset = ramp(fc_size - params_.years);
     FISHING_COEF_.assign(cast_u(params_.years), 1.0);
     std::copy_backward(params_.fishing_coef.begin() + offset, params_.fishing_coef.end(),
                        FISHING_COEF_.end());
