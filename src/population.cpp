@@ -152,7 +152,7 @@ void Population::reproduce_lognormal() {
         subtotal_weights[cast_u(loc)] = std::reduce(female_weights[cast_u(loc)].begin(), female_weights[cast_u(loc)].end());
     }
     if (num_mothers == 0) return;
-    wtl::multinomial_distribution dist_rec(subtotal_weights.begin(), subtotal_weights.end());
+    wtl::multinomial_distribution<int_fast32_t> dist_rec(subtotal_weights.begin(), subtotal_weights.end());
     const auto recruitment_sub = dist_rec(*engine_, recruitment);
     for (int_fast32_t loc=0; loc<num_breeding_places; ++loc) {
         auto& wl = female_weights[cast_u(loc)];
