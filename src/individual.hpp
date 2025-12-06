@@ -3,8 +3,8 @@
 #define PBT_INDIVIDUAL_HPP_
 
 #include <cstdint>
-#include <iosfwd>
 #include <memory>
+#include <string>
 #include <unordered_map>
 
 namespace pbf {
@@ -27,17 +27,21 @@ class Individual {
     ~Individual() = default;
 
     //! Write ancestors recursively.
-    void trace_back(std::ostream& ost, std::unordered_map<const Individual*, int_fast32_t>& ids,
+    template <class OutputIt>
+    void trace_back(OutputIt, std::unordered_map<const Individual*, int_fast32_t>& ids,
                     int_fast32_t loc, int_fast32_t year) const;
     //! Write all the data members in TSV
-    std::ostream& write(std::ostream&) const;
+    template <class OutputIt>
+    OutputIt format_to(OutputIt) const;
     //! Write all the data members in TSV with translated IDs
-    std::ostream& write(std::ostream&, const std::unordered_map<const Individual*, int_fast32_t>&) const;
-    //! Write column names for trace_back()
-    static std::ostream& write_trace_back_header(std::ostream&);
-    //! Write column names for write()
-    static std::ostream& write_names(std::ostream&);
-    friend std::ostream& operator<<(std::ostream&, const Individual&);
+    template <class OutputIt>
+    OutputIt format_to(OutputIt, const std::unordered_map<const Individual*, int_fast32_t>&) const;
+    //! String representation for debugging
+    std::string str() const;
+    //! Column names for trace_back()
+    static std::string trace_back_header();
+    //! Column names for format_to_back()
+    static std::string_view header() noexcept;
 
     //! Age in the given year
     int_fast32_t age(const int_fast32_t year) const noexcept {

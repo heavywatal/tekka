@@ -9,6 +9,11 @@ include(FetchContent)
 include(GNUInstallDirs)
 cmake_print_variables(CMAKE_INSTALL_PREFIX)
 
+add_compile_definitions(
+  "_LIBCPP_REMOVE_TRANSITIVE_INCLUDES"
+  FMT_USE_LOCALE=0
+  FMT_OPTIMIZE_SIZE=1
+)
 add_compile_options(
   -Wall -Wextra -Wpedantic
   -Wconversion -Wsign-conversion
@@ -31,6 +36,13 @@ macro(Pkg_MakeAvailable)
   endforeach()
 endmacro()
 
+FetchContent_Declare(fmt
+  GIT_REPOSITORY https://github.com/fmtlib/fmt.git
+  GIT_TAG 407c905e45ad75fc29bf0f9bb7c5c2fd3475976f
+  EXCLUDE_FROM_ALL
+  FIND_PACKAGE_ARGS 12.1.0
+)
+
 FetchContent_Declare(pcglite
   GIT_REPOSITORY https://github.com/heavywatal/pcglite.git
   GIT_TAG 4eff9c9088e8b503c63c5147eb2e0a994b07a57a
@@ -47,12 +59,12 @@ FetchContent_Declare(clippson
 
 FetchContent_Declare(wtl
   GIT_REPOSITORY https://github.com/heavywatal/cxxwtl.git
-  GIT_TAG fdaa1420abdb25a54ae7262aeaddf622c21a5935
+  GIT_TAG f66a31048c0d934c29882082099988d9423b6bf3
   EXCLUDE_FROM_ALL
-  FIND_PACKAGE_ARGS 0.11.0 COMPONENTS zlib
+  FIND_PACKAGE_ARGS 0.11.2 COMPONENTS zlib
 )
 
-Pkg_MakeAvailable(pcglite clippson wtl)
+Pkg_MakeAvailable(fmt pcglite clippson wtl)
 
 add_library(${PROJECT_NAME} STATIC)
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
@@ -65,7 +77,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 target_link_libraries(${PROJECT_NAME}
-  PRIVATE wtl::wtl wtl::zlib clippson::clippson pcglite::pcglite
+  PRIVATE fmt::fmt wtl::wtl wtl::zlib clippson::clippson pcglite::pcglite
 )
 
 add_executable(${PROJECT_NAME}-exe src/main.cpp)

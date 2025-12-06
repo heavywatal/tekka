@@ -21,8 +21,8 @@ struct Parameters {
     Parameters();
     //! Read json-only variables from stream
     void read(std::istream&);
-    //! Write json-only variables to stream
-    std::ostream& write(std::ostream&) const;
+    //! Return json-only variables as string
+    std::string str() const;
 
 //! @addtogroup parameters
 //! @{

@@ -86,11 +86,15 @@ class Population {
     //! Construct and write tree from #SubPopulation::samples.
     //! Serial IDs are assigned to sampled individuals.
     //! IDs larger than sample size are assigned to unsampled ancestors.
-    std::ostream& write_sample_family(std::ostream& ost) const;
+    std::ostream& write_sample_family(std::ostream&) const;
     //! Write #SubPopulation::demography.
     std::ostream& write_demography(std::ostream&) const;
     //! Write #subpopulations_ for debugging.
     std::ostream& write(std::ostream&) const;
+    //! Format #subpopulations_ for debugging.
+    template <class OutputIt>
+    OutputIt format_to(OutputIt) const;
+
     friend std::ostream& operator<<(std::ostream&, const Population&);
 
   private:

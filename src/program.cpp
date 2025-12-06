@@ -3,6 +3,7 @@
 #include "parameters.hpp"
 #include "config.hpp"
 
+#include <fmt/base.h>
 #include <wtl/chrono.hpp>
 #include <wtl/debug.hpp>
 #include <wtl/zlib.hpp>
@@ -11,6 +12,7 @@
 #include <filesystem>
 #include <fstream>
 #include <sstream>
+#include <cstdio>
 #include <cstdlib>
 
 namespace pbf {
@@ -120,17 +122,17 @@ Program::Program(const std::vector<std::string>& arguments) {
         clippson::parse(general_options(&vm_local), arguments);
     } catch (std::invalid_argument&) {}
     if (vm_local.at("version")) {
-        std::cout << PROJECT_VERSION << "\n";
+        fmt::println("{}", PROJECT_VERSION);
         throw exit_success();
     }
     if (vm_local.at("json")) {
-        std::cout << default_values;
+        fmt::print("{}", default_values);
         throw exit_success();
     }
     Parameters params;
     if (vm_local.at("default")) {
         nlohmann::json obj{params};
-        std::cout << obj << "\n";
+        fmt::println("{}", obj.dump());
         throw exit_success();
     }
     if (const std::string infile = vm_local.at("infile"); !infile.empty()) {
@@ -148,8 +150,8 @@ Program::Program(const std::vector<std::string>& arguments) {
     clippson::parse(cli, arguments);
     if (vm_local.at("help")) {
         auto fmt = clippson::doc_format();
-        std::cout << "Usage: " << PROJECT_NAME << " [options]\n\n";
-        std::cout << clipp::documentation(cli, fmt) << "\n";
+        fmt::println("Usage: {} [options]\n", PROJECT_NAME);
+        fmt::println("{}", clipp::documentation(cli, fmt).str());
         throw exit_success();
     }
     if (params.seed == 0) {
@@ -158,8 +160,8 @@ Program::Program(const std::vector<std::string>& arguments) {
     outdir_ = params.outdir;
     config_ = nlohmann::json{params}.dump() + "\n";
     if (vm_local.at("verbose")) {
-        std::cerr << wtl::iso8601datetime() << std::endl;
-        std::cerr << config_ << std::endl;
+        fmt::println(stderr, "{}", wtl::iso8601datetime());
+        fmt::println(stderr, "{}", config_);
     }
     population_ = std::make_unique<Population>(params);
 }
@@ -204,14 +206,14 @@ void Parameters::read(std::istream& ist) {
     obj.at("migration_matrices").get_to(migration_matrices);
 }
 
-std::ostream& Parameters::write(std::ostream& ost) const {
+std::string Parameters::str() const {
     nlohmann::json obj;
     obj["natural_mortality"] = natural_mortality;
     obj["fishing_mortality"] = fishing_mortality;
     obj["fishing_coef"] = fishing_coef;
     obj["weight_for_age"] = weight_for_age;
     obj["migration_matrices"] = migration_matrices;
-    return ost << obj;
+    return obj.dump();
 }
 
 } // namespace pbf

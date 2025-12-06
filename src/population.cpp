@@ -1,19 +1,23 @@
 #include "population.hpp"
 #include "individual.hpp"
 
+#include <fmt/format.h>
 #include <wtl/random.hpp>
 #include <wtl/debug.hpp>
 #include <pcglite/pcglite.hpp>
 
 #include <algorithm>
 #include <cmath>
-#include <sstream>
+#include <cstdio>
 #include <stdexcept>
+#include <string_view>
 #include <type_traits>
 
 namespace pbf {
 
 namespace {
+
+using OutputIt = std::back_insert_iterator<fmt::memory_buffer>;
 
 // C++20 <iterator>
 template <class T> inline
@@ -283,18 +287,18 @@ void Population::survive(const int_fast32_t season) {
       }
       if (ss_loc == 0) continue;
       if (ssize(carcasses) < ss_loc) {
-        std::cerr << "WARNING:Population::survive():"
-                  << "y" << year_ << "-l" << loc
-                  << ": " << ss_loc - ssize(carcasses) << " fewer samples\n";
+        fmt::println(stderr,
+          "WARNING:Population::survive():y{}-l{}: {} fewer samples",
+          year_, loc, ss_loc - ssize(carcasses)
+        );
         ss_loc = static_cast<int_fast32_t>(ssize(carcasses));
       }
       std::sample(carcasses.begin(), carcasses.end(),
                   std::back_inserter(subpop.samples[year_]), ss_loc, *engine_);
     }
     if (total_n == 0) {
-        std::ostringstream oss{"runtime_error:", std::ios_base::ate};
-        oss << "extinction in " << year_ << "-q" << season;
-        throw std::runtime_error(oss.str());
+        std::string msg = fmt::format("runtime_error:extinction in {}-q{}", year_, season);
+        throw std::runtime_error(msg);
     }
 }
 
@@ -347,7 +351,9 @@ int_fast32_t Population::destination(int_fast32_t age, int_fast32_t loc) {
 }
 
 std::ostream& Population::write_sample_family(std::ostream& ost) const {
-    Individual::write_trace_back_header(ost);
+    fmt::memory_buffer buffer;
+    auto out = std::back_inserter(buffer);
+    fmt::format_to(out, "{}\n", Individual::trace_back_header());
     // unordered_set suffices to remove duplicates, but address is not reproducible.
     std::unordered_map<const Individual*, int_fast32_t> ids;
     ids.emplace(nullptr, 0);
@@ -361,11 +367,11 @@ std::ostream& Population::write_sample_family(std::ostream& ost) const {
     for (int_fast32_t loc=0; loc<ssize(subpopulations_); ++loc) {
         for (const auto& [year, samples]: subpopulations_[cast_u(loc)].samples) {
             for (const auto& p: samples) {
-                p->trace_back(ost, ids, loc, year);
+                p->trace_back(out, ids, loc, year);
             }
         }
     }
-    return ost;
+    return ost << std::string_view(buffer.data(), buffer.size());
 }
 
 void Population::record_demography(const int_fast32_t season) {
@@ -380,7 +386,9 @@ void Population::record_demography(const int_fast32_t season) {
 }
 
 std::ostream& Population::write_demography(std::ostream& ost) const {
-    ost << "year\tseason\tlocation\tage\tcount\n";
+    fmt::memory_buffer buffer;
+    auto out = std::back_inserter(buffer);
+    fmt::format_to(out, "year\tseason\tlocation\tage\tcount\n");
     for (int_fast32_t loc = 0; loc < ssize(subpopulations_); ++loc) {
       const auto& subpop = subpopulations_[cast_u(loc)];
       for (int_fast32_t year = 0; year < ssize(subpop.demography); ++year) {
@@ -389,25 +397,34 @@ std::ostream& Population::write_demography(std::ostream& ost) const {
             const auto& structure = demography_year[cast_u(season)];
             for (int_fast32_t age=0; age<ssize(structure); ++age) {
                 if (structure[cast_u(age)] == 0) continue;
-                ost << year << "\t" << season << "\t"
-                    << loc << "\t"
-                    << age << "\t"
-                    << structure[cast_u(age)] << "\n";
+                fmt::format_to(out, "{}\t{}\t{}\t{}\t{}\n",
+                    year, season, loc, age, structure[cast_u(age)]);
             }
         }
       }
     }
-    return ost;
+    return ost << std::string_view(buffer.data(), buffer.size());
+}
+
+template <>
+OutputIt Population::format_to(OutputIt out) const {
+    for (const auto& subpop: subpopulations_) {
+        for (const auto& individuals: subpop.adults) {
+            for (const auto& p: individuals) {
+                p->format_to(out) = '\n';
+            }
+        }
+        for (const auto& p: subpop.juveniles) {
+            p->format_to(out) = '\n';
+        }
+    }
+    return out;
 }
 
 std::ostream& Population::write(std::ostream& ost) const {
-    for (const auto& subpop: subpopulations_) {
-        for (const auto& individuals: subpop.adults) {
-            for (const auto& p: individuals) {ost << *p << "\n";}
-        }
-        for (const auto& p: subpop.juveniles) {ost << *p << "\n";}
-    }
-    return ost;
+    fmt::memory_buffer buffer;
+    format_to(std::back_inserter(buffer));
+    return ost << std::string_view(buffer.data(), buffer.size());
 }
 
 //! Shortcut for Population::write(ost)
