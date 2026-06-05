@@ -20,12 +20,6 @@ namespace {
 
 using OutputIt = std::back_insert_iterator<fmt::memory_buffer>;
 
-// C++20 <iterator>
-template <class T> inline
-constexpr auto ssize(const T& x) {
-    return static_cast<std::make_signed_t<decltype(x.size())>>(x.size());
-}
-
 template <class T> inline
 constexpr T ramp(const T x) {
     return x < T{} ? T{} : x;
@@ -38,7 +32,7 @@ constexpr std::make_unsigned_t<T> cast_u(T x) {
 
 template <class T> inline
 void elongate(std::vector<T>& v, ptrdiff_t n) noexcept {
-    for (ptrdiff_t i=ssize(v); i<n; ++i) {
+    for (ptrdiff_t i=std::ssize(v); i<n; ++i) {
         v.emplace_back(v.back());
     }
 }
@@ -55,7 +49,7 @@ void copy_elongate(const std::vector<T>& src, std::vector<T>& dst, ptrdiff_t n) 
 inline int_fast32_t get_dest(const std::vector<double>& v) {
     int_fast32_t idx = 0;
     int_fast32_t num_positive = 0;
-    for (int_fast32_t i=0; i<ssize(v); ++i) {
+    for (int_fast32_t i=0; i<std::ssize(v); ++i) {
         if (v[cast_u(i)] > 0.0) {
             ++num_positive;
             idx = i;
@@ -152,7 +146,7 @@ void Population::reproduce_lognormal() {
     std::vector<std::vector<double>> female_weights(num_breeding_places);
     for (int_fast32_t loc=0; loc<num_breeding_places; ++loc) {
         const auto& females = subpopulations_[cast_u(loc)][Sex::F];
-        num_mothers += ssize(females);
+        num_mothers += std::ssize(females);
         female_weights[cast_u(loc)] = weights(females);
         subtotal_weights[cast_u(loc)] = std::reduce(female_weights[cast_u(loc)].begin(), female_weights[cast_u(loc)].end());
     }
@@ -170,7 +164,7 @@ void Population::reproduce_logistic() {
     constexpr int_fast32_t num_breeding_places = 2;
     int_fast32_t popsize = 0;
     for (int_fast32_t loc=0; loc<num_breeding_places; ++loc) {
-        popsize += ssize(subpopulations_[cast_u(loc)]);
+        popsize += std::ssize(subpopulations_[cast_u(loc)]);
     }
     for (int_fast32_t loc=0; loc<num_breeding_places; ++loc) {
         auto& subpop = subpopulations_[cast_u(loc)];
@@ -198,7 +192,7 @@ void Population::reproduce_impl(int_fast32_t loc, std::vector<int_fast32_t> litt
     }
     auto& juveniles = subpop.juveniles;
     juveniles.reserve(subpop.size());
-    for (int_fast32_t i = 0; i < ssize(litter_sizes); ++i) {
+    for (int_fast32_t i = 0; i < std::ssize(litter_sizes); ++i) {
         auto& mother = females[cast_u(i)];
         auto rec = litter_sizes[cast_u(i)];
         for (decltype(rec) j = 0; j < rec; ++j) {
@@ -242,7 +236,7 @@ std::vector<double> Population::survive_juvenile(
     std::vector<double> dead3(sample_size ? litter_sizes.size() : 0u);
     for (int_fast32_t q = 0; q < 4; ++q) {
         auto& demography_q0 = demography_y[cast_u(q)][0u];
-        for (int_fast32_t i = 0; i < ssize(litter_sizes); ++i) {
+        for (int_fast32_t i = 0; i < std::ssize(litter_sizes); ++i) {
             auto& n = litter_sizes[cast_u(i)];
             demography_q0 += n;
             std::binomial_distribution<int_fast32_t> distr(n, d0[cast_u(q)]);
@@ -264,14 +258,14 @@ int_fast32_t Population::sample_size_juvenile(int_fast32_t loc) const {
 void Population::survive(const int_fast32_t season) {
     int_fast32_t total_n{0};
     const bool is_sampling_time = season == 3 && year_ > (params_.years - params_.last);
-    for (int_fast32_t loc = 0; loc < ssize(subpopulations_); ++loc) {
+    for (int_fast32_t loc = 0; loc < std::ssize(subpopulations_); ++loc) {
       auto ss_loc = is_sampling_time ? params_.sample_size_adult[cast_u(loc)] : 0;
       std::vector<ShPtrIndividual> carcasses;
       carcasses.reserve(cast_u(ss_loc));
       auto& subpop = subpopulations_[cast_u(loc)];
       for (const auto sex: {Sex::F, Sex::M}) {
         auto& individuals = subpop[sex];
-        auto sub_n = ssize(individuals);
+        auto sub_n = std::ssize(individuals);
         for (decltype(sub_n) i=0; i<sub_n; ++i) {
             auto& p = individuals[cast_u(i)];
             if (wtl::generate_canonical(*engine_) < death_rate(p->age(year_), season)) {
@@ -287,12 +281,12 @@ void Population::survive(const int_fast32_t season) {
         total_n += sub_n;
       }
       if (ss_loc == 0) continue;
-      if (ssize(carcasses) < ss_loc) {
+      if (std::ssize(carcasses) < ss_loc) {
         fmt::println(stderr,
           "WARNING:Population::survive():y{}-l{}: {} fewer samples",
-          year_, loc, ss_loc - ssize(carcasses)
+          year_, loc, ss_loc - std::ssize(carcasses)
         );
-        ss_loc = static_cast<int_fast32_t>(ssize(carcasses));
+        ss_loc = static_cast<int_fast32_t>(std::ssize(carcasses));
       }
       std::sample(carcasses.begin(), carcasses.end(),
                   std::back_inserter(subpop.samples[year_]), ss_loc, *engine_);
@@ -314,11 +308,11 @@ void Population::migrate() {
     for (const auto sex: {Sex::F, Sex::M}) {
         // sizes before migration is needed for loc > 0
         std::vector<ptrdiff_t> subpop_sizes;
-        subpop_sizes.reserve(subpopulations_.size());
+        subpop_sizes.reserve(std::size(subpopulations_));
         for (const auto& subpop: subpopulations_) {
-            subpop_sizes.push_back(ssize(subpop[sex]));
+            subpop_sizes.push_back(std::ssize(subpop[sex]));
         }
-        for (int_fast32_t loc=0; loc<ssize(subpopulations_); ++loc) {
+        for (int_fast32_t loc=0; loc<std::ssize(subpopulations_); ++loc) {
             auto& individuals = subpopulations_[cast_u(loc)][sex];
             auto n = subpop_sizes[cast_u(loc)];
             for (decltype(n) i=0; i<n;) {
@@ -334,7 +328,7 @@ void Population::migrate() {
             }
         }
     }
-    for (int_fast32_t loc=0; loc<ssize(subpopulations_); ++loc) {
+    for (int_fast32_t loc=0; loc<std::ssize(subpopulations_); ++loc) {
         auto& juveniles = subpopulations_[cast_u(loc)].juveniles;
         for (auto& p: juveniles) {
             constexpr URBG::result_type half_max = URBG::max() >> 1u;
@@ -358,14 +352,14 @@ std::ostream& Population::write_sample_family(std::ostream& ost) const {
     // unordered_set suffices to remove duplicates, but address is not reproducible.
     std::unordered_map<const Individual*, int_fast32_t> ids;
     ids.emplace(nullptr, 0);
-    for (int_fast32_t loc=0; loc<ssize(subpopulations_); ++loc) {
+    for (int_fast32_t loc=0; loc<std::ssize(subpopulations_); ++loc) {
         for (const auto& [_year, samples]: subpopulations_[cast_u(loc)].samples) {
             for (const auto& p: samples) {
-                ids.emplace(p.get(), ssize(ids));
+                ids.emplace(p.get(), std::ssize(ids));
             }
         }
     }
-    for (int_fast32_t loc=0; loc<ssize(subpopulations_); ++loc) {
+    for (int_fast32_t loc=0; loc<std::ssize(subpopulations_); ++loc) {
         for (const auto& [year, samples]: subpopulations_[cast_u(loc)].samples) {
             for (const auto& p: samples) {
                 p->trace_back(out, ids, loc, year);
@@ -390,13 +384,13 @@ std::ostream& Population::write_demography(std::ostream& ost) const {
     fmt::memory_buffer buffer;
     auto out = std::back_inserter(buffer);
     fmt::format_to(out, "year\tseason\tlocation\tage\tcount\n");
-    for (int_fast32_t loc = 0; loc < ssize(subpopulations_); ++loc) {
+    for (int_fast32_t loc = 0; loc < std::ssize(subpopulations_); ++loc) {
       const auto& subpop = subpopulations_[cast_u(loc)];
-      for (int_fast32_t year = 0; year < ssize(subpop.demography); ++year) {
+      for (int_fast32_t year = 0; year < std::ssize(subpop.demography); ++year) {
         const auto& demography_year = subpop.demography[cast_u(year)];
-        for (int_fast32_t season = 0; season < ssize(demography_year); ++season) {
+        for (int_fast32_t season = 0; season < std::ssize(demography_year); ++season) {
             const auto& structure = demography_year[cast_u(season)];
-            for (int_fast32_t age=0; age<ssize(structure); ++age) {
+            for (int_fast32_t age=0; age<std::ssize(structure); ++age) {
                 if (structure[cast_u(age)] == 0) continue;
                 fmt::format_to(out, "{}\t{}\t{}\t{}\t{}\n",
                     year, season, loc, age, structure[cast_u(age)]);
@@ -458,7 +452,7 @@ void Population::init_mortality() {
     copy_elongate(params_.natural_mortality, NATURAL_MORTALITY_, 4 * MAX_AGE);
     copy_elongate(params_.fishing_mortality, FISHING_MORTALITY_, 4 * MAX_AGE);
     NATURAL_MORTALITY_.back() = 1e9;
-    const auto fc_size = ssize(params_.fishing_coef);
+    const auto fc_size = std::ssize(params_.fishing_coef);
     const auto offset = ramp(fc_size - params_.years);
     FISHING_COEF_.assign(cast_u(params_.years), 1.0);
     std::copy_backward(params_.fishing_coef.begin() + offset, params_.fishing_coef.end(),
@@ -468,7 +462,7 @@ void Population::init_mortality() {
 void Population::init_weight() {
     WEIGHT_FOR_AGE_.reserve(MAX_AGE);
     WEIGHT_FOR_AGE_.resize(params_.weight_for_age.size() / 4u);
-    for (int_fast32_t year=0; year<ssize(WEIGHT_FOR_AGE_); ++year) {
+    for (int_fast32_t year=0; year<std::ssize(WEIGHT_FOR_AGE_); ++year) {
         WEIGHT_FOR_AGE_[cast_u(year)] = params_.weight_for_age[cast_u(4 * year)];
     }
     elongate(WEIGHT_FOR_AGE_, MAX_AGE);
@@ -476,11 +470,11 @@ void Population::init_weight() {
 
 bool Population::is_ready() const {
     return (
-      ssize(FISHING_COEF_) >= params_.years
-      && ssize(NATURAL_MORTALITY_) >= 4 * MAX_AGE
-      && ssize(FISHING_MORTALITY_) >= 4 * MAX_AGE
-      && ssize(WEIGHT_FOR_AGE_) >= MAX_AGE
-      && ssize(MIGRATION_DESTINATION_) >= MAX_AGE
+      std::ssize(FISHING_COEF_) >= params_.years
+      && std::ssize(NATURAL_MORTALITY_) >= 4 * MAX_AGE
+      && std::ssize(FISHING_MORTALITY_) >= 4 * MAX_AGE
+      && std::ssize(WEIGHT_FOR_AGE_) >= MAX_AGE
+      && std::ssize(MIGRATION_DESTINATION_) >= MAX_AGE
     );
 }
 

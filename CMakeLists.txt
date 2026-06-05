@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.28)
 project(tekka
-  VERSION 0.9.1
+  VERSION 0.10.0
   LANGUAGES CXX)
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
@@ -59,9 +59,9 @@ FetchContent_Declare(clippson
 
 FetchContent_Declare(wtl
   GIT_REPOSITORY https://github.com/heavywatal/cxxwtl.git
-  GIT_TAG f66a31048c0d934c29882082099988d9423b6bf3
+  GIT_TAG 78f39e7fb2ccc147356647a93137b7d025e475a0
   EXCLUDE_FROM_ALL
-  FIND_PACKAGE_ARGS 0.11.2 COMPONENTS zlib
+  FIND_PACKAGE_ARGS 0.11.3 COMPONENTS zlib
 )
 
 Pkg_MakeAvailable(fmt pcglite clippson wtl)
@@ -70,7 +70,7 @@ add_library(${PROJECT_NAME} STATIC)
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 add_subdirectory(src)
 
-target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_EXTENSIONS OFF)
 target_include_directories(${PROJECT_NAME} PUBLIC
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>
